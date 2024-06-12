@@ -1,0 +1,35 @@
+import { useCallback, useEffect } from "react";
+import DataService from "../api/dataService";
+import dataStore from "../stores/dataStore";
+
+function useData() {
+  const { setData, data } = dataStore();
+
+  const getAllData = useCallback(async () => {
+    const data = await DataService.getAllData();
+    setData(data.data);
+    return data;
+  }, [setData]);
+
+  useEffect(() => {
+    getAllData();
+  }, [getAllData]);
+
+  const updateData = useCallback(
+    async (newData) => {
+      await DataService.updateData(newData);
+      const updatedData = data.map((item) =>
+        item.id === newData.id ? { ...item, ...newData } : item
+      );
+      setData(updatedData);
+    },
+    [data, setData]
+  );
+
+  return {
+    getAllData,
+    updateData,
+  };
+}
+
+export default useData;

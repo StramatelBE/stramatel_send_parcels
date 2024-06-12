@@ -1,0 +1,15 @@
+meta {
+  name: getAllPlaylistMedias
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{host}}/api/playlist-media/2
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

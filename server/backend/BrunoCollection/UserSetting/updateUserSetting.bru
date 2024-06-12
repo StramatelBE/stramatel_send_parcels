@@ -1,0 +1,22 @@
+meta {
+  name: updateUserSetting
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/api/user-setting/update/5
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "language": "FR",
+    "event_auto": true
+  }
+}

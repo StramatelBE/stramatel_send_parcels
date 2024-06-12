@@ -1,0 +1,22 @@
+meta {
+  name: deletePlaylist
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{host}}/api/playlist/5
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "language": "EN",
+    "event_auto": true
+  }
+}

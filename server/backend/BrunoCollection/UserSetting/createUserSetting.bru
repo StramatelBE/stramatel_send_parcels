@@ -1,0 +1,23 @@
+meta {
+  name: createUserSetting
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/api/user-setting
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "user_id": 5,
+    "language": "en",
+    "event_auto": true
+  }
+}

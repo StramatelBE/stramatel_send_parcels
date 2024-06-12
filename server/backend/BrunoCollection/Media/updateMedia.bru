@@ -1,0 +1,31 @@
+meta {
+  name: updateMedia
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/api/media/5
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+  
+      "original_file_name": "chat-orange.jpg",
+      "file_name": "aa5da464-1f05-42fa-88a5-61af50f6ef93.jpeg",
+      "path": "uploads\\test04\\aa5da464-1f05-42fa-88a5-61af50f6ef93.jpeg",
+      "format": "jpeg",
+      "type": "video",
+      "size": 13506,
+      "uploaded_at": "2024-03-13T15:50:19.799Z",
+      "user_id": 11,
+      "folder_id":null
+  }
+    
+}

@@ -1,0 +1,762 @@
+openapi: 3.0.0
+info:
+  title: API Documentation
+  description: Documentation for the API
+  version: 1.0.0
+servers:
+  - url: http://localhost:4500/api
+paths:
+  /auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthCredentialsDto"
+      responses:
+        "200":
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+  /auth/register:
+    post:
+      summary: Register user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthCredentialsDto"
+      responses:
+        "201":
+          description: Successful registration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  username:
+                    type: string
+                  role:
+                    type: string
+  /auth/logout:
+    post:
+      summary: Logout user
+      responses:
+        "204":
+          description: Successful logout
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        "200":
+          description: Successful retrieval of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      summary: Create a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserDto"
+      responses:
+        "201":
+          description: Successful creation of user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /users/{id}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful retrieval of user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    put:
+      summary: Update user by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserDto"
+      responses:
+        "200":
+          description: Successful update of user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      summary: Delete user by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Successful deletion of user
+  /macros:
+    get:
+      summary: Get all macros
+      responses:
+        "200":
+          description: Successful retrieval of macros
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Macro"
+    post:
+      summary: Create a new macro
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMacroDto"
+      responses:
+        "201":
+          description: Successful creation of macro
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Macro"
+  /macros/{button_id}/{user_id}:
+    get:
+      summary: Get macro by button ID and user ID
+      parameters:
+        - in: path
+          name: button_id
+          schema:
+            type: integer
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful retrieval of macro
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Macro"
+    put:
+      summary: Update macro by button ID and user ID
+      parameters:
+        - in: path
+          name: button_id
+          schema:
+            type: integer
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Macro"
+      responses:
+        "200":
+          description: Successful update of macro
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Macro"
+    delete:
+      summary: Delete macro by button ID and user ID
+      parameters:
+        - in: path
+          name: button_id
+          schema:
+            type: integer
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Successful deletion of macro
+  /buttons:
+    get:
+      summary: Get all buttons
+      responses:
+        "200":
+          description: Successful retrieval of buttons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Button"
+    post:
+      summary: Create a new button
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Button"
+      responses:
+        "201":
+          description: Successful creation of button
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Button"
+  /buttons/{buttonId}:
+    get:
+      summary: Get button by ID
+      parameters:
+        - in: path
+          name: buttonId
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful retrieval of button
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Button"
+    put:
+      summary: Update button by ID
+      parameters:
+        - in: path
+          name: buttonId
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Button"
+      responses:
+        "200":
+          description: Successful update of button
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Button"
+    delete:
+      summary: Delete button by ID
+      parameters:
+        - in: path
+          name: buttonId
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Successful deletion of button
+  /playlists:
+    get:
+      summary: Get all playlists
+      responses:
+        "200":
+          description: Successful retrieval of playlists
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Playlist"
+    post:
+      summary: Create a new playlist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Playlist"
+      responses:
+        "201":
+          description: Successful creation of playlist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Playlist"
+  /playlists/{playlistId}:
+    get:
+      summary: Get playlist by ID
+      parameters:
+        - in: path
+          name: playlistId
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful
+
+    paths:
+  /auth/register:
+    post:
+      summary: Register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthCredentialsDto'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponseDto'
+  /auth/logout:
+    post:
+      summary: Logout
+      responses:
+        '204':
+          description: No content
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Create a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDto'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{id}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      summary: Update user
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      summary: Delete user
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      responses:
+        '204':
+          description: No content
+  /user-setting:
+    get:
+      summary: Get user setting by user ID
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSetting'
+    put:
+      summary: Update user setting by user ID
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserSettingDto'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSetting'
+  /macros:
+    get:
+      summary: Get all macros
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Macro'
+    post:
+      summary: Create a new macro
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMacroDto'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Macro'
+  /macros/{button_id}/{user_id}:
+    get:
+      summary: Get macro by button ID and user ID
+      parameters:
+        - in: path
+          name: button_id
+          schema:
+            type: integer
+          required: true
+          description: Button ID
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Macro'
+    put:
+      summary: Update macro by button ID and user ID
+      parameters:
+        - in: path
+          name: button_id
+          schema:
+            type: integer
+          required: true
+          description: Button ID
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMacroDto'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Macro'
+    delete:
+      summary: Delete macro by button ID and user ID
+      parameters:
+        - in: path
+          name: button_id
+          schema:
+            type: integer
+          required: true
+          description: Button ID
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      responses:
+        '204':
+          description: No content
+  /button:
+    post:
+      summary: Create a new button
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateButtonDto'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Button'
+    get:
+      summary: Get all buttons
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Button'
+    /button/{id}:
+      get:
+        summary: Get button by ID
+        parameters:
+          - in: path
+            name: id
+            schema:
+              type: integer
+            required: true
+            description: Button ID
+        responses:
+          '200':
+            description: Success
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Button'
+      put:
+        summary: Update button by ID
+        parameters:
+          - in: path
+            name: id
+            schema:
+              type: integer
+            required: true
+            description: Button ID
+        requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateButtonDto'
+        responses:
+          '200':
+            description: Success
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Button'
+      delete:
+        summary: Delete button by ID
+        parameters:
+          - in: path
+            name: id
+            schema:
+              type: integer
+            required: true
+            description: Button ID
+        responses:
+          '204':
+            description: No content
+  /playlist:
+    post:
+      summary: Create a new playlist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePlaylistDto'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+    get:
+      summary: Get all playlists
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Playlist'
+paths:
+  /scoring:
+    post:
+      summary: Create a new scoring
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateScoringDto'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scoring'
+    get:
+      summary: Get all scorings
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of items to return
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: Offset of items to return
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Scoring'
+  /scoring/{id}:
+    get:
+      summary: Get scoring by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Scoring ID
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scoring'
+    put:
+      summary: Update scoring by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Scoring ID
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scoring'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scoring'
+    delete:
+      summary: Delete scoring by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Scoring ID
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      responses:
+        '204':
+          description: No Content
+
+

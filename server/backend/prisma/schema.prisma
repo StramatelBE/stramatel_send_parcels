@@ -1,0 +1,72 @@
+// schema.prisma
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  password     String
+  role         String        @default("USER") //Role: USER, ADMIN
+  media        Media[]
+  playlists    Playlist[]
+}
+
+
+model Media {
+  id                 Int       @id @default(autoincrement())
+  original_file_name String
+  file_name          String
+  path               String
+  format             String
+  type               String
+  size               Int
+  uploaded_at        DateTime  @updatedAt()
+  user_id            Int
+  duration           Int
+  position           Int
+  user               User      @relation(fields: [user_id], references: [id])
+  Playlist           Playlist? @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  playlistId         Int?
+}
+
+model Playlist {
+  id      Int     @id @default(autoincrement())
+  name    String
+  user_id Int
+  user    User    @relation(fields: [user_id], references: [id])
+  medias  Media[] @relation
+  Mode    Mode[]
+}
+
+model Mode {
+  id          Int       @id @default(autoincrement())
+  mode        String?
+  playlist_id Int?
+  playlist    Playlist? @relation(fields: [playlist_id], references: [id])
+}
+
+model Settings {
+  id                 Int     @id @default(autoincrement())
+  standby            Boolean
+  standby_start_time Int
+  standby_end_time   Int
+  restart_at         Int
+  date               DateTime @updatedAt()
+  language          String
+  theme             String
+}
+
+model Data {
+  id             Int      @id @default(autoincrement())
+  name           String?
+  data           String?
+  type           String?
+}
+

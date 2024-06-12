@@ -1,0 +1,21 @@
+meta {
+  name: updatePlaylist
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/api/playlist/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name":"test01"
+  }
+}

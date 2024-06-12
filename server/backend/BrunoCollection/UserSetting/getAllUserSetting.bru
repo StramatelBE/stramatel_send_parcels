@@ -1,0 +1,15 @@
+meta {
+  name: getAllUserSetting
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/api/user-setting
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

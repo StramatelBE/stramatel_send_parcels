@@ -1,0 +1,18 @@
+meta {
+  name: createUser
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/api/users
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "username": "test13",
+      "password": "123456789"
+  }
+}
