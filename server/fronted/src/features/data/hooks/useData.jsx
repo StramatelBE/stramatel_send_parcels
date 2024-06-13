@@ -1,19 +1,16 @@
-import { useCallback, useEffect } from "react";
-import DataService from "../api/dataService";
-import dataStore from "../stores/dataStore";
+import { useCallback } from 'react';
+import DataService from '../api/dataService';
+import dataStore from '../stores/dataStore';
 
 function useData() {
   const { setData, data } = dataStore();
 
   const getAllData = useCallback(async () => {
+    console.log('getDatas');
     const data = await DataService.getAllData();
     setData(data.data);
     return data;
   }, [setData]);
-
-  useEffect(() => {
-    getAllData();
-  }, [getAllData]);
 
   const updateData = useCallback(
     async (newData) => {
@@ -27,8 +24,8 @@ function useData() {
   );
 
   return {
-    getAllData,
-    updateData,
+    getAllData: getAllData,
+    updateData: updateData,
   };
 }
 

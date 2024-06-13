@@ -1,15 +1,10 @@
-import SettingsComposants from "../components/SettingsComposants";
-
-
+import SettingsLoader from './SettingsLoader';
 
 const SettingsRoutes = () => [
   {
-    path: "",
-    element: <SettingsComposants/>,
+    path: '',
+    element: <SettingsLoader />,
   },
 ];
 
-
 export default SettingsRoutes;
-
-

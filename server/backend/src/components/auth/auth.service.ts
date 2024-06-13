@@ -5,7 +5,11 @@ import jwt from "jsonwebtoken";
 import path from "path";
 import { Service } from "typedi";
 import { HttpException } from "../../exceptions/HttpException";
-import { LoginUserDto, RegisterDto, ChangePasswordDto } from "./auth.validation";
+import {
+  LoginUserDto,
+  RegisterDto,
+  ChangePasswordDto,
+} from "./auth.validation";
 
 const prisma = new PrismaClient();
 
@@ -66,7 +70,10 @@ export class AuthService {
     return token;
   }
 
-  async changePassword(changePasswordData: ChangePasswordDto, username: string): Promise<void> {
+  async changePassword(
+    changePasswordData: ChangePasswordDto,
+    username: string
+  ): Promise<void> {
     const user = await prisma.user.findUnique({
       where: { username: username },
     });
@@ -81,12 +88,15 @@ export class AuthService {
     );
 
     if (!isValidPassword) {
-      throw new HttpException(401, "Incorrect old password");
+      throw new HttpException(400, "Incorrect old password");
     }
 
-    const hashedNewPassword = await bcrypt.hash(changePasswordData.newPassword, 10);
+    const hashedNewPassword = await bcrypt.hash(
+      changePasswordData.newPassword,
+      10
+    );
     await prisma.user.update({
-      where: { username: username},
+      where: { username: username },
       data: { password: hashedNewPassword },
     });
   }

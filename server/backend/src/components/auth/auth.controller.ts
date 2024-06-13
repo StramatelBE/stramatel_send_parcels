@@ -2,8 +2,13 @@ import { User } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import { Inject, Service } from "typedi";
 import { AuthService } from "./auth.service";
-import { CreateUserDto, LoginUserDto, RegisterDto, ChangePasswordDto } from "./auth.validation";
-import { CustomRequest } from "../../middlewares/extractUserId.middleware"; 
+import {
+  CreateUserDto,
+  LoginUserDto,
+  RegisterDto,
+  ChangePasswordDto,
+} from "./auth.validation";
+import { CustomRequest } from "../../middlewares/extractUserId.middleware";
 
 @Service()
 export class AuthController {
@@ -11,7 +16,7 @@ export class AuthController {
 
   register = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userData: CreateUserDto & RegisterDto = req.body;
+      const userData: RegisterDto = req.body;
       const user: User = await this.authService.register(userData);
       res
         .status(201)
@@ -31,13 +36,15 @@ export class AuthController {
     }
   };
 
-  changePassword = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  changePassword = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
-      console.log(req.user);
       const changePasswordData: ChangePasswordDto = req.body;
       const username = req.user.username;
-      
-      
+
       await this.authService.changePassword(changePasswordData, username);
       res.status(200).json({ message: "Password changed successfully" });
     } catch (error) {

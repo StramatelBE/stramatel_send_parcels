@@ -1,21 +1,21 @@
-import { IsBoolean, IsInt, IsNotEmpty, IsString } from "class-validator";
+import { IsBoolean, IsString, IsNotEmpty } from "class-validator";
 
 export class SettingsDto {
   @IsBoolean()
   @IsNotEmpty()
   standby: boolean;
 
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  standby_start_time: number;
+  standby_start_time: string; // Heure au format HH:mm
 
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  standby_end_time: number;
+  standby_end_time: string; // Heure au format HH:mm
 
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  restart_at: number;
+  restart_at: string; // Heure au format HH:mm
 
   @IsString()
   @IsNotEmpty()

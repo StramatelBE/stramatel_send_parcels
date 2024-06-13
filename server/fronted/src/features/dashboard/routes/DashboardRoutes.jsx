@@ -1,15 +1,10 @@
-import DashboardComponents from "../components/DashboardComponents";
-
-
+import DashboardLoader from './DashboardLoader';
 
 const DashboardRoutes = () => [
   {
-    path: "",
-    element: <DashboardComponents/>,
+    path: '',
+    element: <DashboardLoader />,
   },
 ];
 
-
 export default DashboardRoutes;
-
-

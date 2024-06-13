@@ -2,7 +2,7 @@ import { Playlist } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import { Inject, Service } from "typedi";
 import { PlaylistService } from "./playlist.service";
-import { CreatePlaylistDto } from "./playlist.validation";
+import { CreatePlaylistDto, UpdatePlaylistDto } from "./playlist.validation";
 import { UserPayload } from "../../types/UserPayload";
 
 interface CustomRequest extends Request {
@@ -21,7 +21,7 @@ export class PlaylistController {
     next: NextFunction
   ) => {
     try {
-      const playlistData = req.body as CreatePlaylistDto;
+      const playlistData: CreatePlaylistDto = req.body;
       const newPlaylist: Playlist = await this.playlistService.createPlaylist({
         ...playlistData,
         user_id: req.user.id,
@@ -74,7 +74,7 @@ export class PlaylistController {
   ) => {
     try {
       const playlistId: number = parseInt(req.params.playlistId);
-      const playlistData = req.body as CreatePlaylistDto;
+      const playlistData: UpdatePlaylistDto = req.body;
       const updatedPlaylist: Playlist | null =
         await this.playlistService.updatePlaylist(playlistId, playlistData);
       if (!updatedPlaylist) {

@@ -1,15 +1,15 @@
-import { fetchWithAuthorization } from "../../../utils/fetchWithAuthorization";
+import { fetchWithAuthorization } from '../../../utils/fetchWithAuthorization';
 
 const API_URL = `${import.meta.env.VITE_REACT_APP_API_URL}mode/`;
 
 class ModeService {
   static async getModeById(modeId) {
     const response = await fetchWithAuthorization(`${API_URL}${modeId}`, {
-      method: "GET",
+      method: 'GET',
     });
 
     if (!response.ok) {
-      throw new Error("Échec de la récupération du mode");
+      throw new Error('Échec de la récupération du mode');
     }
 
     return await response.json();
@@ -20,16 +20,17 @@ class ModeService {
       mode: mode,
       playlist_id,
     };
+    console.log(updateData);
     const response = await fetchWithAuthorization(`${API_URL}${1}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(updateData),
     });
 
     if (!response.ok) {
-      throw new Error("Échec de la mise à jour du mode");
+      throw new Error('Échec de la mise à jour du mode');
     }
 
     return await response.json();

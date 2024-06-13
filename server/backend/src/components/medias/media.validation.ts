@@ -1,38 +1,50 @@
-import { IsString, IsNotEmpty, ValidateNested } from "class-validator";
+import {
+  IsString,
+  IsNotEmpty,
+  ValidateNested,
+  IsNumber,
+  IsDate,
+  IsOptional,
+} from "class-validator";
 import { Type } from "class-transformer";
 
-class FileDto {
-  @IsString()
-  @IsNotEmpty()
-  fieldname: string;
+export class FileDto {
+  @IsNumber()
+  id: number;
 
   @IsString()
-  @IsNotEmpty()
-  originalname: string;
+  original_file_name: string;
 
   @IsString()
-  @IsNotEmpty()
-  encoding: string;
+  file_name: string;
 
   @IsString()
-  @IsNotEmpty()
-  mimetype: string;
+  path: string;
 
-  @Type(() => Number)
-  @IsNotEmpty()
+  @IsString()
+  format: string;
+
+  @IsString()
+  type: string;
+
+  @IsNumber()
   size: number;
 
-  @IsString()
-  @IsNotEmpty()
-  destination: string;
+  @IsDate()
+  uploaded_at: Date;
 
-  @IsString()
-  @IsNotEmpty()
-  filename: string;
+  @IsNumber()
+  user_id: number;
 
-  @IsString()
-  @IsNotEmpty()
-  path: string;
+  @IsOptional()
+  @IsNumber()
+  duration?: number;
+
+  @IsNumber()
+  position: number;
+
+  @IsNumber()
+  playlistId: number;
 }
 
 export class CreateMediaDto {

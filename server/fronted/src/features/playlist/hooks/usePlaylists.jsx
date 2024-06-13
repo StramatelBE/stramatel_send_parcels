@@ -1,7 +1,7 @@
-import { useCallback, useEffect } from "react";
-import PlaylistService from "../api/playlistService";
-import playlistStore from "../stores/playlistsStores";
-import selectedPlaylistStore from "../stores/selectedPlaylistStore";
+import { useCallback } from 'react';
+import PlaylistService from '../api/playlistService';
+import playlistStore from '../stores/playlistsStores';
+import selectedPlaylistStore from '../stores/selectedPlaylistStore';
 
 const usePlaylists = () => {
   const { setPlaylists, removePlaylist, playlists } = playlistStore();
@@ -12,7 +12,7 @@ const usePlaylists = () => {
       const response = await PlaylistService.getAllPlaylists();
       setPlaylists(response.data);
     } catch (err) {
-      console.error("Error fetching playlists:", err);
+      console.error('Error fetching playlists:', err);
     }
   }, [setPlaylists]);
 
@@ -22,7 +22,7 @@ const usePlaylists = () => {
         const newPlaylist = await PlaylistService.createPlaylist(name);
         setPlaylists([...playlists, newPlaylist.data]);
       } catch (error) {
-        console.error("Failed to add playlist:", error);
+        console.error('Failed to add playlist:', error);
       }
     },
     [playlists, setPlaylists]
@@ -34,7 +34,7 @@ const usePlaylists = () => {
         await PlaylistService.deletePlaylist(id);
         removePlaylist(id);
       } catch (error) {
-        console.error("Failed to delete playlist:", error);
+        console.error('Failed to delete playlist:', error);
       }
     },
     [removePlaylist]
@@ -46,7 +46,7 @@ const usePlaylists = () => {
         const response = await PlaylistService.getPlaylistById(id);
         setSelectedPlaylist(response.data);
       } catch (error) {
-        console.error("Failed to fetch playlist by ID:", error);
+        console.error('Failed to fetch playlist by ID:', error);
       }
     },
     [setSelectedPlaylist]
@@ -62,12 +62,9 @@ const usePlaylists = () => {
     [setSelectedPlaylist]
   );
 
-  useEffect(() => {
-    getAllPlaylists();
-  }, [getAllPlaylists]);
-
   return {
     addPlaylist,
+    getAllPlaylists: getAllPlaylists,
     deletePlaylist,
     getPlaylistById,
     updateMediasInPlaylist,

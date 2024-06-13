@@ -2,6 +2,7 @@ import { Mode } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import { Inject, Service } from "typedi";
 import { ModeService } from "./mode.service";
+import { UpdateModeDto } from "./mode.validation";
 
 @Service()
 export class ModeController {
@@ -57,13 +58,17 @@ export class ModeController {
   ) => {
     try {
       const modeId = Number(req.params.id);
-      const modeData = req.body;
+      const modeData: UpdateModeDto = req.body;
+      console.log(modeData);
+
       const updateMode: Mode = await this.modeService.updateMode(
         modeId,
         modeData
       );
       res.status(200).json({ data: updateMode, message: "updated" });
     } catch (error) {
+      console.log(error);
+
       next(error);
     }
   };
