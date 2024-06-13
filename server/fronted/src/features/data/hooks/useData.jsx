@@ -6,7 +6,6 @@ function useData() {
   const { setData, data } = dataStore();
 
   const getAllData = useCallback(async () => {
-    console.log('getDatas');
     const data = await DataService.getAllData();
     setData(data.data);
     return data;

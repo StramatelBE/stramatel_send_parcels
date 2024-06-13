@@ -25,7 +25,6 @@ function ChangePasswordDialog({ open, onClose }) {
       await userService.changePassword(currentPassword, newPassword);
       onClose();
     } catch (error) {
-      console.log(error.status);
       if (error.status === 400) {
         setError('Mot de passe actuel incorrect');
       }

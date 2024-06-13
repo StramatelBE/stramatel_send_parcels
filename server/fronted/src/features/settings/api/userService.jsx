@@ -17,9 +17,8 @@ class UserService {
     );
 
     if (!response.ok) {
-      console.log(response);
       const errorData = await response.json();
-      throw errorData; // Renvoie directement l'objet d'erreur JSON
+      throw errorData;
     }
     const data = await response.json();
     return data;

@@ -26,9 +26,7 @@ function PlaylistListComponents() {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const { addPlaylist } = usePlaylists();
   const { isLoading } = useLoadingStore();
-  /*  useEffect(() => {
-    console.log('loading', isLoading);
-  }, [isLoading]); */
+
   function closeDialog() {
     setAddDialogOpen(false);
   }

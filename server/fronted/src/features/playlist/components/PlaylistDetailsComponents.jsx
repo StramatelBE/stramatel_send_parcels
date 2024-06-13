@@ -1,8 +1,8 @@
-import AddIcon from "@mui/icons-material/Add";
-import CloseIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditCalendarIcon from "@mui/icons-material/EditCalendar";
-import DragHandleIcon from "@mui/icons-material/DragHandle";
+import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import DragHandleIcon from '@mui/icons-material/DragHandle';
 import {
   Box,
   IconButton,
@@ -11,12 +11,12 @@ import {
   TableCell,
   TableRow,
   TextField,
-} from "@mui/material";
-import Container from "../../../components/ContainerComponents";
-import useMedia from "../hooks/useMedias";
-import selectedPlaylistStore from "../stores/selectedPlaylistStore";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import usePlaylists from "../hooks/usePlaylists";
+} from '@mui/material';
+import Container from '../../../components/ContainerComponents';
+import useMedia from '../hooks/useMedias';
+import selectedPlaylistStore from '../stores/selectedPlaylistStore';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import usePlaylists from '../hooks/usePlaylists';
 
 function PlaylistDetailsComponents() {
   const { selectedPlaylist } = selectedPlaylistStore();
@@ -67,24 +67,24 @@ function PlaylistDetailsContent() {
                   >
                     {(provided) => (
                       <TableRow
-                        style={{ position: "relative" }}
+                        style={{ position: 'relative' }}
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
                         <TableCell align="left">
                           <IconButton>
-                            <DragHandleIcon sx={{ color: "secondary.main" }} />
+                            <DragHandleIcon sx={{ color: 'secondary.main' }} />
                           </IconButton>
                         </TableCell>
                         <TableCell>
-                          {media.type.split("/")[0] === "video" ? (
+                          {media.type.split('/')[0] === 'video' ? (
                             <Box
                               sx={{
-                                height: "100%",
-                                width: "100%",
-                                maxWidth: "16vh",
-                                maxHeight: "8vh",
+                                height: '100%',
+                                width: '100%',
+                                maxWidth: '16vh',
+                                maxHeight: '8vh',
                               }}
                               component="video"
                               alt={media.originalFilename}
@@ -93,10 +93,10 @@ function PlaylistDetailsContent() {
                           ) : (
                             <Box
                               sx={{
-                                height: "100%",
-                                width: "100%",
-                                maxWidth: "16vh",
-                                maxHeight: "8vh",
+                                height: '100%',
+                                width: '100%',
+                                maxWidth: '16vh',
+                                maxHeight: '8vh',
                               }}
                               component="img"
                               alt={media.originalFilename}
@@ -113,9 +113,9 @@ function PlaylistDetailsContent() {
                             }}
                             size="small"
                             type="number"
-                            disabled={media.type.split("/")[0] === "video"}
+                            disabled={media.type.split('/')[0] === 'video'}
                             inputProps={{ min: 0, max: 999 }}
-                            style={{ width: "100%", maxWidth: "90px" }}
+                            style={{ width: '100%', maxWidth: '90px' }}
                           />
                         </TableCell>
                         <TableCell>
@@ -125,7 +125,7 @@ function PlaylistDetailsContent() {
                               deleteMedia(media.id, selectedPlaylist.id);
                             }}
                           >
-                            <DeleteIcon sx={{ color: "secondary.main" }} />
+                            <DeleteIcon sx={{ color: 'secondary.main' }} />
                           </IconButton>
                         </TableCell>
                       </TableRow>
@@ -142,7 +142,7 @@ function PlaylistDetailsContent() {
   );
 }
 function PlaylistDetailsIcon() {
-  return <EditCalendarIcon sx={{ color: "primary.light" }} />;
+  return <EditCalendarIcon sx={{ color: 'primary.light' }} />;
 }
 function PlaylistDetailsClose() {
   const { clearSelectedPlaylist } = selectedPlaylistStore();
@@ -151,10 +151,9 @@ function PlaylistDetailsClose() {
       className="headerButton"
       onClick={() => {
         clearSelectedPlaylist();
-        console.log("clearSelectedPlaylist");
       }}
     >
-      <CloseIcon sx={{ color: "secondary.main" }} />
+      <CloseIcon sx={{ color: 'secondary.main' }} />
     </IconButton>
   );
 }
@@ -165,16 +164,16 @@ function AddMedia() {
     <>
       <IconButton
         onClick={() => {
-          document.getElementById("inputFile").click();
+          document.getElementById('inputFile').click();
         }}
         className="headerButton"
       >
-        <AddIcon sx={{ color: "secondary.main" }} />
+        <AddIcon sx={{ color: 'secondary.main' }} />
       </IconButton>
       <input
         type="file"
         id="inputFile"
-        style={{ display: "none" }}
+        style={{ display: 'none' }}
         onChange={(e) => {
           e.preventDefault();
           uploadMedia(e.target.files[0], selectedPlaylist.id);

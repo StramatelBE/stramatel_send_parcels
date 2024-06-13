@@ -2,16 +2,36 @@
   Warnings:
 
   - You are about to drop the `Accident` table. If the table is not empty, all the data it contains will be lost.
+  - You are about to drop the `GlobalSettings` table. If the table is not empty, all the data it contains will be lost.
+  - You are about to drop the `PlaylistMedia` table. If the table is not empty, all the data it contains will be lost.
+  - You are about to drop the `UserSettings` table. If the table is not empty, all the data it contains will be lost.
   - You are about to drop the column `fileName` on the `Media` table. All the data in the column will be lost.
   - You are about to drop the column `lastModified` on the `Media` table. All the data in the column will be lost.
   - You are about to drop the column `originalFileName` on the `Media` table. All the data in the column will be lost.
+  - Added the required column `duration` to the `Media` table without a default value. This is not possible if the table is not empty.
   - Added the required column `file_name` to the `Media` table without a default value. This is not possible if the table is not empty.
   - Added the required column `original_file_name` to the `Media` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `position` to the `Media` table without a default value. This is not possible if the table is not empty.
 
 */
 -- DropTable
 PRAGMA foreign_keys=off;
 DROP TABLE "Accident";
+PRAGMA foreign_keys=on;
+
+-- DropTable
+PRAGMA foreign_keys=off;
+DROP TABLE "GlobalSettings";
+PRAGMA foreign_keys=on;
+
+-- DropTable
+PRAGMA foreign_keys=off;
+DROP TABLE "PlaylistMedia";
+PRAGMA foreign_keys=on;
+
+-- DropTable
+PRAGMA foreign_keys=off;
+DROP TABLE "UserSettings";
 PRAGMA foreign_keys=on;
 
 -- CreateTable
@@ -23,17 +43,23 @@ CREATE TABLE "Mode" (
 );
 
 -- CreateTable
+CREATE TABLE "Settings" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "standby" BOOLEAN NOT NULL,
+    "standby_start_time" TEXT NOT NULL,
+    "standby_end_time" TEXT NOT NULL,
+    "restart_at" TEXT NOT NULL,
+    "date" DATETIME NOT NULL,
+    "language" TEXT NOT NULL,
+    "theme" TEXT NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "Data" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "data_string_1" TEXT NOT NULL,
-    "data_string_2" TEXT NOT NULL,
-    "data_string_3" TEXT NOT NULL,
-    "data_int_1" INTEGER NOT NULL,
-    "data_int_2" INTEGER NOT NULL,
-    "data_int_3" INTEGER NOT NULL,
-    "data_boolean_1" BOOLEAN NOT NULL,
-    "data_boolean_2" BOOLEAN NOT NULL,
-    "data_boolean_3" BOOLEAN NOT NULL
+    "name" TEXT,
+    "data" TEXT,
+    "type" TEXT
 );
 
 -- RedefineTables
@@ -48,7 +74,11 @@ CREATE TABLE "new_Media" (
     "size" INTEGER NOT NULL,
     "uploaded_at" DATETIME NOT NULL,
     "user_id" INTEGER NOT NULL,
-    CONSTRAINT "Media_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "duration" INTEGER NOT NULL,
+    "position" INTEGER NOT NULL,
+    "playlistId" INTEGER,
+    CONSTRAINT "Media_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Media_playlistId_fkey" FOREIGN KEY ("playlistId") REFERENCES "Playlist" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 INSERT INTO "new_Media" ("format", "id", "path", "size", "type", "uploaded_at", "user_id") SELECT "format", "id", "path", "size", "type", "uploaded_at", "user_id" FROM "Media";
 DROP TABLE "Media";

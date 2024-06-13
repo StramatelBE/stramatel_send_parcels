@@ -14,7 +14,6 @@ function useModes() {
   const updateMode = useCallback(
     async (mode, playlist_id) => {
       const updatedMode = await ModeService.updateMode(mode, playlist_id);
-      console.log(updatedMode);
       setModes(updatedMode.data);
       return updatedMode;
     },

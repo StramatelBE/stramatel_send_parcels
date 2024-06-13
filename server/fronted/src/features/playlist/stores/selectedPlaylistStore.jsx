@@ -1,5 +1,4 @@
-import create from "zustand";
-
+import { create } from 'zustand';
 const selectedPlaylistStore = create((set) => ({
   selectedPlaylist: null,
   setSelectedPlaylist: (selectedPlaylist) => set({ selectedPlaylist }),

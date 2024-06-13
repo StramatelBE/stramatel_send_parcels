@@ -54,7 +54,7 @@ model Mode {
 model Settings {
   id                 Int      @id @default(autoincrement())
   standby            Boolean
-  standby_start_time String // Modifié de Int à String
+  standby_start_time String
   standby_end_time   String
   restart_at         String
   date               DateTime @updatedAt()

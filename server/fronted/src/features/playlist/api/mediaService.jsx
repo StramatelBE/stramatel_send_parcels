@@ -4,7 +4,6 @@ const API_URL = `${import.meta.env.VITE_REACT_APP_API_URL}medias/`;
 
 class MediaService {
   static async uploadFile(fileData, playlistId) {
-    console.log(playlistId);
     const formData = new FormData();
     formData.append('file', fileData);
     formData.append('playlistId', playlistId);
@@ -33,7 +32,6 @@ class MediaService {
   }
 
   static async updateMedia(media) {
-    console.log(media);
     const response = await fetchWithAuthorization(`${API_URL}${media.id}`, {
       method: 'PUT',
       headers: {

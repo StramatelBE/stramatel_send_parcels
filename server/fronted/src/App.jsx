@@ -1,26 +1,14 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "@mui/material/styles";
-import routes from "./routes/Routes";
-import useThemeStore from "./stores/themeStore";
-import { GlobalStyles } from "@mui/material";
-import "./Global.css";
-import useAuthStore from "./stores/authStore";
-import { useEffect, useState } from "react";
+import { GlobalStyles } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import './Global.css';
+import routes from './routes/Routes';
+import useThemeStore from './stores/themeStore';
 
 const App = () => {
-  const [hasToken, setHasToken] = useState(false);
   const { muiTheme } = useThemeStore();
-  const { token } = useAuthStore();
 
-  useEffect(() => {
-    if (token) {
-      setHasToken(true);
-    } else {
-      setHasToken(false);
-    }
-  }, [token]);
-
-  const router = createBrowserRouter(routes(hasToken));
+  const router = createBrowserRouter(routes());
 
   return (
     <ThemeProvider theme={muiTheme}>

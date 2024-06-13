@@ -58,7 +58,6 @@ class PlaylistService {
   }
 
   static async updateMediasInPlaylist(medias, playlistId) {
-    console.log(medias, playlistId);
     const response = await fetchWithAuthorization(
       `${API_URL}${playlistId}/medias`,
       {

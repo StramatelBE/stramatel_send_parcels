@@ -20,7 +20,6 @@ class ModeService {
       mode: mode,
       playlist_id,
     };
-    console.log(updateData);
     const response = await fetchWithAuthorization(`${API_URL}${1}`, {
       method: 'PUT',
       headers: {
