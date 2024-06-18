@@ -1,9 +1,6 @@
 import {
   IsNotEmpty,
-  IsNumber,
-  IsString,
-  MaxLength,
-  MinLength,
+  IsString
 } from "class-validator";
 
 export class CreateModeDto {
@@ -14,5 +11,5 @@ export class CreateModeDto {
 
 export class UpdateModeDto {
   @IsString()
-  public mode?: string;
+  public name?: string;
 }

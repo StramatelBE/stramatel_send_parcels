@@ -10,7 +10,7 @@ export class CreateDataDto {
   public name: string;
 
   @IsString()
-  public data: string;
+  public value: string;
 
   @IsIn(["INT", "BOOLEAN", "STRING"])
   @IsString()

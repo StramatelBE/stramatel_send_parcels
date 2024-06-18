@@ -46,7 +46,7 @@ model Playlist {
 
 model Mode {
   id          Int       @id @default(autoincrement())
-  mode        String?
+  name        String?
   playlist_id Int?
   playlist    Playlist? @relation(fields: [playlist_id], references: [id])
 }
@@ -65,6 +65,6 @@ model Settings {
 model Data {
   id   Int     @id @default(autoincrement())
   name String?
-  data String?
+  value String?
   type String?
 }

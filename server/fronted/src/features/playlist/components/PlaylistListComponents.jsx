@@ -95,10 +95,10 @@ function PlaylistList() {
               <TableCell align="right">
                 {modes &&
                 modes.playlist_id === playlist.id &&
-                modes.mode === 'playlist' ? (
+                modes.name === 'playlist' ? (
                   <IconButton
                     size="small"
-                    onClick={() => updateMode('null', playlist.id)}
+                    onClick={() => updateMode('data', null)}
                   >
                     <StopIcon sx={{ fontSize: 15, color: 'secondary.main' }} />
                     <CircularProgress

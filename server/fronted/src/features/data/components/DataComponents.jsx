@@ -48,9 +48,9 @@ function Data() {
   const handleInputChange = (e, item) => {
     let newData;
     if (item.type === 'BOOLEAN') {
-      newData = { ...item, data: e.target.checked.toString() };
+      newData = { ...item, value: e.target.checked.toString() };
     } else {
-      newData = { ...item, data: e.target.value };
+      newData = { ...item, value: e.target.value };
     }
     updateData(newData);
   };
@@ -70,7 +70,7 @@ function Data() {
               style={{ width: '80%' }}
               margin="normal"
               type="text"
-              value={item.data}
+              value={item.value}
               onChange={(e) => handleInputChange(e, item)}
             />
           )}
@@ -79,14 +79,14 @@ function Data() {
               style={{ width: '30%' }}
               margin="normal"
               type="number"
-              value={item.data}
+              value={item.value}
               onChange={(e) => handleInputChange(e, item)}
             />
           )}
           {item.type === 'BOOLEAN' && (
             <Switch
               color="secondary"
-              checked={item.data === 'true'}
+              checked={item.value === 'true'}
               onChange={(e) => handleInputChange(e, item)}
             />
           )}

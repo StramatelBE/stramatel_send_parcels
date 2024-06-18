@@ -28,7 +28,7 @@ async function main() {
   // Créer un mode
   await prisma.mode.create({
     data: {
-      mode: "null",
+      name: "data",
       playlist_id: null,
     },
   });
@@ -49,7 +49,7 @@ async function main() {
   await prisma.data.create({
     data: {
       name: "Exemple int",
-      data: "10",
+      value: "10",
       type: "INT",
     },
   });
@@ -57,7 +57,7 @@ async function main() {
   await prisma.data.create({
     data: {
       name: "Exemple bool",
-      data: "false",
+      value: "false",
       type: "BOOLEAN",
     },
   });
@@ -65,7 +65,7 @@ async function main() {
   await prisma.data.create({
     data: {
       name: "Exemple string",
-      data: "Exemple string",
+      value: "Exemple string",
       type: "STRING",
     },
   });

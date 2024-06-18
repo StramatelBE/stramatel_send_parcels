@@ -159,8 +159,8 @@ function Settings({ setChangePasswordDialogOpen }) {
                 Test panneau
               </Typography>
             </Stack>
-            {modes && modes.mode === 'test' ? (
-              <IconButton size="small" onClick={() => updateMode('null', null)}>
+            {modes && modes.name === 'test' ? (
+              <IconButton size="small" onClick={() => updateMode('data', null)}>
                 <StopIcon sx={{ fontSize: 32, color: 'secondary.main' }} />
                 <CircularProgress
                   size={32}

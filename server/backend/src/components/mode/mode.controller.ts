@@ -59,7 +59,6 @@ export class ModeController {
     try {
       const modeId = Number(req.params.id);
       const modeData: UpdateModeDto = req.body;
-      console.log(modeData);
 
       const updateMode: Mode = await this.modeService.updateMode(
         modeId,

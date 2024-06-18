@@ -15,9 +15,9 @@ class ModeService {
     return await response.json();
   }
 
-  static async updateMode(mode, playlist_id) {
+  static async updateMode(name, playlist_id) {
     const updateData = {
-      mode: mode,
+      name: name,
       playlist_id,
     };
     const response = await fetchWithAuthorization(`${API_URL}${1}`, {
