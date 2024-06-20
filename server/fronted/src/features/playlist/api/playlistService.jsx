@@ -57,6 +57,25 @@ class PlaylistService {
     return await response.json();
   }
 
+  static async updateNamePlaylist(playlistId, name) {
+
+    const response = await fetchWithAuthorization(`${API_URL}${playlistId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: name,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Échec de la mise à jour de la playlist');
+    }
+
+    return await response.json();
+  }
+
   static async updateMediasInPlaylist(medias, playlistId) {
     const response = await fetchWithAuthorization(
       `${API_URL}${playlistId}/medias`,

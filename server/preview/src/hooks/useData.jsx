@@ -1,31 +1,30 @@
 import { useEffect } from "react";
 import useSocketData from "../stores/socketDataStore";
+import useWebSocket from "../socket/useWebSocket";
 
 const useData = () => {
   const { setSocketData } = useSocketData();
-
-  useEffect(() => {
-    const handleUnixData = (event, newData) => {
+  const { connectWebSocket, closeWebSocket } = useWebSocket(
+    import.meta.env.VITE_SOCKET_URL,
+    (event) => {
       try {
-        const parsedData = JSON.parse(newData);
+        const parsedData = JSON.parse(event.data);
         setSocketData(parsedData);
       } catch (error) {
         console.error("Failed to parse JSON data:", error);
       }
-    };
-
-    if (window.electron && window.electron.onUnixData) {
-      window.electron.onUnixData(handleUnixData);
-    } else {
-      console.error("window.electron.onUnixData is not defined");
     }
+  );
+
+  useEffect(() => {
+    connectWebSocket();
 
     return () => {
-      if (window.electron && window.electron.removeListener) {
-        window.electron.removeListener('unix-data', handleUnixData);
-      }
+      closeWebSocket();
     };
-  }, [setSocketData]);
+  }, [connectWebSocket, closeWebSocket]);
+
+  return null; 
 };
 
 export default useData;

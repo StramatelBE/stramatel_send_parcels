@@ -4,8 +4,8 @@ import playlistStore from '../stores/playlistsStores';
 import selectedPlaylistStore from '../stores/selectedPlaylistStore';
 
 const usePlaylists = () => {
-  const { setPlaylists, removePlaylist, playlists } = playlistStore();
-  const { setSelectedPlaylist } = selectedPlaylistStore();
+  const { setPlaylists, removePlaylist, playlists, updatePlaylistName } = playlistStore();
+  const { setSelectedPlaylist,  } = selectedPlaylistStore();
 
   const getAllPlaylists = useCallback(async () => {
     try {
@@ -62,12 +62,29 @@ const usePlaylists = () => {
     [setSelectedPlaylist]
   );
 
+  const updateNamePlaylist = useCallback(
+    async (selectedPlaylist, name) => {
+      try {
+        await PlaylistService.updateNamePlaylist(selectedPlaylist.id, name);
+        setSelectedPlaylist({
+          ...selectedPlaylist,
+          name: name,
+        });
+        updatePlaylistName(selectedPlaylist.id, name);
+      } catch (error) {
+        console.error('Failed to update playlist name:', error);
+      }
+    },
+    [setSelectedPlaylist, updatePlaylistName]
+  );
+
   return {
     addPlaylist,
     getAllPlaylists: getAllPlaylists,
     deletePlaylist,
     getPlaylistById,
     updateMediasInPlaylist,
+    updateNamePlaylist
   };
 };
 

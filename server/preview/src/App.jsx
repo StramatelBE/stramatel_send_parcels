@@ -8,10 +8,7 @@ function App() {
   useData();
 
   const {socketData} = useSocketData();
-/*   useEffect(() => {
-    console.log(socketData)
-  }, [socketData]) */
- 
+
   return <>
     {socketData?.mode === "test" && <TestComponents />}
     {socketData?.mode === "data" && <DataComposant />}

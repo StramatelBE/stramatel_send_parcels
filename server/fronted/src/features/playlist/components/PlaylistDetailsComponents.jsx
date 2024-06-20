@@ -1,37 +1,60 @@
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
+import EditIcon from '@mui/icons-material/Edit';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import {
   Box,
   IconButton,
+  Stack,
   Table,
   TableBody,
   TableCell,
   TableRow,
   TextField,
+  Typography,
 } from '@mui/material';
+import { useState } from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import Container from '../../../components/ContainerComponents';
 import useMedia from '../hooks/useMedias';
-import selectedPlaylistStore from '../stores/selectedPlaylistStore';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import usePlaylists from '../hooks/usePlaylists';
+import selectedPlaylistStore from '../stores/selectedPlaylistStore';
+import UpdatePlaylistDialog from './dialogs/UpdatePLaylistDialog';
 
 function PlaylistDetailsComponents() {
-  const { selectedPlaylist } = selectedPlaylistStore();
+  const [open, setOpen] = useState(false);
+  function closeDialog() {
+    setOpen(false);
+  }
+
   return (
     <>
       <Container
         icon={<PlaylistDetailsIcon />}
-        title={selectedPlaylist.name}
+        title={<PlaylistDetailsTittle setOpen={setOpen} />}
         content={PlaylistDetailsContent()}
         headerRight={AddMedia()}
         headerLeft={PlaylistDetailsClose()}
       />
+      <UpdatePlaylistDialog open={open} onClose={closeDialog} />
     </>
   );
 }
+
+function PlaylistDetailsTittle({ setOpen }) {
+  const { selectedPlaylist } = selectedPlaylistStore();
+  return (
+    <Stack direction="row" alignItems="center" spacing={0}>
+      <Typography variant="h6">{selectedPlaylist.name}</Typography>
+      <IconButton onClick={() => setOpen(true)}>
+        <EditIcon sx={{ color: 'secondary.main' }} />
+      </IconButton>
+    </Stack>
+  );
+}
+
 function PlaylistDetailsContent() {
   const { selectedPlaylist } = selectedPlaylistStore();
   const { deleteMedia, updateMedia } = useMedia();

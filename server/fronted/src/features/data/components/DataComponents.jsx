@@ -1,9 +1,9 @@
-import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import PollIcon from '@mui/icons-material/Poll';
 import { Box, Skeleton, Switch, TextField, Typography } from '@mui/material';
 import Container from '../../../components/ContainerComponents';
-import dataStore from '../stores/dataStore';
-import useData from '../hooks/useData';
 import useLoadingStore from '../../../stores/loadingStore';
+import useData from '../hooks/useData';
+import dataStore from '../stores/dataStore';
 
 function DataComponents() {
   const { isLoading } = useLoadingStore();
@@ -38,7 +38,7 @@ function DataComponents() {
 }
 
 function Icon() {
-  return <EditCalendarIcon sx={{ color: 'primary.light' }} />;
+  return <PollIcon sx={{ color: 'primary.light' }} />;
 }
 
 function Data() {

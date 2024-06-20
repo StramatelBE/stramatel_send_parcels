@@ -13,7 +13,5 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-// Importer et démarrer le serveur Unix Socket
-import "./sockets/unixSocketServer";
-
+import "./sockets/webSocketServer";
 export default app;

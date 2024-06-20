@@ -65,6 +65,9 @@ importers:
       uuid:
         specifier: ^9.0.1
         version: 9.0.1
+      ws:
+        specifier: ^8.17.1
+        version: 8.17.1
     devDependencies:
       '@types/express':
         specifier: ^4.17.21

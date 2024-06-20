@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import ListIcon from '@mui/icons-material/List';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import {
@@ -21,15 +21,14 @@ import usePlaylists from '../hooks/usePlaylists';
 import modeStore from '../stores/modeStore';
 import playlistStore from '../stores/playlistsStores'; // Importez votre store ici
 import AddPlaylistDialog from './dialogs/AddPlaylistDialog';
-
 function PlaylistListComponents() {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const { addPlaylist } = usePlaylists();
   const { isLoading } = useLoadingStore();
 
   function closeDialog() {
     setAddDialogOpen(false);
   }
+
 
   return (
     <>
@@ -63,14 +62,13 @@ function PlaylistListComponents() {
       <AddPlaylistDialog
         open={addDialogOpen}
         onClose={closeDialog}
-        addPlaylist={addPlaylist}
       />
     </>
   );
 }
 
 function PlaylistIcon() {
-  return <EditCalendarIcon sx={{ color: 'primary.light' }} />;
+  return <ListIcon sx={{ color: 'primary.light' }} />;
 }
 
 function PlaylistList() {
@@ -83,7 +81,7 @@ function PlaylistList() {
     <div style={{ width: '100%' }}>
       <Table size="big">
         <TableBody>
-          {playlists.map((playlist) => (
+          {playlists?.map((playlist) => (
             <TableRow hover key={playlist.id} style={{ position: 'relative' }}>
               <TableCell
                 onClick={() => {

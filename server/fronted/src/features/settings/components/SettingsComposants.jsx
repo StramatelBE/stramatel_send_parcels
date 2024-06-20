@@ -178,14 +178,14 @@ function Settings({ setChangePasswordDialogOpen }) {
               </IconButton>
             )}
           </Stack>
-          <Stack direction="row" alignItems="center" spacing={3}>
+         {/*  <Stack direction="row" alignItems="center" spacing={3}>
             <IconButton>
               <DateRangeIcon sx={{ color: 'text.secondary' }} />
             </IconButton>
             <Typography variant="h8" sx={{ color: 'text.primary' }}>
               Synchroniser la Date
             </Typography>
-          </Stack>
+          </Stack> */}
           <Stack direction="row" alignItems="center" spacing={3}>
             <IconButton onClick={() => setChangePasswordDialogOpen(true)}>
               <LockIcon sx={{ color: 'text.secondary' }} />
