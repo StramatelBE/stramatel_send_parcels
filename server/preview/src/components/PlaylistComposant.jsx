@@ -29,15 +29,24 @@ function PlaylistComposant() {
   const currentMedia = socketData.playlist.medias[currentMediaIndex];
 
   if (!currentMedia) {
-    return ;
+    return null;
   }
 
   return (
     <div>
       {currentMedia.type === 'video' ? (
-        <video className='medias' src={`${import.meta.env.VITE_REACT_APP_FRONT_URL}${currentMedia.path}`} autoPlay />
+        <video
+          className='medias'
+          src={`${import.meta.env.VITE_REACT_APP_FRONT_URL}${currentMedia.path}`}
+          autoPlay
+          loop
+        />
       ) : (
-        <img className='medias' src={`${import.meta.env.VITE_REACT_APP_FRONT_URL}${currentMedia.path}`} alt={currentMedia.original_file_name} />
+        <img
+          className='medias'
+          src={`${import.meta.env.VITE_REACT_APP_FRONT_URL}${currentMedia.path}`}
+          alt={currentMedia.original_file_name}
+        />
       )}
     </div>
   );

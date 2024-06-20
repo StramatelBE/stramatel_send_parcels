@@ -1,13 +1,20 @@
 import { PrismaClient, Playlist, Media } from "@prisma/client";
-import { Service } from "typedi";
+import { Service, Inject } from "typedi";
 import { CreatePlaylistDto } from "./playlist.validation";
+import { UploadService } from "../medias/upload.service";
 
 const prisma = new PrismaClient();
+
 interface PlaylistWithMedia extends Playlist {
   medias: Media[];
 }
+
 @Service()
 export class PlaylistService {
+  constructor(
+    @Inject(() => UploadService) private uploadService: UploadService
+  ) {}
+
   async getAllPlaylists(): Promise<Playlist[]> {
     const playlists = await prisma.playlist.findMany({
       include: {
@@ -51,10 +58,27 @@ export class PlaylistService {
     return playlist;
   }
 
-  async deletePlaylist(id: number): Promise<Playlist | null> {
-    const playlist = await prisma.playlist.delete({
+  async deletePlaylist(id: number, req: any): Promise<Playlist | null> {
+    // Récupérer les médias associés à la playlist
+    const playlist = await prisma.playlist.findUnique({
+      where: { id },
+      include: { medias: true },
+    });
+
+    if (!playlist) {
+      throw new Error("Playlist not found");
+    }
+
+    // Supprimer les fichiers médias du système de fichiers
+    for (const media of playlist.medias) {
+      await this.uploadService.deleteMedia(media, req);
+    }
+
+    // Supprimer la playlist et les médias associés de la base de données
+    await prisma.playlist.delete({
       where: { id },
     });
+
     return playlist;
   }
 

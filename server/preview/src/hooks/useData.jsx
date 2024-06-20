@@ -19,10 +19,7 @@ const useData = () => {
   useEffect(() => {
     connectWebSocket();
 
-    return () => {
-      closeWebSocket();
-    };
-  }, [connectWebSocket, closeWebSocket]);
+  }, []);
 
   return null; 
 };

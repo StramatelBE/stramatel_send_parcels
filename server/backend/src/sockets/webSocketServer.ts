@@ -30,15 +30,9 @@ server.on('connection', (ws) => {
       } else {
         socketData = { mode: modes[0].name };
       }
-
-      if (
-        !previousData ||
-        JSON.stringify(previousData) !== JSON.stringify(socketData)
-      ) {
-        console.log(socketData);
+      
         ws.send(JSON.stringify(socketData));
-        previousData = socketData;
-      }
+
     } catch (error) {
       console.error('Error fetching modes:', error);
       ws.send('Error fetching modes\n');

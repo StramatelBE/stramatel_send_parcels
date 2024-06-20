@@ -2,10 +2,14 @@ import { useCallback } from 'react';
 import PlaylistService from '../api/playlistService';
 import playlistStore from '../stores/playlistsStores';
 import selectedPlaylistStore from '../stores/selectedPlaylistStore';
+import useModes from './useMode';
+import modeStore from '../stores/modeStore';
 
 const usePlaylists = () => {
   const { setPlaylists, removePlaylist, playlists, updatePlaylistName } = playlistStore();
-  const { setSelectedPlaylist,  } = selectedPlaylistStore();
+  const { setSelectedPlaylist } = selectedPlaylistStore();
+  const { updateMode } = useModes();
+  const { modes } = modeStore();
 
   const getAllPlaylists = useCallback(async () => {
     try {
@@ -31,6 +35,9 @@ const usePlaylists = () => {
   const deletePlaylist = useCallback(
     async (id) => {
       try {
+        if (modes.playlist_id === id) {
+          updateMode('data', null)
+        }
         await PlaylistService.deletePlaylist(id);
         removePlaylist(id);
       } catch (error) {
