@@ -56,10 +56,23 @@ function useMedia() {
     [selectedPlaylist, setSelectedPlaylist]
   );
 
+  const handleAddData = useCallback(
+    async (type, playlistId) => {
+      try {
+        await MediaService.addData(type, playlistId);
+        getPlaylistById(playlistId);
+      } catch (error) {
+        console.error("Failed to add data:", error);
+      }
+    },
+    []
+  );
+
   return {
     deleteMedia,
     uploadMedia,
     updateMedia,
+    handleAddData
   };
 }
 

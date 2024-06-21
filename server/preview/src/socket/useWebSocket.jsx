@@ -6,7 +6,7 @@ const useWebSocket = (url, onMessage) => {
 
   const connectWebSocket = () => {
     wsRef.current = new WebSocket(url);
-
+    console.log("wsRef.current", wsRef.current);
     wsRef.current.onmessage = (event) => {
       if (onMessage) {
         onMessage(event);
@@ -32,12 +32,6 @@ const useWebSocket = (url, onMessage) => {
     };
   };
 
-  const sendMessage = (message) => {
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      wsRef.current.send(message);
-    }
-  };
-
   const closeWebSocket = () => {
     if (wsRef.current) {
       wsRef.current.close();
@@ -47,7 +41,7 @@ const useWebSocket = (url, onMessage) => {
     }
   };
 
-  return { connectWebSocket, sendMessage, closeWebSocket };
+  return { connectWebSocket, closeWebSocket };
 };
 
 export default useWebSocket;

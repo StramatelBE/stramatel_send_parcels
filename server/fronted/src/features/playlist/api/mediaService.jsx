@@ -47,6 +47,16 @@ class MediaService {
 
     return await response.json();
   }
+
+  static async addData(type, playlistId) {
+    const response = await fetchWithAuthorization(`${API_URL}/addData`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ type, playlistId }),
+    });
+  }
 }
 
 export default MediaService;

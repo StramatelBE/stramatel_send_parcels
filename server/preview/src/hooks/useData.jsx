@@ -8,8 +8,10 @@ const useData = () => {
     import.meta.env.VITE_SOCKET_URL,
     (event) => {
       try {
-        const parsedData = JSON.parse(event.data);
-        setSocketData(parsedData);
+
+          const parsedData = JSON.parse(event.data);
+          setSocketData(parsedData);
+        
       } catch (error) {
         console.error("Failed to parse JSON data:", error);
       }

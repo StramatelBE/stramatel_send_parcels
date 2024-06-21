@@ -35,6 +35,36 @@ export class MediaService {
     }
   }
 
+  public async addData(type: string, userId: number, mediaCount: number, playlistId: number): Promise<Media> {
+    const newMedia = {
+      type: type,
+      position: mediaCount + 1,
+      duration: 1,
+      original_file_name: type,
+      file_name: type,
+      path: type,
+      format: type,
+      size: 1,
+      uploaded_at: new Date(),
+      user: {
+        connect: { id: userId }
+      },
+      Playlist: {
+        connect: { id: playlistId }
+      }
+    };
+
+    try {
+      const createdMedia = await prisma.media.create({
+        data: newMedia,
+      });
+      return createdMedia;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(500, "Cannot create data media");
+    }
+  }
+
   public getDuration(filePath: string, fileType: string): Promise<number> {
     // Vérifier si le type de fichier est une vidéo
     if (!fileType.startsWith("video")) {
@@ -68,6 +98,13 @@ export class MediaService {
       where: { id: mediaId },
       data: media,
     });
+  }
+
+  async getMediaCount(playlistId: number): Promise<number> {
+    const mediaCount = await prisma.media.count({
+      where: { playlistId: playlistId },
+    });
+    return mediaCount;
   }
 
   async deleteMedia(mediaId: number): Promise<Media> {

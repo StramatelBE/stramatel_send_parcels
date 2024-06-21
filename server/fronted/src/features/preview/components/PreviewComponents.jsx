@@ -16,17 +16,17 @@ function Preview() {
   const width = import.meta.env.VITE_REACT_APP_PREVIEW_WIDTH;
   const ratio = height / width;
 
-  return (
-    <iframe
-      src={import.meta.env.VITE_REACT_APP_PREVIEW_URL}
-      title="Preview"
-      style={{
-        border: "none",
-        width: "100%",
-        height: `calc(100vw * ${ratio})`,
-        maxHeight: "100vh"
-      }}
-    ></iframe>
+  return (<><iframe
+    src={import.meta.env.VITE_REACT_APP_PREVIEW_URL}
+    title="Preview"
+    style={{
+      border: "none",
+      height: `calc(80vh * ${ratio})`,
+      width: `calc(80vw * ${ratio})`,
+
+    }}
+  ></iframe></>
+    
   );
 }
 

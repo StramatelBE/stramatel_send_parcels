@@ -11,7 +11,6 @@ const server = new Server({ port });
 server.on('connection', (ws) => {
   console.log('Client connected');
 
-  let previousData = null;
 
   const intervalId = setInterval(async () => {
     try {
@@ -26,10 +25,10 @@ server.on('connection', (ws) => {
           where: { id: modes[0].playlist_id },
           include: { medias: true },
         });
-        socketData = { playlist: playlist, mode: modes[0].name };
-      } else {
-        socketData = { mode: modes[0].name };
-      }
+        if (playlist) {
+          socketData = { playlist: playlist, mode: modes[0].name };
+        }       
+        }
       
         ws.send(JSON.stringify(socketData));
 

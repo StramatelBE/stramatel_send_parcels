@@ -7,6 +7,8 @@ import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import {
   Box,
   IconButton,
+  Menu,
+  MenuItem,
   Stack,
   Table,
   TableBody,
@@ -113,7 +115,7 @@ function PlaylistDetailsContent() {
                               alt={media.originalFilename}
                               src={`${media.path}#t=10`}
                             />
-                          ) : (
+                          ) : media.type.split('/')[0] === 'image' ? (
                             <Box
                               sx={{
                                 height: '100%',
@@ -125,6 +127,8 @@ function PlaylistDetailsContent() {
                               alt={media.originalFilename}
                               src={`${media.path}`}
                             />
+                          ):(
+                            <Typography>{media.type}</Typography>
                           )}
                         </TableCell>
                         <TableCell>
@@ -181,18 +185,49 @@ function PlaylistDetailsClose() {
   );
 }
 function AddMedia() {
-  const { uploadMedia } = useMedia();
+  const { uploadMedia, handleAddData } = useMedia();
   const { selectedPlaylist } = selectedPlaylistStore();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <>
       <IconButton
-        onClick={() => {
-          document.getElementById('inputFile').click();
-        }}
+        onClick={handleClick}
         className="headerButton"
       >
         <AddIcon sx={{ color: 'secondary.main' }} />
       </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        <MenuItem
+          onClick={() => {
+            document.getElementById('inputFile').click();
+            handleClose();
+          }}
+        >
+          Upload
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleAddData('data', selectedPlaylist.id);
+            handleClose();
+          }}
+        >
+          Data
+        </MenuItem>
+      </Menu>
       <input
         type="file"
         id="inputFile"

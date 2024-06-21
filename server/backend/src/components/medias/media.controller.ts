@@ -4,7 +4,11 @@ import { Inject, Service } from "typedi";
 import { MediaService } from "./media.service";
 import { UploadService } from "./upload.service";
 import { PlaylistService } from "../playlist/playlist.service";
+import { UserPayload } from "../../types/UserPayload";
 
+interface CustomRequest extends Request {
+  user?: UserPayload;
+}
 @Service()
 export class MediaController {
   constructor(
@@ -36,6 +40,19 @@ export class MediaController {
           message: "File uploaded and added to playlist successfully",
         });
       });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  addData = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    try {
+      console.log(req.body);
+      const mediaCount = await this.mediaService.getMediaCount(req.body.playlistId);
+      console.log(mediaCount);
+      
+      const media = await this.mediaService.addData(req.body.type, req.user.id, mediaCount, req.body.playlistId);
+      res.status(200).json({ data: media, message: "added" });
     } catch (error) {
       next(error);
     }
@@ -81,7 +98,9 @@ export class MediaController {
       const { media_id } = req.params;
       const media = await this.mediaService.findMedia(parseInt(media_id));
       await this.mediaService.deleteMedia(parseInt(media_id)).then(() => {
-        this.uploadService.deleteMedia(media, req);
+        if(media.type.split('/')[0] === 'image' && media.type.split('/')[0] === 'video'){
+          this.uploadService.deleteMedia(media, req);
+        }
         res.status(200).json({ message: "deleted" });
       });
     } catch (error) {

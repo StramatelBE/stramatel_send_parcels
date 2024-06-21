@@ -7,45 +7,47 @@ function PlaylistComposant() {
   const [duration, setDuration] = useState(socketData.playlist.medias[0]?.duration || 0);
 
   useEffect(() => {
-    const media = socketData.playlist.medias[currentMediaIndex];
-    if (media) {
-      const timer = setTimeout(() => {
-        setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % socketData.playlist.medias.length);
-      }, duration * 1000);
+    console.log("socketData.playlist.medias", socketData.playlist);
+    if (socketData.playlist.medias.length === 0) return;
 
-      return () => clearTimeout(timer);
-    }
+    const interval = setInterval(() => {
+      const nextIndex = (currentMediaIndex + 1) % socketData.playlist.medias.length;
+      setCurrentMediaIndex(nextIndex);
+      setDuration(socketData.playlist.medias[nextIndex]?.duration || 0);
+    }, duration * 1000);
+
+    return () => clearInterval(interval);
   }, [currentMediaIndex, duration, socketData.playlist.medias]);
 
   useEffect(() => {
-    const media = socketData.playlist.medias[currentMediaIndex];
-    if (media) {
-      setDuration(media.duration);
-    } else {
+    if (!socketData.playlist.medias[currentMediaIndex]) {
       setCurrentMediaIndex(0);
+      setDuration(socketData.playlist.medias[0]?.duration || 0);
     }
-  }, [currentMediaIndex, socketData.playlist.medias]);
+  }, [socketData.playlist.medias, currentMediaIndex]);
 
-  const currentMedia = socketData.playlist.medias[currentMediaIndex];
-
-  if (!currentMedia) {
+  if (socketData.playlist.medias.length === 0) {
     return null;
   }
 
+  const currentMedia = socketData.playlist.medias[currentMediaIndex];
+
   return (
     <div>
-      {currentMedia.type === 'video' ? (
+      {currentMedia?.type === 'video' ? (
         <video
           className='medias'
           src={`${import.meta.env.VITE_REACT_APP_FRONT_URL}${currentMedia.path}`}
           autoPlay
+          muted
           loop
+          preload="auto"
         />
       ) : (
         <img
           className='medias'
           src={`${import.meta.env.VITE_REACT_APP_FRONT_URL}${currentMedia.path}`}
-          alt={currentMedia.original_file_name}
+          alt={currentMedia?.original_file_name}
         />
       )}
     </div>

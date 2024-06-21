@@ -9,6 +9,9 @@ const mediaController = Container.get(MediaController);
 router.post("/", authMiddleware, extractUserId, (req, res, next) =>
   mediaController.uploadFile(req, res, next)
 );
+router.post("/addData", authMiddleware, extractUserId, (req, res, next) =>
+  mediaController.addData(req, res, next)
+);
 
 router.get("/", authMiddleware, (req, res, next) =>
   mediaController.getAllMedia(req, res, next)
