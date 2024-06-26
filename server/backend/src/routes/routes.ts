@@ -9,7 +9,7 @@ import dataRouter from "../components/data/data.route";
 import accidentRouter from "../components/accident/accident.route";
 
 const app = express();
-app.use("/accident", accidentRouter);
+app.use("/accidents", accidentRouter);
 app.use("/auth", authRouter);
 app.use("/data", dataRouter);
 app.use("/medias", mediaRouter);

@@ -1,4 +1,15 @@
-body, #root {
+@font-face {
+  font-family: "D-DIN-Bold"; /* Nommez la police comme vous le souhaitez, ce nom est utilisé pour la référence */
+  src: local("D-DIN-Bold"),
+    /* Nom pour rechercher la police localement sur l'ordinateur de l'utilisateur */
+      url("./fonts/D-DIN-Bold.otf") format("opentype"); /* Ajustez le chemin selon l'endroit où vous avez placé votre fichier .otf */
+  font-weight: bold; /* Ici, c'est 'bold' parce que la police est déjà une version 'bold' */
+  font-style: normal;
+}
+
+body,
+#root {
+  font-family: "D-DIN-Bold", sans-serif;
   margin: 0;
   background-color: #000000;
   color: rgb(255, 255, 255);
@@ -7,7 +18,8 @@ body, #root {
   height: 100%;
 }
 
-body , .medias {
+body,
+.medias {
   width: calc(var(--preview-width, 100vw));
   height: calc(var(--preview-height, 100vh));
 }

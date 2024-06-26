@@ -7,7 +7,6 @@ const playlistStore = create((set) => ({
   removePlaylist: (id) =>
     set((state) => ({ playlists: state.playlists.filter((p) => p.id !== id) })),
   setPlaylists: (playlists) => {
-    console.log("Setting playlists:", playlists);
     set({ playlists });
   },
   updatePlaylistName: (id, name) => {

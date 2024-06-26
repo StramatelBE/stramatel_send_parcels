@@ -1,8 +1,9 @@
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
+import ClearIcon from '@mui/icons-material/Clear';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import EditIcon from '@mui/icons-material/Edit';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import {
   Box,
@@ -127,7 +128,7 @@ function PlaylistDetailsContent() {
                               alt={media.originalFilename}
                               src={`${media.path}`}
                             />
-                          ):(
+                          ) : (
                             <Typography>{media.type}</Typography>
                           )}
                         </TableCell>
@@ -152,7 +153,7 @@ function PlaylistDetailsContent() {
                               deleteMedia(media.id, selectedPlaylist.id);
                             }}
                           >
-                            <DeleteIcon sx={{ color: 'secondary.main' }} />
+                            <ClearIcon sx={{ color: 'secondary.main' }} />
                           </IconButton>
                         </TableCell>
                       </TableRow>
@@ -180,7 +181,7 @@ function PlaylistDetailsClose() {
         clearSelectedPlaylist();
       }}
     >
-      <CloseIcon sx={{ color: 'secondary.main' }} />
+      <ArrowBackIcon sx={{ color: 'secondary.main' }} />
     </IconButton>
   );
 }
@@ -200,17 +201,10 @@ function AddMedia() {
 
   return (
     <>
-      <IconButton
-        onClick={handleClick}
-        className="headerButton"
-      >
+      <IconButton onClick={handleClick} className="headerButton">
         <AddIcon sx={{ color: 'secondary.main' }} />
       </IconButton>
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-      >
+      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
         <MenuItem
           onClick={() => {
             document.getElementById('inputFile').click();
@@ -219,13 +213,21 @@ function AddMedia() {
         >
           Upload
         </MenuItem>
-        <MenuItem
+        {/*  <MenuItem
           onClick={() => {
             handleAddData('data', selectedPlaylist.id);
             handleClose();
           }}
         >
           Data
+        </MenuItem> */}
+        <MenuItem
+          onClick={() => {
+            handleAddData('accident', selectedPlaylist.id);
+            handleClose();
+          }}
+        >
+          Accident
         </MenuItem>
       </Menu>
       <input

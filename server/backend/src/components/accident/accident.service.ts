@@ -22,6 +22,22 @@ export class AccidentService {
     id: number,
     dto: CreateAccidentDto
   ): Promise<Accident | null> {
+    const accident = await prisma.accident.findUnique({
+      where: { id },
+    });
+
+    if (!accident) {
+      throw new Error("Accident not found");
+    }
+
+    if (dto.days_without_accident > accident.record_days_without_accident) {
+      dto.record_days_without_accident = dto.days_without_accident;
+    }
+
+    if (dto.accidents_this_year > accident.accidents_this_year) {
+      dto.days_without_accident = 0;
+    }
+
     return prisma.accident.update({
       where: { id },
       data: dto,

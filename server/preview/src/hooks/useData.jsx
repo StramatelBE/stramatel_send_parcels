@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import useSocketData from "../stores/socketDataStore";
 import useWebSocket from "../socket/useWebSocket";
+import useStandby from "../hooks/useStandby";
 
 const useData = () => {
   const { setSocketData } = useSocketData();
@@ -8,10 +9,8 @@ const useData = () => {
     import.meta.env.VITE_SOCKET_URL,
     (event) => {
       try {
-
-          const parsedData = JSON.parse(event.data);
-          setSocketData(parsedData);
-        
+        const parsedData = JSON.parse(event.data);
+        setSocketData(parsedData);
       } catch (error) {
         console.error("Failed to parse JSON data:", error);
       }
@@ -20,10 +19,11 @@ const useData = () => {
 
   useEffect(() => {
     connectWebSocket();
-
   }, []);
 
-  return null; 
+  useStandby();
+
+  return null;
 };
 
 export default useData;

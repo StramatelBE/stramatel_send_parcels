@@ -27,7 +27,7 @@ const useWebSocket = (url, onMessage) => {
             clearInterval(reconnectInterval.current);
             reconnectInterval.current = null;
           }
-        }, 5000); // Reconnect every 5 seconds
+        }, 5000);
       }
     };
   };

@@ -25,14 +25,11 @@ class AccidentService {
     });
 
     if (!response.ok) {
-      throw new Error('Échec de la mise à jour de l\'accident');
+      throw new Error("Échec de la mise à jour de l'accident");
     }
 
     return await response.json();
   }
-
- 
- 
 }
 
 export default AccidentService;

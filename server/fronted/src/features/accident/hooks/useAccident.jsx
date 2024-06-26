@@ -6,15 +6,16 @@ function useAccident() {
   const { setAccidents, accidents } = accidentStore();
 
   const getAllAccidents = useCallback(async () => {
-    const accidents = await AccidentService.getAllAccidents();
-    setAccidents(accidents.data); 
-    return accidents;
+    const data = await AccidentService.getAllAccidents();
+    setAccidents(data.accidents[0]);
+    return data.accidents;
   }, [setAccidents]);
 
   const updateAccident = useCallback(
     async (newAccident) => {
-      await AccidentService.updateAccident(newAccident);
-      setAccidents(updatedAccidents);
+      const updated = await AccidentService.updateAccident(newAccident);
+      console.log(updated.accident);
+      setAccidents(updated.accident);
     },
     [accidents, setAccidents]
   );

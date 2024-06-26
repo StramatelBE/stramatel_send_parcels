@@ -18,10 +18,14 @@ function useSettings() {
     },
     [setSettings]
   );
+  const updateSettingDate = useCallback(async (date) => {
+    await SettingsService.updateDate(date);
+  }, []);
 
   return {
     getSettings,
     updateSetting,
+    updateSettingDate,
   };
 }
 
