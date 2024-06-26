@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{host}}/api/button
+  url: {{host}}/medias
   body: multipartForm
   auth: bearer
 }
@@ -21,5 +21,6 @@ body:json {
 }
 
 body:multipart-form {
-  file: 
+  file: @file(C:\Users\Guillaume\Pictures\FJkQpMbWYAAdy7s.jpg)
+  playlistId: 8
 }

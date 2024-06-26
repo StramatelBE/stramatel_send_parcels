@@ -1,0 +1,27 @@
+meta {
+  name: createData
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/data
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "Exemple int",
+    "value": "10",
+    "type": "INT"
+  }
+}
+
+body:multipart-form {
+  file: 
+}

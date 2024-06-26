@@ -1,11 +1,11 @@
 meta {
   name: updateMedia
   type: http
-  seq: 4
+  seq: 5
 }
 
 put {
-  url: {{host}}/api/media/5
+  url: {{host}}/medias/28
   body: json
   auth: bearer
 }
@@ -16,16 +16,17 @@ auth:bearer {
 
 body:json {
   {
-  
-      "original_file_name": "chat-orange.jpg",
-      "file_name": "aa5da464-1f05-42fa-88a5-61af50f6ef93.jpeg",
-      "path": "uploads\\test04\\aa5da464-1f05-42fa-88a5-61af50f6ef93.jpeg",
+      "id": 28,
+      "original_file_name": "FJkQpMbWYAAdy7s.jpg",
+      "file_name": "dbda6ea4-553e-4e5f-804a-9c170bad965a.jpeg",
+      "path": "/medias/user/dbda6ea4-553e-4e5f-804a-9c170bad965a.jpeg",
       "format": "jpeg",
-      "type": "video",
-      "size": 13506,
-      "uploaded_at": "2024-03-13T15:50:19.799Z",
-      "user_id": 11,
-      "folder_id":null
+      "type": "image",
+      "size": 273021,
+      "uploaded_at": "2024-06-12T07:58:41.824Z",
+      "user_id": 3,
+      "duration": 14,
+      "position": 0,
+      "playlistId": 8
   }
-    
 }

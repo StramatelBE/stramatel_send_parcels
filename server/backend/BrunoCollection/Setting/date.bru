@@ -1,11 +1,11 @@
 meta {
-  name: deleteUserSetting
+  name: date
   type: http
   seq: 5
 }
 
-delete {
-  url: {{host}}/api/user-setting/5
+put {
+  url: {{host}}/settings/date
   body: json
   auth: bearer
 }
@@ -16,7 +16,6 @@ auth:bearer {
 
 body:json {
   {
-    "language": "EN",
-    "event_auto": true
+    "date": "2023-10-10 15:30:25"
   }
 }

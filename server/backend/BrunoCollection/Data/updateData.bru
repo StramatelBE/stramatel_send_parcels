@@ -1,0 +1,23 @@
+meta {
+  name: updateData
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/data/4
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "Exemple int",
+    "value": "12",
+    "type": "INT"
+  }
+}

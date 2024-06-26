@@ -5,14 +5,14 @@ meta {
 }
 
 post {
-  url: {{host}}/api/auth/register
+  url: {{host}}/auth/register
   body: json
   auth: none
 }
 
 body:json {
   {
-      "username": "test03",
+      "username": "user1",
       "password": "123456789"
   }
 }

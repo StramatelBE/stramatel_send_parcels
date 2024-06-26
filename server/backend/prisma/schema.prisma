@@ -44,6 +44,15 @@ model Playlist {
   Mode    Mode[]
 }
 
+model Accident {
+  id                           Int      @id @default(autoincrement())
+  days_without_accident        Int
+  record_days_without_accident Int
+  accidents_this_year          Int
+  reset_on_new_year            Boolean
+  last_updated                 DateTime @updatedAt()
+}
+
 model Mode {
   id          Int       @id @default(autoincrement())
   name        String?
@@ -63,8 +72,8 @@ model Settings {
 }
 
 model Data {
-  id   Int     @id @default(autoincrement())
-  name String?
+  id    Int     @id @default(autoincrement())
+  name  String?
   value String?
-  type String?
+  type  String?
 }

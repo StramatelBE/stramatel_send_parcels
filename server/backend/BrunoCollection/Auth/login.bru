@@ -5,15 +5,15 @@ meta {
 }
 
 post {
-  url: {{host}}/api/auth/login
+  url: {{host}}/auth/login
   body: json
   auth: bearer
 }
 
 body:json {
   {
-      "username": "test",
-      "password": "123456789"
+      "username": "user",
+      "password": "stramatel123"
   }
 }
 

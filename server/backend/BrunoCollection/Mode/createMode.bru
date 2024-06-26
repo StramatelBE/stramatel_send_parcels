@@ -1,11 +1,11 @@
 meta {
-  name: createUserSetting
+  name: createMode
   type: http
   seq: 1
 }
 
 post {
-  url: {{host}}/api/user-setting
+  url: {{host}}/mode
   body: json
   auth: bearer
 }
@@ -16,8 +16,11 @@ auth:bearer {
 
 body:json {
   {
-    "user_id": 5,
-    "language": "en",
-    "event_auto": true
+    "mode": "test",
+    "playlist_id": 3
   }
+}
+
+body:multipart-form {
+  file: 
 }

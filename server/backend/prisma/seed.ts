@@ -69,7 +69,17 @@ async function main() {
       type: "STRING",
     },
   });
+  await prisma.accident.create({
+    data: {
+      days_without_accident: 0,
+      reset_on_new_year: false,
+      record_days_without_accident: 0,
+      accidents_this_year: 0,
+    },
+  });
 }
+
+
 
 main()
   .catch((e) => {

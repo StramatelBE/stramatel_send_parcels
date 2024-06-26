@@ -1,0 +1,28 @@
+meta {
+  name: createAccident
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/accident
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "days_without_accident": 0,
+    "reset_on_new_year": false,
+    "record_days_without_accident": 0,
+    "accidents_this_year": 0
+  }
+}
+
+body:multipart-form {
+  file: 
+}

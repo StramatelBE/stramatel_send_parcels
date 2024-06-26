@@ -1,0 +1,24 @@
+meta {
+  name: updateAccident
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/accident/2
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "days_without_accident": 1,
+    "reset_on_new_year": true,
+    "record_days_without_accident": 0,
+    "accidents_this_year": 0
+  }
+}

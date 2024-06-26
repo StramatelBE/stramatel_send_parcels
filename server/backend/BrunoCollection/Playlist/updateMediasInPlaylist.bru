@@ -1,0 +1,49 @@
+meta {
+  name: updateMediasInPlaylist
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{host}}/playlist/9/medias
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {"medias": [
+      {
+        "id": 29,
+        "original_file_name": "GMRt2gWWUAArBag.jpg",
+        "file_name": "93d8a561-a15c-4940-9500-836c14c3d493.jpeg",
+        "path": "/medias/user/93d8a561-a15c-4940-9500-836c14c3d493.jpeg",
+        "format": "jpeg",
+        "type": "image",
+        "size": 344539,
+        "uploaded_at": "2024-06-12T08:11:15.637Z",
+        "user_id": 3,
+        "duration": 10,
+        "position": 1,
+        "playlistId": 8
+      },
+      {
+        "id": 30,
+        "original_file_name": "valorant-vrl-france-kcorp.webp",
+        "file_name": "eccf2050-6b60-4f05-9058-d027e8e1fbeb.webp",
+        "path": "/medias/user/eccf2050-6b60-4f05-9058-d027e8e1fbeb.webp",
+        "format": "webp",
+        "type": "image",
+        "size": 3192,
+        "uploaded_at": "2024-06-12T08:11:15.624Z",
+        "user_id": 3,
+        "duration": 10,
+        "position": 0,
+        "playlistId": 8
+      }
+    ]
+  }
+}

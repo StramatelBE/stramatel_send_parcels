@@ -1,0 +1,15 @@
+meta {
+  name: getAllAccidents
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/accident
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

@@ -1,0 +1,22 @@
+meta {
+  name: updateMode
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/mode/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+     "mode": "null",
+     "playlist_id": null
+  }
+}

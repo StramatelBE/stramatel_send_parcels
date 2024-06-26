@@ -1,0 +1,22 @@
+meta {
+  name: addData
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{host}}/medias/addData
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "type":"test",
+    "playlistId":1
+  }
+}

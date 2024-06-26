@@ -1,0 +1,22 @@
+meta {
+  name: deleteData
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{host}}/data/4
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "language": "EN",
+    "event_auto": true
+  }
+}

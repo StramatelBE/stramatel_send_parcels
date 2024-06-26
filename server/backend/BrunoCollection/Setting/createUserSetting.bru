@@ -1,0 +1,26 @@
+meta {
+  name: createUserSetting
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/settings
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "standby": true,
+    "standby_start_time": "22:00",
+    "standby_end_time": "06:00",
+    "restart_at": "03:00",
+    "language": "fr",
+    "theme": "dark"
+  }
+}
