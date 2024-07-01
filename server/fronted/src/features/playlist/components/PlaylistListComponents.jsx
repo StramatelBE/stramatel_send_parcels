@@ -96,7 +96,7 @@ function PlaylistList() {
                 modes.name === 'playlist' ? (
                   <IconButton
                     size="small"
-                    onClick={() => updateMode('data', null)}
+                    onClick={() => updateMode('null', null)}
                   >
                     <StopIcon sx={{ fontSize: 15, color: 'secondary.main' }} />
                     <CircularProgress

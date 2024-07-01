@@ -1,8 +1,12 @@
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import StopIcon from '@mui/icons-material/Stop';
 import WarningIcon from '@mui/icons-material/Warning';
-import { Box, Skeleton, TextField, Typography } from '@mui/material';
+import { Box, CircularProgress, IconButton, Skeleton, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import Container from '../../../components/ContainerComponents';
 import useLoadingStore from '../../../stores/loadingStore';
+import useModes from '../../playlist/hooks/useMode';
+import modeStore from '../../playlist/stores/modeStore';
 import useAccident from '../hooks/useAccident';
 import accidentStore from '../stores/accidentStore';
 import ResetAccidentsOnNewYearDialog from './dialog/resetAccidentsOnNewYearDialog';
@@ -57,6 +61,7 @@ function AccidentComponents() {
             <Accident />
           )
         }
+        headerRight={<HeaderRight />}
       />
       <ResetAccidentsOnNewYearDialog open={open} onClose={handleClose} />
     </>
@@ -65,6 +70,33 @@ function AccidentComponents() {
 
 function Icon() {
   return <WarningIcon sx={{ color: 'primary.light' }} />;
+}
+
+function HeaderRight() {
+  const { updateMode } = useModes();
+  const { modes } = modeStore();
+  return (
+    <>
+      {modes && modes.name === 'accident' ? (
+        <IconButton  className="headerButton" onClick={() => updateMode('null', null)}>
+          <StopIcon  sx={{ color: 'secondary.main' }} />
+          <CircularProgress
+            size={24}
+            sx={{
+              top: 8,
+              left: 8,
+              position: 'absolute',
+              color: 'secondary.main',
+            }}
+          />
+        </IconButton>
+      ) : (
+        <IconButton  className="headerButton" onClick={() => updateMode('accident', null)}>
+          <PlayArrowIcon  sx={{ color: 'secondary.main' }} />
+        </IconButton>
+      )}
+    </>
+  );
 }
 
 function Accident() {
