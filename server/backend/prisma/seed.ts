@@ -46,7 +46,7 @@ async function main() {
   });
 
   // Créer des données
-  await prisma.data.create({
+ /*  await prisma.data.create({
     data: {
       name: "Exemple int",
       value: "10",
@@ -68,7 +68,15 @@ async function main() {
       value: "Exemple string",
       type: "STRING",
     },
+  }); */
+  await prisma.data.create({
+    data: {
+      name: "temperature",
+      value: "20",
+      type: "STRING",
+    },
   });
+
   await prisma.accident.create({
     data: {
       days_without_accident: 0,
@@ -78,8 +86,6 @@ async function main() {
     },
   });
 }
-
-
 
 main()
   .catch((e) => {

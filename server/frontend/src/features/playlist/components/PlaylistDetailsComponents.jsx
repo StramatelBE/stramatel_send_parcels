@@ -229,6 +229,14 @@ function AddMedia() {
         >
           Accident
         </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleAddData('infor', selectedPlaylist.id);
+            handleClose();
+          }}
+        >
+          Info
+        </MenuItem>
       </Menu>
       <input
         type="file"

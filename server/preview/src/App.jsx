@@ -14,7 +14,6 @@ function App() {
 
   return (
     <>
-      {/* <AccidentComposant /> */}
       {isStandby ? (
         <></>
       ) : (
@@ -23,6 +22,7 @@ function App() {
           {socketData?.mode.name === "data" && <DataComposant />}
           {socketData?.mode.name === "playlist" && <PlaylistComposant />}
           {socketData?.mode.name === "accident" && <AccidentComposant />}
+          {socketData?.mode.name === "information" && <InformationComposant />}
         </>
       )}
     </>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import useSocketData from "../stores/socketDataStore";
 import AccidentComposant from "./AccidentComposant";
+import InformationComposant from "./InformationComposant";
 
 function PlaylistComposant() {
   const { socketData } = useSocketData();
@@ -61,9 +62,11 @@ function PlaylistComposant() {
           }
           alt={currentMedia?.original_file_name}
         />
-      ) : (
-        currentMedia?.type === "accident" && <AccidentComposant />
-      )}
+      ) : currentMedia?.type === "accident" ? (
+        <AccidentComposant />
+      ) : currentMedia?.type === "information" ? (
+        <InformationComposant />
+      ) : null}
     </div>
   );
 }
