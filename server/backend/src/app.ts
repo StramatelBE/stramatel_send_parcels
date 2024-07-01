@@ -1,11 +1,11 @@
-import { config } from "dotenv";
+
 import express from "express";
 import "reflect-metadata";
 import { configureApp } from "./configureApp";
 
-config();
+
 const app = express();
-const port: number = process.env.PORT ? parseInt(process.env.PORT) : 4500;
+const port: number = process.env.API_PORT ? parseInt(process.env.API_PORT) : 4500;
 
 configureApp(app);
 

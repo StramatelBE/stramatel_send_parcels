@@ -3,7 +3,7 @@ import { fetchWithAuthorization } from '../../../utils/fetchWithAuthorization';
 class SettingsService {
   static async getSettings() {
     const response = await fetchWithAuthorization(
-      `${import.meta.env.VITE_REACT_APP_API_URL}settings/`,
+      `${process.env.API_URL}settings/`,
       {
         method: 'GET',
       }
@@ -19,7 +19,7 @@ class SettingsService {
 
   static async updateDate(date) {
     const response = await fetchWithAuthorization(
-      `${import.meta.env.VITE_REACT_APP_API_URL}settings/date`,
+      `${process.env.API_URL}settings/date`,
       {
         method: 'PUT',
         headers: {
@@ -32,7 +32,7 @@ class SettingsService {
 
   static async updateSetting(settingId, settingData) {
     const response = await fetchWithAuthorization(
-      `${import.meta.env.VITE_REACT_APP_API_URL}settings/${settingId}`,
+      `${process.env.API_URL}settings/${settingId}`,
       {
         method: 'PUT',
         headers: {

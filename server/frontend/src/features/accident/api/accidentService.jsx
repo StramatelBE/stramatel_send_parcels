@@ -1,6 +1,6 @@
 import { fetchWithAuthorization } from '../../../utils/fetchWithAuthorization';
 
-const API_URL = `${import.meta.env.VITE_REACT_APP_API_URL}accidents/`;
+const API_URL = `${process.env.API_URL}accidents/`;
 
 class AccidentService {
   static async getAllAccidents() {

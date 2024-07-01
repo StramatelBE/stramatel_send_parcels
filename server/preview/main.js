@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import  config  from "@dotenvx/dotenvx";
 import { app, BrowserWindow } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.join(__dirname, '.env.development') });
+config({ path: path.join(__dirname, '.env') });
 
 let mainWindow;
 
@@ -15,13 +15,13 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         x: 0,
         y: 0,
-        width: parseInt(process.env.VITE_REACT_APP_PREVIEW_WIDTH, 10),
-        height: parseInt(process.env.VITE_REACT_APP_PREVIEW_HEIGHT, 10),
+        width: parseInt(process.env.VITE_PREVIEW_WIDTH, 10),
+        height: parseInt(process.env.VITE_PREVIEW_HEIGHT, 10),
         frame: false,
 
     });
     mainWindow.webContents.openDevTools();
-    mainWindow.loadURL(process.env.VITE_REACT_APP_PREVIEW_URL);
+    mainWindow.loadURL(process.env.VITE_PREVIEW_URL);
 }
 
 

@@ -1,21 +1,17 @@
 {
-  "name": "fronted-starter",
+  "name": "frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "dotenv -e .env.production vite",
-    "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "dev": "dotenvx run --env-file=../.env -- vite",
+    "build": "dotenvx run --env-file=../.env -- vite build"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.19",
     "@mui/material": "^5.15.19",
-    "dotenv": "^16.4.5",
-    "dotenv-cli": "^7.4.2",
     "lodash": "^4.17.21",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
@@ -23,7 +19,8 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.1",
     "vite-plugin-pwa": "^0.20.0",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.2",
+    "@dotenvx/dotenvx": "^0.26.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

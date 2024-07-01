@@ -1,10 +1,9 @@
 import { PrismaClient } from "@prisma/client";
-import { config } from "dotenv"
 import "reflect-metadata";
 import { Container } from "typedi";
 import { AuthService } from "../src/components/auth/auth.service"; // Assurez-vous que le chemin est correct
 
-config();
+
 
 const prisma = new PrismaClient();
 

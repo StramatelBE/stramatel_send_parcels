@@ -12,12 +12,12 @@ function Icon() {
 }
 
 function Preview() {
-  const height = import.meta.env.VITE_REACT_APP_PREVIEW_HEIGHT;
-  const width = import.meta.env.VITE_REACT_APP_PREVIEW_WIDTH;
+  const height = import.meta.env.VITE_PREVIEW_HEIGHT;
+  const width = import.meta.env.VITE_PREVIEW_WIDTH;
   const ratio = height / width;
 
   return (<><iframe
-    src={import.meta.env.VITE_REACT_APP_PREVIEW_URL}
+    src={import.meta.env.VITE_PREVIEW_URL}
     title="Preview"
     style={{
       border: "none",

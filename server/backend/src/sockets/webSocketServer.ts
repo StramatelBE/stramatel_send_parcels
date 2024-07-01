@@ -1,10 +1,8 @@
-import { config } from "dotenv";
 import { Server } from "ws";
 import { PrismaClient } from "@prisma/client";
-import { log } from "console";
 
-config();
-const port = process.env.WEBSOCKET_PORT || 8080;
+
+const port: number = parseInt(process.env.WEBSOCKET_PORT) || 8080;
 const prisma = new PrismaClient();
 
 const server = new Server({ port });
@@ -59,3 +57,4 @@ server.on("connection", (ws) => {
 });
 
 console.log(`WebSocket Server is running on port ${port}`);
+

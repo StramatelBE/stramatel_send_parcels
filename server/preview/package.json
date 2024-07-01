@@ -5,20 +5,17 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "start": "electron ."
+    "dev": "dotenvx run -- vite",
+    "build": "dotenvx run -- vite build",
+    "electron": "dotenvx run -- electron ."
   },
   "dependencies": {
-    "cross-env": "^7.0.3",
-    "dotenv": "^16.4.5",
     "electron": "^31.0.1",
     "net": "^1.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.2",
+    "@dotenvx/dotenvx": "^0.26.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

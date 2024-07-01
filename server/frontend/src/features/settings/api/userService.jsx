@@ -3,7 +3,7 @@ import { fetchWithAuthorization } from '../../../utils/fetchWithAuthorization';
 class UserService {
   static async changePassword(oldPassword, newPassword) {
     const response = await fetchWithAuthorization(
-      `${import.meta.env.VITE_REACT_APP_API_URL}auth/change-password`,
+      `${process.env.API_URL}auth/change-password`,
       {
         method: 'POST',
         headers: {

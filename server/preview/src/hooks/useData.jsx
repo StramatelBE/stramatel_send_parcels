@@ -6,7 +6,7 @@ import useStandby from "../hooks/useStandby";
 const useData = () => {
   const { setSocketData } = useSocketData();
   const { connectWebSocket, closeWebSocket } = useWebSocket(
-    import.meta.env.VITE_SOCKET_URL,
+    import.meta.env.SOCKET_URL,
     (event) => {
       try {
         const parsedData = JSON.parse(event.data);
