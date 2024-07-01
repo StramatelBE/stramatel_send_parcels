@@ -1,4 +1,4 @@
-import  config  from "@dotenvx/dotenvx";
+import { config } from "@dotenvx/dotenvx";
 import { app, BrowserWindow } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -15,13 +15,13 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         x: 0,
         y: 0,
-        width: parseInt(process.env.VITE_PREVIEW_WIDTH, 10),
-        height: parseInt(process.env.VITE_PREVIEW_HEIGHT, 10),
+        width: parseInt(process.env.PREVIEW_WIDTH, 10),
+        height: parseInt(process.env.PREVIEW_HEIGHT, 10),
         frame: false,
 
     });
     mainWindow.webContents.openDevTools();
-    mainWindow.loadURL(process.env.VITE_PREVIEW_URL);
+    mainWindow.loadURL(process.env.PREVIEW_URL);
 }
 
 

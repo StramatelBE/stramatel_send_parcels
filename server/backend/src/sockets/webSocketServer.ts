@@ -36,8 +36,6 @@ server.on("connection", (ws) => {
           socketData = { ...socketData, playlist: playlist };
         }
       }
-      console.log(socketData);
-
       ws.send(JSON.stringify(socketData));
     } catch (error) {
       console.error("Error fetching modes:", error);

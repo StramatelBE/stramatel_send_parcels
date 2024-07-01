@@ -5,9 +5,8 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "dev": "dotenvx run -- vite",
-    "build": "dotenvx run -- vite build",
-    "electron": "dotenvx run -- electron ."
+    "dev": "dotenvx run --env-file=../.env -- vite",
+    "electron": "dotenvx run --env-file=../.env -- electron ."
   },
   "dependencies": {
     "electron": "^31.0.1",

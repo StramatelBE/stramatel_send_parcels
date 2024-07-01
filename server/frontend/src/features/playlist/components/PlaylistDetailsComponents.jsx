@@ -231,7 +231,7 @@ function AddMedia() {
         </MenuItem>
         <MenuItem
           onClick={() => {
-            handleAddData('infor', selectedPlaylist.id);
+            handleAddData('info', selectedPlaylist.id);
             handleClose();
           }}
         >
