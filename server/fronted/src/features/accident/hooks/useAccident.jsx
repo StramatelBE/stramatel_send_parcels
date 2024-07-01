@@ -14,7 +14,6 @@ function useAccident() {
   const updateAccident = useCallback(
     async (newAccident) => {
       const updated = await AccidentService.updateAccident(newAccident);
-      console.log(updated.accident);
       setAccidents(updated.accident);
     },
     [accidents, setAccidents]

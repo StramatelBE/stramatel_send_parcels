@@ -12,9 +12,9 @@ function PlaylistComposant() {
     if (medias.length === 0) return;
 
     const currentMedia = medias[currentMediaIndex];
-    if (!currentMedia) return; // Vérifier si le média actuel existe
+    if (!currentMedia) return;
 
-    const duration = currentMedia.duration * 1000; // Convertir en millisecondes
+    const duration = currentMedia.duration * 1000;
 
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -28,7 +28,7 @@ function PlaylistComposant() {
   }, [currentMediaIndex, socketData.playlist.medias.length]);
 
   const currentMedia = socketData.playlist.medias[currentMediaIndex];
-  if (!currentMedia) return null; // Vérifier si le média actuel existe
+  if (!currentMedia) return null;
 
   const mediaPath = `${import.meta.env.VITE_REACT_APP_FRONT_URL}${
     currentMedia?.path
