@@ -12,21 +12,28 @@ function Icon() {
 }
 
 function Preview() {
-  const height = import.meta.env.VITE_PREVIEW_HEIGHT;
-  const width = import.meta.env.VITE_PREVIEW_WIDTH;
-  const ratio = height / width;
+  const height = process.env.PREVIEW_HEIGHT;
+  const width = process.env.PREVIEW_WIDTH;
+  const ratio = (height / width) * 100;
+  const padding = "20px"; 
 
-  return (<><iframe
-    src={import.meta.env.VITE_PREVIEW_URL}
-    title="Preview"
-    style={{
-      border: "none",
-      height: `calc(80vh * ${ratio})`,
-      width: `calc(80vw * ${ratio})`,
-
-    }}
-  ></iframe></>
-    
+  return (
+    <>
+      <div style={{ position: "relative", width: `calc(100% - ${padding} * 2)`, paddingTop: `calc(${ratio}% )`, }}>
+        <iframe
+          src={process.env.PREVIEW_URL}
+          title="Preview"
+          style={{
+            position: "absolute",
+            top: padding,
+            left: padding,
+            border: "none",
+            height: `calc(100% - ${padding} * 2)`,
+            width: `calc(100% - ${padding} * 2)`,
+          }}
+        ></iframe>
+      </div>
+    </>
   );
 }
 

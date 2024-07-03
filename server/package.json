@@ -8,7 +8,6 @@
     "dev:frontend": "pnpm --filter frontend dev",
     "dev:preview": "pnpm --filter preview dev",
     "dev:electron": "pnpm --filter preview electron",
-
     "prisma:generate": "cd backend && npx prisma generate",
     "prisma:migrate": "cd backend && npx prisma migrate dev",
     "prisma:seed": "cd backend && npx ts-node prisma/seed.ts"
@@ -18,10 +17,10 @@
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.57.0",
-    "eslint-plugin-react": "^7.34.2",
+    "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.5.0"

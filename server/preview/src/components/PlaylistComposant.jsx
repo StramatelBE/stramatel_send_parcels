@@ -31,9 +31,7 @@ function PlaylistComposant() {
   const currentMedia = socketData.playlist.medias[currentMediaIndex];
   if (!currentMedia) return null;
 
-  const mediaPath = `${import.meta.env.VITE_REACT_APP_FRONT_URL}${
-    currentMedia?.path
-  }`;
+  const mediaPath = `${process.env.FRONT_URL}${currentMedia?.path}`;
 
   return (
     <div>
