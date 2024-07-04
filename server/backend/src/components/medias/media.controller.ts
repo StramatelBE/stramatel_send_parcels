@@ -5,6 +5,7 @@ import { MediaService } from "./media.service";
 import { UploadService } from "./upload.service";
 import { PlaylistService } from "../playlist/playlist.service";
 import { UserPayload } from "../../types/UserPayload";
+import { log } from "console";
 
 interface CustomRequest extends Request {
   user?: UserPayload;
@@ -98,7 +99,7 @@ export class MediaController {
       const { media_id } = req.params;
       const media = await this.mediaService.findMedia(parseInt(media_id));
       await this.mediaService.deleteMedia(parseInt(media_id)).then(() => {
-        if(media.type.split('/')[0] === 'image' && media.type.split('/')[0] === 'video'){
+        if(media.type=== 'image' || media.type === 'video'){
           this.uploadService.deleteMedia(media, req);
         }
         res.status(200).json({ message: "deleted" });

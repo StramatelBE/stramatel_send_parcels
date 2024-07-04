@@ -1,6 +1,6 @@
 import { PrismaClient, Data } from "@prisma/client";
 import { Service } from "typedi";
-import { CreateDataDto } from "./data.validation";
+import { CreateDataDto, UpdateDataDto } from "./data.validation";
 
 const prisma = new PrismaClient();
 
@@ -19,7 +19,7 @@ export class DataService {
     });
   }
 
-  async updateData(id: number, dataDto: CreateDataDto): Promise<Data | null> {
+  async updateData(id: number, dataDto: UpdateDataDto): Promise<Data | null> {
     return prisma.data.update({
       where: { id },
       data: dataDto,

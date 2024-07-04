@@ -25,6 +25,9 @@ code {
 .herderTitlePage {
   flex-direction: row !important;
   justify-content: space-between;
+  overflow: hidden; /* Ajouté pour éviter le dépassement */
+  text-overflow: ellipsis; /* Ajouté pour gérer le texte qui dépasse */
+  white-space: nowrap; /* Ajouté pour empêcher le retour à la ligne */
 }
 .headerTitle {
   padding: 16px;
@@ -54,11 +57,17 @@ code {
   display: flex;
   justify-content: center;
   align-content: center;
-  overflow-y: hidden;
+  overflow-y: scroll; /* Change overflow-y to scroll */
   padding: 8px;
   flex-direction: column;
   justify-content: flex-start;
-  height: calc(94vh - 200px);
+  flex: 1;
+  scrollbar-width: none; /* Pour Firefox */
+  -ms-overflow-style: none; /* Pour Internet Explorer et Edge */
+}
+
+.containerPage::-webkit-scrollbar {
+  display: none; /* Pour Chrome, Safari et Opera */
 }
 
 .centeredContainer {
@@ -85,30 +94,7 @@ code {
   min-height: calc(94vh - 120px);
 }
 
-.MuiTableCell-root {
-  border-bottom: 1px solid #2b646f26 !important;
-}
-/* ===== Scrollbar CSS ===== */
-/* Firefox */
-* {
-  scrollbar-width: auto;
-  scrollbar-color: #1e454d #ffffff00;
-}
 
-/* Chrome, Edge, and Safari */
-*::-webkit-scrollbar {
-  display: none;
-}
-
-*::-webkit-scrollbar-track {
-  background: #ffffff00;
-}
-
-*::-webkit-scrollbar-thumb {
-  background-color: #1e454d;
-  /* border-radius: 16px; */
-  /* border: 3px solid #ffffff; */
-}
 
 @media (max-width: 600px) {
   .headerTitle {

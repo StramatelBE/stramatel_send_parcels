@@ -6,6 +6,7 @@ import TestComponents from "./components/TestComponents";
 import DataComposant from "./components/DataComposant";
 import PlaylistComposant from "./components/PlaylistComposant";
 import AccidentComposant from "./components/AccidentComposant";
+import InformationComposant from "./components/InformationComposant";
 
 function App() {
   useData();
@@ -15,7 +16,7 @@ function App() {
   return (
     <>
       
-      {isStandby ? (
+      {!isStandby ? (
         <></>
       ) : (
         <>

@@ -6,7 +6,6 @@ import { AuthService } from "../src/components/auth/auth.service"; // Assurez-vo
 
 
 const prisma = new PrismaClient();
-
 async function main() {
   const authService = Container.get(AuthService);
 
@@ -16,6 +15,10 @@ async function main() {
     password: "stramatel123",
   });
 
+ await authService.register({
+  username: String(process.env.APP_USERNAME),
+  password: String(process.env.APP_PASSWORD),
+  });
   // Créer une playlist pour l'utilisateur
   const playlist1 = await prisma.playlist.create({
     data: {
@@ -89,7 +92,6 @@ async function main() {
 main()
   .catch((e) => {
     console.error(e);
-    process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();

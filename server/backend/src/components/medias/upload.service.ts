@@ -23,7 +23,9 @@ export class UploadService {
 
   public handleUpload = async (req: any, res: any, next: NextFunction) => {
     try {
-      const destination = `${process.env.UPLOAD_DIR}${req.user.username}`;
+      const env = process.env.NODE_ENV;
+      const uploadDir = process.env[`UPLOAD_DIR_${env}`];
+      const destination = `${uploadDir}${req.user.username}`;
 
       const upload = multer({
         storage: multer.diskStorage({
@@ -55,7 +57,11 @@ export class UploadService {
   public deleteMedia = async (media: Media, req: any): Promise<void> => {
     try {
       unlinkSync(
-        `${process.env.UPLOAD_DIR}${req.user.username}/${media.file_name}`
+        path.join(
+          process.env[`UPLOAD_DIR_${process.env.NODE_ENV}`],
+          req.user.username,
+          media.file_name
+        )
       );
     } catch (error) {
       console.log(error);

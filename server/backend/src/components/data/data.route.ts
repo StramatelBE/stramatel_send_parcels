@@ -3,7 +3,7 @@ import { Container } from "typedi";
 import { DataController } from "./data.controller";
 import { authMiddleware } from "../../middlewares/auth.middleware";
 import { validateDto } from "../../middlewares/validation.middleware";
-import { CreateDataDto } from "./data.validation";
+import { CreateDataDto, UpdateDataDto } from "./data.validation";
 
 const router = Router();
 const dataController = Container.get(DataController);
@@ -23,7 +23,7 @@ router.get("/:dataId", authMiddleware, (req, res, next) =>
 router.put(
   "/:dataId",
   authMiddleware,
-  validateDto(CreateDataDto),
+  validateDto(UpdateDataDto),
   (req, res, next) => dataController.updateData(req, res, next)
 );
 

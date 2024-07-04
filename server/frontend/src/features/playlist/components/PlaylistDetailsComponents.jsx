@@ -82,7 +82,7 @@ function PlaylistDetailsContent() {
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="droppable-medias">
         {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef}>
+          <div {...provided.droppableProps} ref={provided.innerRef} style={{ maxHeight: 'calc(94vh - 200px)', overflowY: 'scroll', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <Table size="big">
               <TableBody>
                 {sortedMedias.map((media, index) => (
@@ -98,19 +98,21 @@ function PlaylistDetailsContent() {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        <TableCell align="left">
+                        <TableCell  sx={{padding: '0px'}} align="left">
                           <IconButton>
                             <DragHandleIcon sx={{ color: 'secondary.main' }} />
                           </IconButton>
                         </TableCell>
-                        <TableCell>
+                        <TableCell sx={{
+                                maxWidth: '14vh',
+                                maxHeight: '7vh',
+                              }} >
                           {media.type.split('/')[0] === 'video' ? (
                             <Box
                               sx={{
-                                height: '100%',
-                                width: '100%',
-                                maxWidth: '16vh',
-                                maxHeight: '8vh',
+
+                                maxWidth: '14vh',
+                                maxHeight: '7vh',
                               }}
                               component="video"
                               alt={media.originalFilename}
@@ -121,8 +123,8 @@ function PlaylistDetailsContent() {
                               sx={{
                                 height: '100%',
                                 width: '100%',
-                                maxWidth: '16vh',
-                                maxHeight: '8vh',
+                                maxWidth: '14vh',
+                                maxHeight: '7vh',
                               }}
                               component="img"
                               alt={media.originalFilename}
@@ -132,7 +134,7 @@ function PlaylistDetailsContent() {
                             <Typography>{media.type}</Typography>
                           )}
                         </TableCell>
-                        <TableCell>
+                        <TableCell align="right"> 
                           <TextField
                             value={media.duration}
                             onChange={(e) => {
@@ -145,8 +147,11 @@ function PlaylistDetailsContent() {
                             inputProps={{ min: 0, max: 999 }}
                             style={{ width: '100%', maxWidth: '90px' }}
                           />
+                          <Typography variant="caption" display="block" gutterBottom>
+                            secondes
+                          </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell sx={{padding: '0px'}} align="right">
                           <IconButton
                             onClick={(e) => {
                               e.stopPropagation();
@@ -231,11 +236,11 @@ function AddMedia() {
         </MenuItem>
         <MenuItem
           onClick={() => {
-            handleAddData('info', selectedPlaylist.id);
+            handleAddData('information', selectedPlaylist.id);
             handleClose();
           }}
         >
-          Info
+          information
         </MenuItem>
       </Menu>
       <input

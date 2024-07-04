@@ -82,15 +82,21 @@ function PlaylistList() {
       <Table size="big">
         <TableBody>
           {playlists?.map((playlist) => (
-            <TableRow hover key={playlist.id} style={{ position: 'relative' }}>
+            <TableRow 
+              sx={{cursor: 'pointer'}} 
+              hover
+              key={playlist.id}
+              style={{ position: 'relative' }}
+            >
               <TableCell
                 onClick={() => {
                   getPlaylistById(playlist.id);
                 }}
+                style={{ padding: '0 16px' }}
               >
                 {playlist.name}
               </TableCell>
-              <TableCell align="right">
+              <TableCell style={{ width: 'auto', padding: "16px 0px" }} align="right">
                 {modes &&
                 modes.playlist_id === playlist.id &&
                 modes.name === 'playlist' ? (
@@ -120,7 +126,7 @@ function PlaylistList() {
                   </IconButton>
                 )}
               </TableCell>
-              <TableCell align="right">
+              <TableCell style={{ width: 'auto',padding: "16px 0px" }} align="right">
                 <IconButton
                   size="small"
                   onClick={() => deletePlaylist(playlist.id)}

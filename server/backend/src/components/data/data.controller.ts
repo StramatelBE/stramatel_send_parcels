@@ -3,7 +3,8 @@ import { Data } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import { Inject, Service } from "typedi";
 import { DataService } from "./data.service";
-import { CreateDataDto } from "./data.validation";
+import { CreateDataDto, UpdateDataDto } from "./data.validation";
+import { log } from "console";
 
 @Service()
 export class DataController {
@@ -43,7 +44,7 @@ export class DataController {
   updateData = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const dataId: number = parseInt(req.params.dataId);
-      const dataDto : CreateDataDto = req.body
+      const dataDto = req.body
       const updatedData: Data | null = await this.dataService.updateData(
         dataId,
         dataDto
@@ -54,6 +55,7 @@ export class DataController {
         res.status(200).json({ data: updatedData, message: "Data updated" });
       }
     } catch (error) {
+      console.log(error)
       next(error);
     }
   };

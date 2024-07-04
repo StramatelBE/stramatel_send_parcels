@@ -9,8 +9,6 @@ const prisma = new PrismaClient();
 export class MediaService {
   async createMedia(req: any, mediaPosition: number): Promise<Media> {
     const file = req.file;
-
-    // Résoudre la durée avant de créer l'objet media
     const mediaDuration = await this.getDuration(file.path, file.mimetype);
     const media = {
       original_file_name: file.originalname,
@@ -28,7 +26,7 @@ export class MediaService {
       const newMedia = await prisma.media.create({
         data: media,
       });
-      return newMedia; // Ensure the newMedia object is returned here
+      return newMedia;
     } catch (error) {
       console.log(error);
       throw new HttpException(500, "Cannot create media");

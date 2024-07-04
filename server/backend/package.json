@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "dotenvx run --env-file=../.env -- nodemon app.js",
-    "seed": "dotenvx run --env-file=../.env -- ts-node prisma/seed.ts"
+    "dev": "NODE_ENV=DEV dotenvx run --env-file=../.env -- nodemon app.ts",
+    "seed": "NODE_ENV=DEV dotenvx run --env-file=../.env -- ts-node prisma/seed.ts",
+    "start": "NODE_ENV=PROD dotenvx run --env-file=../.env -- ts-node ./src/app.ts app.ts",
+    "compile": "tsc src/app.ts"
   },
   "keywords": [],
   "author": "",

@@ -16,3 +16,12 @@ export class CreateDataDto {
   @IsString()
   public type: string;
 }
+
+export class UpdateDataDto {
+
+
+  @IsString()
+  public value?: string;
+
+
+}

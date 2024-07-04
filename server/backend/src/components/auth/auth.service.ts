@@ -33,9 +33,8 @@ export class AuthService {
         password: hashedPassword,
       },
     });
-
-    const uploadDir = `${process.env.UPLOAD_DIR}${user.username}`;
-    
+    const env = process.env.NODE_ENV;
+    const uploadDir = process.env[`UPLOAD_DIR_${env}`] + user.username;
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
