@@ -64,9 +64,7 @@ export class UploadService {
         )
       );
     } catch (error) {
-      console.log(error);
-
-      throw new HttpException(500, "Cannot delete media");
+    
     }
   };
 }

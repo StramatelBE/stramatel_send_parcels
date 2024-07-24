@@ -1,6 +1,7 @@
 import { PrismaClient, Accident } from "@prisma/client";
 import { Service } from "typedi";
 import { CreateAccidentDto } from "./accident.validation";
+import moment from "moment";
 
 const prisma = new PrismaClient();
 
@@ -38,6 +39,10 @@ export class AccidentService {
       dto.days_without_accident = 0;
     }
 
+    if(dto.record_days_without_accident < accident.days_without_accident){
+      dto.record_days_without_accident = dto.days_without_accident;
+    }
+
     return prisma.accident.update({
       where: { id },
       data: dto,
@@ -56,10 +61,21 @@ export class AccidentService {
 
   async incrementDaysWithoutAccident(): Promise<void> {
     const allAccidents = await prisma.accident.findMany();
+    
     allAccidents.forEach(async (accident) => {
+      const today = moment();
+      const lastUpdated = moment(accident.last_updated);
+      const daysDifference = today.diff(lastUpdated, 'days');
+      const newDaysWithoutAccident = accident.days_without_accident + daysDifference;
+      const newRecordDaysWithoutAccident = Math.max(newDaysWithoutAccident, accident.record_days_without_accident);
+
       await prisma.accident.update({
         where: { id: accident.id },
-        data: { days_without_accident: accident.days_without_accident + 1 },
+        data: { 
+          days_without_accident: newDaysWithoutAccident,
+          record_days_without_accident: newRecordDaysWithoutAccident,
+          last_updated: today.toDate()
+        },
       });
     });
   }

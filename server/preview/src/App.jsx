@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import useSocketData from "./stores/socketDataStore";
 import useData from "./hooks/useData";
 import useStandbyStore from "./stores/standbyStore";
@@ -15,8 +15,7 @@ function App() {
 
   return (
     <>
-      
-      {!isStandby ? (
+      {isStandby ? (
         <></>
       ) : (
         <>

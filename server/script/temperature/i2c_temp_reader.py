@@ -10,21 +10,15 @@ import math
 
 load_dotenv()
 
-# I2C bus initialization
 bus = smbus.SMBus(1)
 TEMP_REG = 0x00
 lm92_address = None
-# Define known addresses for LM92 if multiple devices are on the bus
 known_addresses = [0x48, 0x49, 0x4A, 0x4B] 
 
 def find_i2c_address():
-    # Run the i2cdetect command and capture its output
     result = subprocess.check_output(["i2cdetect", "-y", "1"])
-    # Decode result to string and split into lines
     result = result.decode('utf-8').split('\n')
-    # Look for hexadecimal numbers in the output, which are I2C addresses
     addresses = re.findall(r'\b[0-9a-fA-F]{2}\b', '\n'.join(result))
-    # Convert hex addresses to integers
     addresses = [int(address, 16) for address in addresses if address != 'UU']
     print("I2C Adress found :", addresses)
     return addresses
@@ -43,23 +37,26 @@ def get_user_token():
         return None
 
 def update_temperature(temp):
-    token = get_user_token()
-    if token:
-        url = os.getenv("API_URL") + "data/1"
-        headers = {
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json"
-        }
-        payload = {
-            "value": temp
-        }
-        response = requests.put(url, json=payload, headers=headers)
-        if response.status_code == 200:
-            print("Temperature updated successfully")
+    try:
+        token = get_user_token()
+        if token:
+            url = os.getenv("API_URL") + "data/1"
+            headers = {
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "value": temp
+            }
+            response = requests.put(url, json=payload, headers=headers)
+            if response.status_code == 200:
+                print("Temperature updated successfully", temp)
+            else:
+                print("Failed to update temperature")
         else:
-            print("Failed to update temperature")
-    else:
-        print("No token available, cannot update temperature")
+            print("No token available, cannot update temperature")
+    except requests.exceptions.RequestException as e:
+        print(f"Error updating temperature: {e}")
 
 def read_temperature():
     try:
@@ -84,11 +81,11 @@ while True:
                 lm92_address = addr
                 break
         if lm92_address is None:
-            print("LM92 sensor not found on I2C bus, retrying in 10 seconds...")
+            print("Capteur LM92 non trouvé sur le bus I2C, réessayez dans 10 secondes...")
             update_temperature("---")
     else:
         temp = read_temperature()
         print(f"Temperature: {temp}°C")
         update_temperature(str(temp))
     
-    time.sleep(60) 
+    time.sleep(3) 

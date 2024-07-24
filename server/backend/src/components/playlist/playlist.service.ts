@@ -71,7 +71,9 @@ export class PlaylistService {
 
     // Supprimer les fichiers médias du système de fichiers
     for (const media of playlist.medias) {
-      await this.uploadService.deleteMedia(media, req);
+      if (media.type === "image" || media.type === "video") {
+        await this.uploadService.deleteMedia(media, req);
+      }
     }
 
     // Supprimer la playlist et les médias associés de la base de données

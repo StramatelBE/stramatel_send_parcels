@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "dotenvx run --env-file=../.env -- vite --host",
     "build": "dotenvx run --env-file=../.env -- vite build",
-    "serve": "serve -s dist"
+    "serve": "dotenvx run --env-file=../.env -- serve -s dist"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",

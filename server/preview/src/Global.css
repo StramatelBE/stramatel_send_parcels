@@ -1,15 +1,28 @@
 @font-face {
-  font-family: "D-DIN-Bold"; /* Nommez la police comme vous le souhaitez, ce nom est utilisé pour la référence */
-  src: local("D-DIN-Bold"),
-    /* Nom pour rechercher la police localement sur l'ordinateur de l'utilisateur */
-      url("./fonts/D-DIN-Bold.otf") format("opentype"); /* Ajustez le chemin selon l'endroit où vous avez placé votre fichier .otf */
-  font-weight: bold; /* Ici, c'est 'bold' parce que la police est déjà une version 'bold' */
-  font-style: normal;
+  font-family: "stratos-bold";
+  src: local("stratos-bold"),
+    url("/fonts/stratos-bold.otf") format("opentype"); /* Chemin ajusté */
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+  font-family: "stratos-medium";
+  src: local("stratos-medium"),
+  url("/fonts/stratos-medium.otf") format("opentype"); /* Chemin ajusté */
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+  font-family: "stratos-regular";
+  src: local("stratos-regular"),
+    url("/fonts/stratos-regular.otf") format("opentype"); /* Chemin ajusté */
+    font-weight: normal;
+    font-style: normal;
 }
 
 body,
 #root {
-  font-family: "D-DIN-Bold", sans-serif;
+  font-family: "stratos-regular", sans-serif;
   margin: 0;
   background-color: #000000;
   color: rgb(255, 255, 255);
@@ -20,6 +33,80 @@ body,
 
 body,
 .medias {
-  width: calc(var(--preview-width, 100vw));
-  height: calc(var(--preview-height, 100vh));
+  width: 100%;
+  height: 100%;
+  object-fit: fill; /* Déforme la vidéo pour remplir le conteneur */
+}
+
+.accident-container {
+  height: 100%;
+  background-color: rgb(219, 218, 218);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 100px;
+  height: 100%;
+}
+
+.header-text {
+  font-size: 17px;
+  font-family: "stratos-bold", sans-serif;
+  color: #F1921D;
+}
+
+.info-section {
+  font-family: "stratos-bold", sans-serif;
+  height: 100%;
+  background-color: #000000;
+  padding: 7px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-text {
+  line-height: 1.2;
+  font-size: 21px;
+  font-family: "stratos-bold", sans-serif;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  font-weight: bold; 
+
+}
+.info-text-light {
+  font-size: 14px;
+  font-family: "stratos-regular", sans-serif;
+}
+
+.info-value {
+  background-color: black;
+  height: 35px;
+  width: 68px;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: right;
+  padding-right: 5px;
+}
+
+.info-value-texte{
+  margin-top: 6px;
+
+}
+
+.info-value-date{
+  font-size: 32px;
+  font-family: "stratos-bold";
+  padding-top: 15px;
 }

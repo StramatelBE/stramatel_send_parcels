@@ -6,7 +6,6 @@ const useWebSocket = (url, onMessage) => {
 
   const connectWebSocket = () => {
     wsRef.current = new WebSocket(url);
-    console.log("wsRef.current", wsRef.current);
     wsRef.current.onmessage = (event) => {
       if (onMessage) {
         onMessage(event);

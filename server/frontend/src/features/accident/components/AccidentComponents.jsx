@@ -157,22 +157,6 @@ function Accident() {
         justifyContent="space-between"
         marginBottom={2}
       >
-        <Typography variant="body1">Accident cette année</Typography>
-
-        <TextField
-          style={{ width: '10vh' }}
-          margin="normal"
-          type="number"
-          value={accidents.accidents_this_year}
-          onChange={(e) => handleChange(e, 'accidents_this_year')}
-        />
-      </Box>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-        marginBottom={2}
-      >
         <Typography variant="body1">Record de jour sans accident</Typography>
 
         <TextField
@@ -183,6 +167,25 @@ function Accident() {
           onChange={(e) => handleChange(e, 'record_days_without_accident')}
         />
       </Box>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        marginBottom={2}
+      >
+        <Typography variant="body1">Accident cette année</Typography>
+
+        <TextField
+          style={{ width: '10vh' }}
+          margin="normal"
+          type="number"
+          value={accidents.accidents_this_year}
+          onChange={(e) => handleChange(e, 'accidents_this_year')}
+        />
+      </Box>
+     
+      
+     
     </form>
   );
 }

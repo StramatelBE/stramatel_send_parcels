@@ -35,9 +35,7 @@ const usePlaylists = () => {
   const deletePlaylist = useCallback(
     async (id) => {
       try {
-        if (modes.playlist_id === id) {
-          updateMode('data', null)
-        }
+        updateMode('null', null)
         await PlaylistService.deletePlaylist(id);
         removePlaylist(id);
       } catch (error) {

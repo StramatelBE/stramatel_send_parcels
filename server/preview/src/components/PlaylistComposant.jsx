@@ -34,7 +34,7 @@ function PlaylistComposant() {
   const mediaPath = `${process.env.FRONT_URL}${currentMedia?.path}`;
 
   return (
-    <div>
+    <div style={{ height: `${process.env.PREVIEW_HEIGHT}px`, width: `${process.env.PREVIEW_WIDTH}px` }}>
       {currentMedia?.type === "video" ? (
         <video
           className="medias"
