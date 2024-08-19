@@ -34,9 +34,10 @@ server.on("connection", (ws) => {
         });
         if (playlist) {
           socketData = { ...socketData, playlist: playlist };
+          console.log(socketData.playlist);
         }
       }
-      console.log(socketData);
+      /* console.log(socketData); */
       
       ws.send(JSON.stringify(socketData));
     } catch (error) {

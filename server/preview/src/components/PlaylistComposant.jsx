@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import useSocketData from "../stores/socketDataStore";
 import AccidentComposant from "./AccidentComposant";
 import InformationComposant from "./InformationComposant";
@@ -8,11 +8,13 @@ function PlaylistComposant() {
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const intervalRef = useRef(null);
 
-  useEffect(() => {
-    const medias = socketData.playlist.medias;
-    if (medias.length === 0) return;
+  // Trier les médias en fonction de leur position
+  const sortedMedias = socketData.playlist.medias.sort((a, b) => a.position - b.position);
 
-    const currentMedia = medias[currentMediaIndex];
+  useEffect(() => {
+    if (sortedMedias.length === 0) return;
+
+    const currentMedia = sortedMedias[currentMediaIndex];
     if (!currentMedia) return;
 
     const duration = currentMedia.duration * 1000;
@@ -22,13 +24,13 @@ function PlaylistComposant() {
     }
 
     intervalRef.current = setInterval(() => {
-      setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % medias.length);
+      setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % sortedMedias.length);
     }, duration);
 
     return () => clearInterval(intervalRef.current);
-  }, [currentMediaIndex, socketData.playlist.medias.length]);
+  }, [currentMediaIndex, sortedMedias.length]);
 
-  const currentMedia = socketData.playlist.medias[currentMediaIndex];
+  const currentMedia = sortedMedias[currentMediaIndex];
   if (!currentMedia) return null;
 
   const mediaPath = `${process.env.FRONT_URL}${currentMedia?.path}`;
@@ -41,7 +43,7 @@ function PlaylistComposant() {
           src={mediaPath}
           onError={() =>
             setCurrentMediaIndex(
-              (prevIndex) => (prevIndex + 1) % socketData.playlist.medias.length
+              (prevIndex) => (prevIndex + 1) % sortedMedias.length
             )
           }
           autoPlay
@@ -55,7 +57,7 @@ function PlaylistComposant() {
           src={mediaPath}
           onError={() =>
             setCurrentMediaIndex(
-              (prevIndex) => (prevIndex + 1) % socketData.playlist.medias.length
+              (prevIndex) => (prevIndex + 1) % sortedMedias.length
             )
           }
           alt={currentMedia?.original_file_name}
