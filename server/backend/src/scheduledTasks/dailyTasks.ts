@@ -4,8 +4,8 @@ import cron from 'node-cron';
 const accidentService = new AccidentService();
 
 // Tâche quotidienne pour incrémenter les jours sans accident
-cron.schedule('0 0 * * *', async () => {
-  console.log('Running daily task to increment days without accident');
+cron.schedule("0 */2 * * *", async () => {
+  console.log("Running task to increment days without accident every 2 hours");
   await accidentService.incrementDaysWithoutAccident();
 });
 

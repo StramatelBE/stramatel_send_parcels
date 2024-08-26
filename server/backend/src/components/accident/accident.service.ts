@@ -63,22 +63,27 @@ export class AccidentService {
     const allAccidents = await prisma.accident.findMany();
     
     allAccidents.forEach(async (accident) => {
-      const today = moment();
-      const lastUpdated = moment(accident.last_updated);
-      const daysDifference = today.diff(lastUpdated, 'days');
-      const newDaysWithoutAccident = accident.days_without_accident + daysDifference;
-      const newRecordDaysWithoutAccident = Math.max(newDaysWithoutAccident, accident.record_days_without_accident);
+      let today = moment().format("YYYY-MM-DD");
+      let todayMoment = moment(today, "YYYY-MM-DD");
+      let lastUpdatedMoment = moment(accident.last_updated, "YYYY-MM-DD");
+      let daysDifference = todayMoment.diff(lastUpdatedMoment, 'days');
 
-      await prisma.accident.update({
-        where: { id: accident.id },
-        data: { 
-          days_without_accident: newDaysWithoutAccident,
-          record_days_without_accident: newRecordDaysWithoutAccident,
-          last_updated: today.toDate()
-        },
-      });
+      if (daysDifference > 0) {
+        console.log(daysDifference);
+        const newDaysWithoutAccident = accident.days_without_accident + daysDifference;
+        const newRecordDaysWithoutAccident = Math.max(newDaysWithoutAccident, accident.record_days_without_accident);
+
+        await prisma.accident.update({
+          where: { id: accident.id },
+          data: { 
+            days_without_accident: newDaysWithoutAccident,
+            record_days_without_accident: newRecordDaysWithoutAccident,
+            last_updated: todayMoment.toDate()
+          },
+        });
+      }
     });
-  }
+}
 
   async resetOnNewYear(): Promise<void> {
     await prisma.accident.updateMany({
