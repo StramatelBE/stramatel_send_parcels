@@ -1,5 +1,4 @@
 import { Grid } from "@mui/material";
-import DataComponents from "../../data/components/DataComponents";
 import PreviewComponents from "../../preview/components/PreviewComponents";
 import PlaylistComponents from "../../playlist/components/PlaylistComponents";
 import AccidentComponents from "../../accident/components/AccidentComponents";

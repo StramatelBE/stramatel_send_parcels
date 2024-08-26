@@ -240,7 +240,7 @@ function AddMedia() {
             handleClose();
           }}
         >
-          information
+          Information
         </MenuItem>
       </Menu>
       <input

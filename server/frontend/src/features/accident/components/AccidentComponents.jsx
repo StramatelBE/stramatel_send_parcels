@@ -157,7 +157,7 @@ function Accident() {
         justifyContent="space-between"
         marginBottom={2}
       >
-        <Typography variant="body1">Record de jour sans accident</Typography>
+        <Typography variant="body1">Record de jours sans accident</Typography>
 
         <TextField
           style={{ width: '10vh' }}
@@ -173,7 +173,7 @@ function Accident() {
         justifyContent="space-between"
         marginBottom={2}
       >
-        <Typography variant="body1">Accident cette année</Typography>
+        <Typography variant="body1">Accidents cette année</Typography>
 
         <TextField
           style={{ width: '10vh' }}
@@ -183,9 +183,6 @@ function Accident() {
           onChange={(e) => handleChange(e, 'accidents_this_year')}
         />
       </Box>
-     
-      
-     
     </form>
   );
 }
