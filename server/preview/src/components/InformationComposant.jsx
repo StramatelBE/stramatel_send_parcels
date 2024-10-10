@@ -15,7 +15,7 @@ function InformationComposant() {
               BIENVENUE
             </div>
           </div>
-          <div style={{display:'flex', flexDirection:'column', alignItems:'center' , padding:'5px'}}>
+          <div style={{display:'flex', flexDirection:'column', alignItems:'center' }}>
             <div className="info-value-date">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
             <div className="info-value-date">{new Date().toLocaleDateString()}</div>
             <div className="info-value-date">{socketData.data[0].value}°C</div>
