@@ -1,13 +1,12 @@
 import PollIcon from '@mui/icons-material/Poll';
 import { Box, Skeleton } from '@mui/material';
 import { useState } from 'react';
-import { createEditor, Transforms, Editor } from 'slate';
+import { createEditor, Editor, Transforms } from 'slate';
 import { Editable, Slate, withReact } from 'slate-react';
 import Container from '../../../components/ContainerComponents';
 import useLoadingStore from '../../../stores/loadingStore';
 import useData from '../hooks/useData';
 import dataStore from '../stores/dataStore';
-import EditorComponents from './EditorComponents';
 function DataComponents() {
   const { isLoading } = useLoadingStore();
   return (
@@ -74,7 +73,7 @@ function Data() {
   });
 
   const MAX_PARAGRAPHS = 10;
-  const MAX_CHARS = 8;
+  const MAX_CHARS = 12;
 
   const parseValue = (item) => {
     try {
@@ -171,13 +170,14 @@ function Data() {
                 onChange={(value) => handleEditorChange(value, item)}
               >
                 <Editable
-                  placeholder="Max 8 chars per paragraph, max 10 paragraphs..."
+                  className="LiberationMono-Bold"
                   onKeyDown={handleKeyDown}
                   style={{
+                    fontFamily: 'G552 mono',
+                    fontWeight: 'bold',
                     whiteSpace: 'pre-wrap',
                     wordWrap: 'break-word',
-                    width: '200px',
-                    height: '300px',
+                    height: '100%',
                   }}
                 />
               </Slate>
@@ -188,7 +188,6 @@ function Data() {
               </div>
             </>
           )}
-          <EditorComponents />
         </Box>
       ))}
     </form>
