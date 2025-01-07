@@ -81,6 +81,7 @@ export class DataController {
       const data: Data[] = await this.dataService.getAllData();
       res.status(200).json({ data: data, message: "All data retrieved" });
     } catch (error) {
+      console.log(error)
       next(error);
     }
   };

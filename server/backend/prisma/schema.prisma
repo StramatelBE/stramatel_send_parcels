@@ -76,4 +76,5 @@ model Data {
   name  String?
   value String?
   type  String?
+  edit Boolean @default(true)
 }

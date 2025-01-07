@@ -12,7 +12,7 @@ export class CreateDataDto {
   @IsString()
   public value: string;
 
-  @IsIn(["INT", "BOOLEAN", "STRING"])
+  @IsIn(["INT", "BOOLEAN", "STRING", "EDIT"])
   @IsString()
   public type: string;
 }

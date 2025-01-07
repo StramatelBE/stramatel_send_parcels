@@ -1,13 +1,13 @@
 import { Grid } from "@mui/material";
 import PreviewComponents from "../../preview/components/PreviewComponents";
 import PlaylistComponents from "../../playlist/components/PlaylistComponents";
-import AccidentComponents from "../../accident/components/AccidentComponents";
+import DataComponents from "../../data/components/DataComponents";
 
 function DashboardComponents() {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} sm={3}>
-        <AccidentComponents />
+        <DataComponents />
       </Grid>
       <Grid item xs={12} sm={6}>
         <PreviewComponents />
