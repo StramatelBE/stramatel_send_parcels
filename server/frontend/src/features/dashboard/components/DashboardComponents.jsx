@@ -1,7 +1,7 @@
-import { Grid } from "@mui/material";
-import PreviewComponents from "../../preview/components/PreviewComponents";
-import PlaylistComponents from "../../playlist/components/PlaylistComponents";
-import DataComponents from "../../data/components/DataComponents";
+import { Grid } from '@mui/material';
+import DataComponents from '../../data/components/DataComponents';
+import PlaylistComponents from '../../playlist/components/PlaylistComponents';
+import PreviewComponents from '../../preview/components/PreviewComponents';
 
 function DashboardComponents() {
   return (

@@ -1,5 +1,5 @@
-import { Box, Grid, IconButton, Paper, Stack, Typography } from "@mui/material";
-import PropTypes from "prop-types";
+import { Box, Grid, IconButton, Paper, Stack, Typography } from '@mui/material';
+import PropTypes from 'prop-types';
 
 function Container({ icon, title, content, headerRight, headerLeft }) {
   return (
@@ -13,7 +13,7 @@ function Container({ icon, title, content, headerRight, headerLeft }) {
             </IconButton>
             <Typography
               variant="h6"
-              sx={{ color: "text.primary" }}
+              sx={{ color: 'text.primary' }}
               className="headerTitle"
             >
               {title}
@@ -21,7 +21,7 @@ function Container({ icon, title, content, headerRight, headerLeft }) {
           </Box>
           <Box className="headerRight">{headerRight}</Box>
         </Stack>
-        <Box className="containerPage" style={{ alignItems: "center" }}>
+        <Box className="containerPage" style={{ alignItems: 'center' }}>
           {content}
         </Box>
       </Paper>

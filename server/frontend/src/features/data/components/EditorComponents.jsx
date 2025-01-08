@@ -1,266 +1,109 @@
-import { useCallback, useMemo } from 'react';
-import isHotkey from 'is-hotkey';
-import { Editable, withReact, useSlate, Slate } from 'slate-react';
-import {
-  Editor,
-  Transforms,
-  createEditor,
-  Element as SlateElement,
-} from 'slate';
-import { withHistory } from 'slate-history';
-import { Button, Icon, Toolbar } from '@mui/material';
-import PropTypes from 'prop-types';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
+import TextAlign from '@tiptap/extension-text-align';
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
+import FormatBoldIcon from '@mui/icons-material/FormatBold';
+import FormatItalicIcon from '@mui/icons-material/FormatItalic';
+import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
+import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough';
+import '../../../Global.css';
+import { IconButton } from '@mui/material';
 
-const HOTKEYS = {
-  'mod+b': 'bold',
-  'mod+i': 'italic',
-  'mod+u': 'underline',
-  'mod+`': 'code',
-};
-const LIST_TYPES = ['numbered-list', 'bulleted-list'];
-const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'];
-const EditorComponents = () => {
-  const renderElement = useCallback((props) => <Element {...props} />, []);
-  const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
-  const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+const MenuBar = ({ editor }) => {
+  if (!editor) {
+    return null;
+  }
+
   return (
-    <Slate editor={editor} initialValue={initialValue}>
-      <Toolbar>
-        <MarkButton format="bold" icon="format_bold" />
-        <MarkButton format="italic" icon="format_italic" />
-        <MarkButton format="underline" icon="format_underlined" />
-        <MarkButton format="code" icon="code" />
-        <BlockButton format="heading-one" icon="looks_one" />
-        <BlockButton format="heading-two" icon="looks_two" />
-        <BlockButton format="block-quote" icon="format_quote" />
-        <BlockButton format="numbered-list" icon="format_list_numbered" />
-        <BlockButton format="bulleted-list" icon="format_list_bulleted" />
-        <BlockButton format="left" icon="format_align_left" />
-        <BlockButton format="center" icon="format_align_center" />
-        <BlockButton format="right" icon="format_align_right" />
-        <BlockButton format="justify" icon="format_align_justify" />
-      </Toolbar>
-      <Editable
-        renderElement={renderElement}
-        renderLeaf={renderLeaf}
-        placeholder="Enter some rich text…"
-        spellCheck
-        autoFocus
-        onKeyDown={(event) => {
-          for (const hotkey in HOTKEYS) {
-            if (isHotkey(hotkey, event)) {
-              event.preventDefault();
-              const mark = HOTKEYS[hotkey];
-              toggleMark(editor, mark);
-            }
-          }
-        }}
-      />
-    </Slate>
+    <div className="control-group">
+      <div className="button-group">
+        <IconButton
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          color={editor.isActive('bold') ? 'primary' : 'default'}
+        >
+          <FormatBoldIcon />
+        </IconButton>
+        <IconButton
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          color={editor.isActive('italic') ? 'primary' : 'default'}
+        >
+          <FormatItalicIcon />
+        </IconButton>
+        <IconButton
+          onClick={() => editor.chain().focus().toggleStrike().run()}
+          color={editor.isActive('strike') ? 'primary' : 'default'}
+        >
+          <FormatStrikethroughIcon />
+        </IconButton>
+
+        <IconButton
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          color={editor.isActive('underline') ? 'primary' : 'default'}
+        >
+          <FormatUnderlinedIcon />
+        </IconButton>
+        <IconButton
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          color={editor.isActive('left') ? 'primary' : 'default'}
+        >
+          <FormatAlignLeftIcon />
+        </IconButton>
+        <IconButton
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          color={editor.isActive('center') ? 'primary' : 'default'}
+        >
+          <FormatAlignCenterIcon />
+        </IconButton>
+        <IconButton
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          color={editor.isActive('right') ? 'primary' : 'default'}
+        >
+          <FormatAlignRightIcon />
+        </IconButton>
+
+        {/* <button onClick={() => editor.chain().focus().undo().run()}>
+          Undo
+        </button>
+        <button onClick={() => editor.chain().focus().redo().run()}>
+          Redo
+        </button> */}
+      </div>
+    </div>
   );
 };
-const toggleBlock = (editor, format) => {
-  const isActive = isBlockActive(
-    editor,
-    format,
-    TEXT_ALIGN_TYPES.includes(format) ? 'align' : 'type'
-  );
-  const isList = LIST_TYPES.includes(format);
-  Transforms.unwrapNodes(editor, {
-    match: (n) =>
-      !Editor.isEditor(n) &&
-      SlateElement.isElement(n) &&
-      LIST_TYPES.includes(n.type) &&
-      !TEXT_ALIGN_TYPES.includes(format),
-    split: true,
+export default function EditorComponents() {
+  const editor = useEditor({
+    placeholder: 'test',
+    extensions: [
+      StarterKit,
+      Underline,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+    ],
+    onUpdate: ({ editor }) => {
+      const { from } = editor.state.selection;
+      const currentPosition = editor.state.doc.resolve(from);
+      const lineNumber = currentPosition.path[1] + 1; // Adding 1 because array is 0-based
+      console.log('Current line number:', lineNumber);
+      const currentText = editor.getJSON();
+      console.log(currentText);
+    },
+    content: `
+      <p>
+        test
+      </p>
+      
+    `,
   });
-  let newProperties;
-  if (TEXT_ALIGN_TYPES.includes(format)) {
-    newProperties = {
-      align: isActive ? undefined : format,
-    };
-  } else {
-    newProperties = {
-      type: isActive ? 'paragraph' : isList ? 'list-item' : format,
-    };
-  }
-  Transforms.setNodes(editor, newProperties);
-  if (!isActive && isList) {
-    const block = { type: format, children: [] };
-    Transforms.wrapNodes(editor, block);
-  }
-};
-const toggleMark = (editor, format) => {
-  const isActive = isMarkActive(editor, format);
-  if (isActive) {
-    Editor.removeMark(editor, format);
-  } else {
-    Editor.addMark(editor, format, true);
-  }
-};
-const isBlockActive = (editor, format, blockType = 'type') => {
-  const { selection } = editor;
-  if (!selection) return false;
-  const [match] = Array.from(
-    Editor.nodes(editor, {
-      at: Editor.unhangRange(editor, selection),
-      match: (n) =>
-        !Editor.isEditor(n) &&
-        SlateElement.isElement(n) &&
-        n[blockType] === format,
-    })
-  );
-  return !!match;
-};
-const isMarkActive = (editor, format) => {
-  const marks = Editor.marks(editor);
-  return marks ? marks[format] === true : false;
-};
-const Element = ({ attributes, children, element }) => {
-  const style = { textAlign: element.align };
-  switch (element.type) {
-    case 'block-quote':
-      return (
-        <blockquote style={style} {...attributes}>
-          {children}
-        </blockquote>
-      );
-    case 'bulleted-list':
-      return (
-        <ul style={style} {...attributes}>
-          {children}
-        </ul>
-      );
-    case 'heading-one':
-      return (
-        <h1 style={style} {...attributes}>
-          {children}
-        </h1>
-      );
-    case 'heading-two':
-      return (
-        <h2 style={style} {...attributes}>
-          {children}
-        </h2>
-      );
-    case 'list-item':
-      return (
-        <li style={style} {...attributes}>
-          {children}
-        </li>
-      );
-    case 'numbered-list':
-      return (
-        <ol style={style} {...attributes}>
-          {children}
-        </ol>
-      );
-    default:
-      return (
-        <p style={style} {...attributes}>
-          {children}
-        </p>
-      );
-  }
-};
-const Leaf = ({ attributes, children, leaf }) => {
-  if (leaf.bold) {
-    children = <strong>{children}</strong>;
-  }
-  if (leaf.code) {
-    children = <code>{children}</code>;
-  }
-  if (leaf.italic) {
-    children = <em>{children}</em>;
-  }
-  if (leaf.underline) {
-    children = <u>{children}</u>;
-  }
-  return <span {...attributes}>{children}</span>;
-};
-const BlockButton = ({ format, icon }) => {
-  const editor = useSlate();
+
   return (
-    <Button
-      active={isBlockActive(
-        editor,
-        format,
-        TEXT_ALIGN_TYPES.includes(format) ? 'align' : 'type'
-      )}
-      onMouseDown={(event) => {
-        event.preventDefault();
-        toggleBlock(editor, format);
-      }}
-    >
-      <Icon>{icon}</Icon>
-    </Button>
+    <>
+      <MenuBar editor={editor} />
+      <EditorContent editor={editor} className="fixed-editor" />
+    </>
   );
-};
-const MarkButton = ({ format, icon }) => {
-  const editor = useSlate();
-  return (
-    <Button
-      active={isMarkActive(editor, format)}
-      onMouseDown={(event) => {
-        event.preventDefault();
-        toggleMark(editor, format);
-      }}
-    >
-      <Icon>{icon}</Icon>
-    </Button>
-  );
-};
-const initialValue = [
-  {
-    type: 'paragraph',
-    children: [
-      { text: 'This is editable ' },
-      { text: 'rich', bold: true },
-      { text: ' text, ' },
-      { text: 'much', italic: true },
-      { text: ' better than a ' },
-      { text: '<textarea>', code: true },
-      { text: '!' },
-    ],
-  },
-  {
-    type: 'paragraph',
-    children: [
-      {
-        text: "Since it's rich text, you can do things like turn a selection of text ",
-      },
-      { text: 'bold', bold: true },
-      {
-        text: ', or add a semantically rendered block quote in the middle of the page, like this:',
-      },
-    ],
-  },
-  {
-    type: 'block-quote',
-    children: [{ text: 'A wise quote.' }],
-  },
-  {
-    type: 'paragraph',
-    align: 'center',
-    children: [{ text: 'Try it out for yourself!' }],
-  },
-];
-Element.propTypes = {
-  attributes: PropTypes.object.isRequired,
-  children: PropTypes.node.isRequired,
-  element: PropTypes.object.isRequired,
-};
-Leaf.propTypes = {
-  attributes: PropTypes.object.isRequired,
-  children: PropTypes.node.isRequired,
-  leaf: PropTypes.object.isRequired,
-};
-BlockButton.propTypes = {
-  format: PropTypes.string.isRequired,
-  icon: PropTypes.string.isRequired,
-};
-MarkButton.propTypes = {
-  format: PropTypes.string.isRequired,
-  icon: PropTypes.string.isRequired,
-};
-export default EditorComponents;
+}

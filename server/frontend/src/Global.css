@@ -113,3 +113,16 @@ body {
 .editorTextArea {
   font-family: 'G552 mono', monospace;
 }
+.tiptap {
+  :first-child {
+    margin-top: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.fixed-editor {
+  width: 100%; /* Définissez la largeur souhaitée */
+}
