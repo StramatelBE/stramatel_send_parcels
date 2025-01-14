@@ -124,5 +124,18 @@ body {
 }
 
 .fixed-editor {
-  width: 100%; /* Définissez la largeur souhaitée */
+  font-size: 24px;
+  width: 288px;
+  height: 432px;
+
+  font-family: 'G552 mono';
+
+  overflow-y: auto;
+}
+p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }

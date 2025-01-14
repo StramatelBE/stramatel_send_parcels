@@ -12,7 +12,7 @@ export class DataController {
 
   createData = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const dataDto : CreateDataDto = req.body
+      const dataDto: CreateDataDto = req.body;
       const errors = await validate(dataDto);
 
       if (errors.length > 0) {
@@ -44,7 +44,7 @@ export class DataController {
   updateData = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const dataId: number = parseInt(req.params.dataId);
-      const dataDto = req.body
+      const dataDto = req.body;
       const updatedData: Data | null = await this.dataService.updateData(
         dataId,
         dataDto
@@ -55,7 +55,7 @@ export class DataController {
         res.status(200).json({ data: updatedData, message: "Data updated" });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next(error);
     }
   };
@@ -81,7 +81,7 @@ export class DataController {
       const data: Data[] = await this.dataService.getAllData();
       res.status(200).json({ data: data, message: "All data retrieved" });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       next(error);
     }
   };

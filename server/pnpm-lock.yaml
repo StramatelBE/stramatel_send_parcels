@@ -145,9 +145,15 @@ importers:
       '@mui/material':
         specifier: ^5.15.19
         version: 5.15.21(@emotion/react@11.11.4(@types/react@18.3.3)(react@18.3.1))(@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tiptap/extension-character-count':
+        specifier: 3.0.0-next.4
+        version: 3.0.0-next.4(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))(@tiptap/pm@2.11.0)
       '@tiptap/extension-list-item':
         specifier: ^2.11.0
         version: 2.11.0(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))
+      '@tiptap/extension-placeholder':
+        specifier: 3.0.0-next.4
+        version: 3.0.0-next.4(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))(@tiptap/pm@2.11.0)
       '@tiptap/extension-text-align':
         specifier: ^2.11.0
         version: 2.11.0(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))
@@ -1692,6 +1698,12 @@ packages:
     peerDependencies:
       '@tiptap/core': ^2.7.0
 
+  '@tiptap/extension-character-count@3.0.0-next.4':
+    resolution: {integrity: sha512-h2aW5TuvYNMz2iBd7VtV6vJabxzmOZ1HOtjvVMWRre6ZkUGY0kQShdBcWwFVkuEwOHbWR3hIjitLK+VXa4geCg==}
+    peerDependencies:
+      '@tiptap/core': ^3.0.0-next.1
+      '@tiptap/pm': ^3.0.0-next.1
+
   '@tiptap/extension-code-block@2.11.0':
     resolution: {integrity: sha512-8of3qTOLjpveHBrrk8KVliSUVd6R2i2TNrBj0f/21HcFVAy0fP++02p6vI6UPOhwM3+p3CprGdSM48DFCu1rqw==}
     peerDependencies:
@@ -1767,6 +1779,12 @@ packages:
     resolution: {integrity: sha512-xLNC05An3SQq0bVHJtOTLa8As5r6NxDZFpK0NZqO2hTq/fAIRL/9VPeZ8E0tziXULwIvIPp+L0Taw3TvaUkRUg==}
     peerDependencies:
       '@tiptap/core': ^2.7.0
+
+  '@tiptap/extension-placeholder@3.0.0-next.4':
+    resolution: {integrity: sha512-5HiiIkGm1e7y2KseI6hugBjpu9BYJOux07I/6bXDO812l0bxPR+2iMtVje7Ds88aWunJ8luKqPgFxYbkeIwNZg==}
+    peerDependencies:
+      '@tiptap/core': ^3.0.0-next.1
+      '@tiptap/pm': ^3.0.0-next.1
 
   '@tiptap/extension-strike@2.11.0':
     resolution: {integrity: sha512-71i2IZT58kY2ohlhyO+ucyAioNNCkNkuPkrVERc9lXhmcCKOff5y6ekDHQHO2jNjnejkVE5ibyDO3Z7RUXjh1A==}
@@ -7352,6 +7370,11 @@ snapshots:
     dependencies:
       '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
 
+  '@tiptap/extension-character-count@3.0.0-next.4(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))(@tiptap/pm@2.11.0)':
+    dependencies:
+      '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
+      '@tiptap/pm': 2.11.0
+
   '@tiptap/extension-code-block@2.11.0(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))(@tiptap/pm@2.11.0)':
     dependencies:
       '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
@@ -7414,6 +7437,11 @@ snapshots:
   '@tiptap/extension-paragraph@2.11.0(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))':
     dependencies:
       '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
+
+  '@tiptap/extension-placeholder@3.0.0-next.4(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))(@tiptap/pm@2.11.0)':
+    dependencies:
+      '@tiptap/core': 2.11.0(@tiptap/pm@2.11.0)
+      '@tiptap/pm': 2.11.0
 
   '@tiptap/extension-strike@2.11.0(@tiptap/core@2.11.0(@tiptap/pm@2.11.0))':
     dependencies:
@@ -10643,7 +10671,7 @@ snapshots:
   proxy-agent@6.3.1:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.5
+      debug: 4.4.0(supports-color@5.5.0)
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.5
       lru-cache: 7.18.3
@@ -10883,7 +10911,7 @@ snapshots:
 
   require-in-the-middle@5.2.0:
     dependencies:
-      debug: 4.3.5
+      debug: 4.4.0(supports-color@5.5.0)
       module-details-from-path: 1.0.3
       resolve: 1.22.10
     transitivePeerDependencies:

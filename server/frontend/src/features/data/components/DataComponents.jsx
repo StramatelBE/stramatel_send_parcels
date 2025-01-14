@@ -3,6 +3,7 @@ import { Skeleton } from '@mui/material';
 import Container from '../../../components/ContainerComponents';
 import useLoadingStore from '../../../stores/loadingStore';
 import EditorComponents from './EditorComponents';
+import dataStore from '../stores/dataStore';
 function DataComponents() {
   const { isLoading } = useLoadingStore();
   return (
@@ -40,11 +41,11 @@ function Icon() {
 }
 
 function Data() {
- 
+  const { data } = dataStore();
 
   return (
     <>
-      <EditorComponents />
+      <EditorComponents data={data} />
     </>
   );
 }

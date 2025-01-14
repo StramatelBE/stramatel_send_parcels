@@ -88,34 +88,117 @@ export default function EditorComponents({ data }) {
   const maxCharsPerLine = 5; // Limite de caractères par ligne
   const maxHeight = 432; // Limite de hauteur en pixels
   let content;
-  if (data?.length > 0) {
-    content = JSON.parse(data?.[0]?.value); // Conversion des données JSON en contenu
+  if (data) {
+    console.log('data', data);
+    content = JSON.parse(data?.[0]?.value);
   }
-
-  // Initialisation de l'éditeur avec le contenu et les extensions
   const editor = useEditor({
     content: content,
     extensions: [
       StarterKit,
       Underline,
       Placeholder.configure({
-        placeholder: 'Enter your text here', // Texte de l'espace réservé
+        placeholder: 'Enter your text here',
         emptyNodeClass:
           'first:before:text-gray-400 first:before:float-left first:before:content-[attr(data-placeholder)] first:before:pointer-events-none',
       }),
       TextAlign.configure({
-        types: ['heading', 'paragraph'], // Types de nœuds auxquels appliquer l'alignement du texte
+        types: ['heading', 'paragraph'],
       }),
     ],
     onUpdate: ({ editor }) => {
-      const currentHeight =
-        document.querySelector('.fixed-editor').scrollHeight;
+      const editorElement = document.querySelector('.fixed-editor');
+      const currentHeight = editorElement.scrollHeight;
+
+      const { from, to } = editor.state.selection;
       const text = editor.getJSON();
-      console.log(currentHeight, text);
+
+      if (currentHeight > maxHeight) {
+        console.warn(
+          'La hauteur maximale est atteinte. Le contenu ne peut pas être ajouté.'
+        );
+
+        const lastNode = text.content[text.content.length - 1];
+        if (lastNode && lastNode.type === 'paragraph') {
+          if (lastNode.content) {
+            const lastTextNode = lastNode.content[lastNode.content.length - 1];
+            if (lastTextNode && lastTextNode.type === 'text') {
+              lastTextNode.text = lastTextNode.text.slice(0, maxCharsPerLine);
+            }
+          } else {
+            text.content.pop();
+          }
+        }
+
+        editor.commands.setContent(text);
+        return;
+      }
+      const newContent = text.content
+        .map((node) => {
+          if (node.type === 'paragraph' && node.content) {
+            const newParagraphs = [];
+            const textAlign = node.attrs?.textAlign || null;
+
+            node.content.forEach((textNode) => {
+              if (textNode.type === 'text') {
+                let text = textNode.text;
+                while (text.length > maxCharsPerLine) {
+                  const newTextNode = {
+                    ...textNode,
+                    text: text.slice(0, maxCharsPerLine),
+                  };
+                  newParagraphs.push({
+                    type: 'paragraph',
+                    attrs: { textAlign },
+                    content: [newTextNode],
+                  });
+                  text = text.slice(maxCharsPerLine);
+                }
+                if (text.length > 0) {
+                  const remainingTextNode = {
+                    ...textNode,
+                    text: text,
+                  };
+                  newParagraphs.push({
+                    type: 'paragraph',
+                    attrs: { textAlign },
+                    content: [remainingTextNode],
+                  });
+                }
+              }
+            });
+            return newParagraphs;
+          }
+          return [node];
+        })
+        .flat();
+
+      const newDoc = {
+        type: 'doc',
+        content: newContent,
+      };
+      // Restaurer la position du curseur si il n'y a pas 5 caractères
+
+      editor.commands.setContent(newDoc);
+      const data = { id: 1, value: JSON.stringify(newDoc) };
+      updateData(data);
+      if (
+        text.content[text.content.length - 1].content[0].text.length <=
+        maxCharsPerLine
+      ) {
+        editor.view.dispatch(
+          editor.state.tr.setSelection(
+            editor.state.selection.constructor.create(
+              editor.state.doc,
+              from,
+              to
+            )
+          )
+        );
+      }
     },
   });
 
-  // Rendu du composant MenuBar et de l'éditeur de contenu
   return (
     <>
       <MenuBar editor={editor} />
