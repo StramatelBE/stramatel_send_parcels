@@ -6,6 +6,8 @@ import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import AutoDateExtension from "../extensions/AutoDateExtension";
 import AutoTimeExtension from "../extensions/AutoTimeExtension";
+import TextSizeExtension from "../extensions/TextSizeExtension";
+import TextStyle from "@tiptap/extension-text-style";
 
 function EditorDataComponent() {
   const { socketData } = useSocketData();
@@ -24,11 +26,14 @@ function EditorDataComponent() {
     extensions: [
       StarterKit,
       Underline,
+      TextStyle,
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
       AutoDateExtension,
       AutoTimeExtension,
+      
+      TextSizeExtension,
     ],
   });
 
