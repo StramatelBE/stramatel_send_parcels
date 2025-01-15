@@ -124,18 +124,42 @@ body {
 }
 
 .fixed-editor {
-  font-size: 24px;
-  width: 288px;
-  height: 432px;
+  font-size: 40px;
 
   font-family: 'G552 mono';
 
   overflow-y: auto;
 }
 p.is-editor-empty:first-child::before {
-  color: #adb5bd;
+  color: #d3d7df;
   content: attr(data-placeholder);
   float: left;
   height: 0;
   pointer-events: none;
+  font-size: 16px;
+}
+
+.auto-date-component {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.auto-date-component .label {
+  font-weight: bold;
+}
+
+.auto-time-component {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.auto-time-component .label {
+  font-weight: bold;
+}
+.ProseMirror {
+  margin: 1px;
 }

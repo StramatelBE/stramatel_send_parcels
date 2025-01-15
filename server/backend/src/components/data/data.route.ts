@@ -23,7 +23,6 @@ router.get("/:dataId", authMiddleware, (req, res, next) =>
 router.put(
   "/:dataId",
   authMiddleware,
-  validateDto(UpdateDataDto),
   (req, res, next) => dataController.updateData(req, res, next)
 );
 

@@ -42,6 +42,7 @@ export class DataController {
   };
 
   updateData = async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
     try {
       const dataId: number = parseInt(req.params.dataId);
       const dataDto = req.body;

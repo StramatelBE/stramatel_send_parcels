@@ -1,4 +1,4 @@
-import PollIcon from '@mui/icons-material/Poll';
+import EditIcon from '@mui/icons-material/Edit';
 import { Skeleton } from '@mui/material';
 import Container from '../../../components/ContainerComponents';
 import useLoadingStore from '../../../stores/loadingStore';
@@ -9,7 +9,7 @@ function DataComponents() {
   return (
     <Container
       icon={Icon()}
-      title="Data"
+      title="Text editor"
       content={
         isLoading ? (
           <>
@@ -37,7 +37,7 @@ function DataComponents() {
 }
 
 function Icon() {
-  return <PollIcon sx={{ color: 'primary.light' }} />;
+  return <EditIcon sx={{ color: 'primary.light' }} />;
 }
 
 function Data() {

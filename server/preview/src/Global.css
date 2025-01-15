@@ -1,28 +1,10 @@
 @font-face {
-  font-family: "stratos-bold";
-  src: local("stratos-bold"),
-    url("/fonts/stratos-bold.otf") format("opentype"); /* Chemin ajusté */
-    font-weight: bold;
-    font-style: normal;
+  font-family: "G552 mono";
+  src: local("G552 mono.otf"), url("/fonts/G552 mono.otf") format("opentype"); /* Chemin ajusté */
 }
-@font-face {
-  font-family: "stratos-medium";
-  src: local("stratos-medium"),
-  url("/fonts/stratos-medium.otf") format("opentype"); /* Chemin ajusté */
-    font-weight: normal;
-    font-style: normal;
-}
-@font-face {
-  font-family: "stratos-regular";
-  src: local("stratos-regular"),
-    url("/fonts/stratos-regular.otf") format("opentype"); /* Chemin ajusté */
-    font-weight: normal;
-    font-style: normal;
-}
-
 body,
 #root {
-  font-family: "stratos-regular", sans-serif;
+  font-family: "G552 mono", sans-serif;
   margin: 0;
   background-color: #000000;
   color: rgb(255, 255, 255);
@@ -57,12 +39,12 @@ body,
 
 .header-text {
   font-size: 17px;
-  font-family: "stratos-bold", sans-serif;
-  color: #F1921D;
+  font-family: "G552 mono", sans-serif;
+  color: #f1921d;
 }
 
 .info-section {
-  font-family: "stratos-bold", sans-serif;
+  font-family: "G552 mono", sans-serif;
   height: 100%;
   background-color: #000000;
   padding: 7px 10px;
@@ -74,16 +56,15 @@ body,
 .info-text {
   line-height: 1.2;
   font-size: 21px;
-  font-family: "stratos-bold", sans-serif;
+  font-family: "G552 mono", sans-serif;
   display: flex;
   flex-direction: column;
   color: white;
-  font-weight: bold; 
-
+  font-weight: bold;
 }
 .info-text-light {
   font-size: 14px;
-  font-family: "stratos-regular", sans-serif;
+  font-family: "G552 mono", sans-serif;
 }
 
 .info-value {
@@ -100,13 +81,55 @@ body,
   padding-right: 5px;
 }
 
-.info-value-texte{
+.info-value-texte {
   margin-top: 6px;
-
 }
 
-.info-value-date{
+.info-value-date {
   font-size: 32px;
-  font-family: "stratos-bold";
+  font-family: "G552 mono";
   padding-top: 15px;
+}
+
+.fixed-editor {
+  font-size: 40px;
+  width: 288px;
+  height: 432px;
+
+  font-family: "G552 mono";
+
+  overflow-y: auto;
+}
+p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+p {
+  margin: 0;
+}
+.auto-date-component {
+  display: inline-block;
+  padding: 4px 8px;
+
+  border-radius: 4px;
+}
+
+.auto-date-component .label {
+  font-weight: bold;
+}
+
+.auto-time-component {
+  display: inline-block;
+  padding: 4px 8px;
+
+  border-radius: 4px;
+}
+
+.auto-time-component .label {
+  font-weight: bold;
 }

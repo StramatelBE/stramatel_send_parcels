@@ -1,7 +1,6 @@
-import React from 'react'
 import useSocketData from '../stores/socketDataStore';
 
-function InformationComposant() {
+function InformationComponent() {
   const { socketData } = useSocketData();
   return (
     <div >
@@ -25,4 +24,4 @@ function InformationComposant() {
   )
 }
 
-export default InformationComposant
+export default InformationComponent

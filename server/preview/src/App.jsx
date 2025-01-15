@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
-import useSocketData from "./stores/socketDataStore";
+import DataComponent from "./components/DataComponent";
+import EditorDataComponent from "./components/EditorDataComponent";
+import InformationComponent from "./components/InformationComponent";
+import PlaylistComponent from "./components/PlaylistComponent";
+import TestComponent from "./components/TestComponent";
 import useData from "./hooks/useData";
+import useSocketData from "./stores/socketDataStore";
 import useStandbyStore from "./stores/standbyStore";
-import TestComponents from "./components/TestComponents";
-import DataComposant from "./components/DataComposant";
-import PlaylistComposant from "./components/PlaylistComposant";
-import AccidentComposant from "./components/AccidentComposant";
-import InformationComposant from "./components/InformationComposant";
 
 function App() {
   useData();
@@ -19,11 +18,11 @@ function App() {
         <></>
       ) : (
         <>
-          {socketData?.mode.name === "test" && <TestComponents />}
-          {socketData?.mode.name === "data" && <DataComposant />}
-          {socketData?.mode.name === "playlist" && <PlaylistComposant />}
-          {socketData?.mode.name === "accident" && <AccidentComposant />}
-          {socketData?.mode.name === "information" && <InformationComposant />}
+          {socketData?.mode.name === "textEditor" && <EditorDataComponent />}
+          {socketData?.mode.name === "test" && <TestComponent />}
+          {socketData?.mode.name === "data" && <DataComponent />}
+          {socketData?.mode.name === "playlist" && <PlaylistComponent />}
+          {socketData?.mode.name === "information" && <InformationComponent />}
         </>
       )}
     </>

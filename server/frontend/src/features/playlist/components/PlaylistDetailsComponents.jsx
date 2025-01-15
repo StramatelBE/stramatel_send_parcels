@@ -1,10 +1,11 @@
 import AddIcon from '@mui/icons-material/Add';
-import CloseIcon from '@mui/icons-material/Close';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ClearIcon from '@mui/icons-material/Clear';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import EditIcon from '@mui/icons-material/Edit';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+
+import UploadIcon from '@mui/icons-material/Upload';
 import {
   Box,
   IconButton,
@@ -82,7 +83,16 @@ function PlaylistDetailsContent() {
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="droppable-medias">
         {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef} style={{ maxHeight: 'calc(94vh - 200px)', overflowY: 'scroll', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            style={{
+              maxHeight: 'calc(94vh - 200px)',
+              overflowY: 'scroll',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+          >
             <Table size="big">
               <TableBody>
                 {sortedMedias.map((media, index) => (
@@ -98,19 +108,20 @@ function PlaylistDetailsContent() {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        <TableCell  sx={{padding: '0px'}} align="left">
+                        <TableCell sx={{ padding: '0px' }} align="left">
                           <IconButton>
                             <DragHandleIcon sx={{ color: 'secondary.main' }} />
                           </IconButton>
                         </TableCell>
-                        <TableCell sx={{
-                                maxWidth: '14vh',
-                                maxHeight: '7vh',
-                              }} >
+                        <TableCell
+                          sx={{
+                            maxWidth: '14vh',
+                            maxHeight: '7vh',
+                          }}
+                        >
                           {media.type.split('/')[0] === 'video' ? (
                             <Box
                               sx={{
-
                                 maxWidth: '14vh',
                                 maxHeight: '7vh',
                               }}
@@ -131,10 +142,10 @@ function PlaylistDetailsContent() {
                               src={`${media.path}`}
                             />
                           ) : (
-                            <Typography>{media.type}</Typography>
+                            <Typography>Text editor</Typography>
                           )}
                         </TableCell>
-                        <TableCell align="right"> 
+                        <TableCell align="right">
                           <TextField
                             value={media.duration}
                             onChange={(e) => {
@@ -147,11 +158,15 @@ function PlaylistDetailsContent() {
                             inputProps={{ min: 0, max: 999 }}
                             style={{ width: '100%', maxWidth: '90px' }}
                           />
-                          <Typography variant="caption" display="block" gutterBottom>
+                          <Typography
+                            variant="caption"
+                            display="block"
+                            gutterBottom
+                          >
                             secondes
                           </Typography>
                         </TableCell>
-                        <TableCell sx={{padding: '0px'}} align="right">
+                        <TableCell sx={{ padding: '0px' }} align="right">
                           <IconButton
                             onClick={(e) => {
                               e.stopPropagation();
@@ -216,6 +231,7 @@ function AddMedia() {
             handleClose();
           }}
         >
+          <UploadIcon sx={{ color: 'secondary.main', mr: 1 }} />
           Upload
         </MenuItem>
         {/*  <MenuItem
@@ -228,20 +244,21 @@ function AddMedia() {
         </MenuItem> */}
         <MenuItem
           onClick={() => {
-            handleAddData('accident', selectedPlaylist.id);
+            handleAddData('textEditor', selectedPlaylist.id);
             handleClose();
           }}
         >
-          Accident
+          <EditIcon sx={{ color: 'secondary.main', mr: 1 }} />
+          Text Editor
         </MenuItem>
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             handleAddData('information', selectedPlaylist.id);
             handleClose();
           }}
         >
           Information
-        </MenuItem>
+        </MenuItem> */}
       </Menu>
       <input
         type="file"

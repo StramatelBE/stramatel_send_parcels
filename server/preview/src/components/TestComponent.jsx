@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
-function TestComponents() {
+function TestComponent() {
   const colors = ["#FF0000", "#00FF00", "#0000FF"];
   const [colorIndex, setColorIndex] = useState(0);
 
@@ -14,15 +14,18 @@ function TestComponents() {
     };
   }, []);
 
-  return (<><div
-    style={{
-      width: `100%`,
-      height: `100%`,
-      backgroundColor: colors[colorIndex] ,
-    }}
-  />test</>
-    
+  return (
+    <>
+      <div
+        style={{
+          width: `100%`,
+          height: `100%`,
+          backgroundColor: colors[colorIndex],
+        }}
+      />
+      test
+    </>
   );
 }
 
-export default TestComponents;
+export default TestComponent;
