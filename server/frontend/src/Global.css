@@ -124,17 +124,7 @@ body {
 }
 
 .fixed-editor {
-<<<<<<< HEAD
-  font-size: 24px;
-  width: 288px;
-  height: 432px;
-  overflow: hidden;
-  scrollbar-width: none;
-=======
->>>>>>> cff7682609d68c0709be761a5813c461c68bf8be
   font-family: 'G552 mono';
-
-  overflow-y: auto;
 }
 p.is-editor-empty:first-child::before {
   color: #d3d7df;
@@ -167,4 +157,11 @@ p.is-editor-empty:first-child::before {
 }
 .ProseMirror {
   margin: 1px;
+}
+
+.tiptap-text-container {
+  max-width: 288px;
+  min-width: 288px; /* Adjust this value to control the number of characters per line */
+  margin: 0 auto;
+  font-size: 32px;
 }
