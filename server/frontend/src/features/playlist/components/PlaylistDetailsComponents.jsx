@@ -4,6 +4,8 @@ import ClearIcon from '@mui/icons-material/Clear';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import EditIcon from '@mui/icons-material/Edit';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+
+import UploadIcon from '@mui/icons-material/Upload';
 import {
   Box,
   IconButton,
@@ -144,7 +146,7 @@ function PlaylistDetailsContent() {
                               src={`${media.path}`}
                             />
                           ) : (
-                            <Typography>{media.type}</Typography>
+                            <Typography>Text editor</Typography>
                           )}
                         </TableCell>
                         <TableCell align="right">
@@ -233,6 +235,7 @@ function AddMedia() {
             handleClose();
           }}
         >
+          <UploadIcon sx={{ color: 'secondary.main', mr: 1 }} />
           Upload
         </MenuItem>
         {/*  <MenuItem
@@ -245,20 +248,21 @@ function AddMedia() {
         </MenuItem> */}
         <MenuItem
           onClick={() => {
-            handleAddData('accident', selectedPlaylist.id);
+            handleAddData('textEditor', selectedPlaylist.id);
             handleClose();
           }}
         >
-          Accident
+          <EditIcon sx={{ color: 'secondary.main', mr: 1 }} />
+          Text Editor
         </MenuItem>
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             handleAddData('information', selectedPlaylist.id);
             handleClose();
           }}
         >
           Information
-        </MenuItem>
+        </MenuItem> */}
       </Menu>
       <input
         type="file"

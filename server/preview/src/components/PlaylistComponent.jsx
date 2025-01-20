@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import useSocketData from "../stores/socketDataStore";
-import AccidentComposant from "./AccidentComposant";
-import InformationComposant from "./InformationComposant";
+import InformationComponent from "./InformationComponent";
+import EditorDataComponent from "./EditorDataComponent";
 
-function PlaylistComposant() {
+function PlaylistComponent() {
   const { socketData } = useSocketData();
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const intervalRef = useRef(null);
 
   // Trier les médias en fonction de leur position
-  const sortedMedias = socketData.playlist.medias.sort((a, b) => a.position - b.position);
+  const sortedMedias = socketData.playlist.medias.sort(
+    (a, b) => a.position - b.position
+  );
 
   useEffect(() => {
     if (sortedMedias.length === 0) return;
@@ -24,7 +26,9 @@ function PlaylistComposant() {
     }
 
     intervalRef.current = setInterval(() => {
-      setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % sortedMedias.length);
+      setCurrentMediaIndex(
+        (prevIndex) => (prevIndex + 1) % sortedMedias.length
+      );
     }, duration);
 
     return () => clearInterval(intervalRef.current);
@@ -36,7 +40,12 @@ function PlaylistComposant() {
   const mediaPath = `${process.env.FRONT_URL}${currentMedia?.path}`;
 
   return (
-    <div style={{ height: `${process.env.PREVIEW_HEIGHT}px`, width: `${process.env.PREVIEW_WIDTH}px` }}>
+    <div
+      style={{
+        height: `${process.env.PREVIEW_HEIGHT}px`,
+        width: `${process.env.PREVIEW_WIDTH}px`,
+      }}
+    >
       {currentMedia?.type === "video" ? (
         <video
           className="medias"
@@ -62,13 +71,13 @@ function PlaylistComposant() {
           }
           alt={currentMedia?.original_file_name}
         />
-      ) : currentMedia?.type === "accident" ? (
-        <AccidentComposant />
       ) : currentMedia?.type === "information" ? (
-        <InformationComposant />
+        <InformationComponent />
+      ) : currentMedia?.type === "textEditor" ? (
+        <EditorDataComponent />
       ) : null}
     </div>
   );
 }
 
-export default PlaylistComposant;
+export default PlaylistComponent;
