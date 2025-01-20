@@ -1,9 +1,8 @@
 import AddIcon from '@mui/icons-material/Add';
-import CloseIcon from '@mui/icons-material/Close';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ClearIcon from '@mui/icons-material/Clear';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import EditIcon from '@mui/icons-material/Edit';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import {
   Box,
@@ -18,6 +17,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import Container from '../../../components/ContainerComponents';
@@ -57,6 +57,9 @@ function PlaylistDetailsTittle({ setOpen }) {
     </Stack>
   );
 }
+PlaylistDetailsTittle.propTypes = {
+  setOpen: PropTypes.func.isRequired,
+};
 
 function PlaylistDetailsContent() {
   const { selectedPlaylist } = selectedPlaylistStore();
@@ -82,7 +85,16 @@ function PlaylistDetailsContent() {
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="droppable-medias">
         {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef} style={{ maxHeight: 'calc(94vh - 200px)', overflowY: 'scroll', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            style={{
+              maxHeight: 'calc(94vh - 200px)',
+              overflowY: 'scroll',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+          >
             <Table size="big">
               <TableBody>
                 {sortedMedias.map((media, index) => (
@@ -98,19 +110,20 @@ function PlaylistDetailsContent() {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        <TableCell  sx={{padding: '0px'}} align="left">
+                        <TableCell sx={{ padding: '0px' }} align="left">
                           <IconButton>
                             <DragHandleIcon sx={{ color: 'secondary.main' }} />
                           </IconButton>
                         </TableCell>
-                        <TableCell sx={{
-                                maxWidth: '14vh',
-                                maxHeight: '7vh',
-                              }} >
+                        <TableCell
+                          sx={{
+                            maxWidth: '14vh',
+                            maxHeight: '7vh',
+                          }}
+                        >
                           {media.type.split('/')[0] === 'video' ? (
                             <Box
                               sx={{
-
                                 maxWidth: '14vh',
                                 maxHeight: '7vh',
                               }}
@@ -134,7 +147,7 @@ function PlaylistDetailsContent() {
                             <Typography>{media.type}</Typography>
                           )}
                         </TableCell>
-                        <TableCell align="right"> 
+                        <TableCell align="right">
                           <TextField
                             value={media.duration}
                             onChange={(e) => {
@@ -147,11 +160,15 @@ function PlaylistDetailsContent() {
                             inputProps={{ min: 0, max: 999 }}
                             style={{ width: '100%', maxWidth: '90px' }}
                           />
-                          <Typography variant="caption" display="block" gutterBottom>
+                          <Typography
+                            variant="caption"
+                            display="block"
+                            gutterBottom
+                          >
                             secondes
                           </Typography>
                         </TableCell>
-                        <TableCell sx={{padding: '0px'}} align="right">
+                        <TableCell sx={{ padding: '0px' }} align="right">
                           <IconButton
                             onClick={(e) => {
                               e.stopPropagation();

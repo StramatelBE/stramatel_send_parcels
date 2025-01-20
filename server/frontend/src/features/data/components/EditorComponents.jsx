@@ -1,3 +1,6 @@
+import React from 'react';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EditIcon from '@mui/icons-material/Edit';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
 import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
@@ -5,13 +8,15 @@ import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
-import { IconButton } from '@mui/material';
+import PollIcon from '@mui/icons-material/Poll';
+import { IconButton, Stack, Typography } from '@mui/material';
 import Placeholder from '@tiptap/extension-placeholder';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import PropTypes from 'prop-types';
+import Container from '../../../components/ContainerComponents';
 import '../../../Global.css';
 import useData from '../hooks/useData';
 
@@ -41,7 +46,6 @@ const MenuBar = ({ editor }) => {
         >
           <FormatStrikethroughIcon />
         </IconButton>
-
         <IconButton
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           color={editor.isActive('underline') ? 'primary' : 'default'}
@@ -66,13 +70,6 @@ const MenuBar = ({ editor }) => {
         >
           <FormatAlignRightIcon />
         </IconButton>
-
-        {/* <button onClick={() => editor.chain().focus().undo().run()}>
-          Undo
-        </button>
-        <button onClick={() => editor.chain().focus().redo().run()}>
-          Redo
-        </button> */}
       </div>
     </div>
   );
@@ -82,14 +79,54 @@ MenuBar.propTypes = {
   editor: PropTypes.object.isRequired,
 };
 
-export default function EditorComponents({ data }) {
-  const { updateData } = useData();
+function EditorComponents() {
+  return (
+    <>
+      <Container
+        icon={<DataIcon />}
+        title={<DataDetailsTittle />}
+        content={ContentEditor()}
+        headerLeft={DataDetailsClose()}
+      />
+    </>
+  );
+}
 
-  const maxCharsPerLine = 5; // Limite de caractères par ligne
-  const maxHeight = 432; // Limite de hauteur en pixels
+function DataIcon() {
+  return <PollIcon sx={{ color: 'primary.light' }} />;
+}
+
+function DataDetailsTittle() {
+  const { selectedData } = useData();
+  return (
+    <Stack direction="row" alignItems="center" spacing={0}>
+      <Typography variant="h6">{selectedData.name}</Typography>
+      <IconButton>
+        <EditIcon sx={{ color: 'secondary.main' }} />
+      </IconButton>
+    </Stack>
+  );
+}
+
+function DataDetailsClose() {
+  const { clearSelectedData } = useData();
+  return (
+    <IconButton
+      className="headerButton"
+      onClick={() => {
+        clearSelectedData(null);
+      }}
+    >
+      <ArrowBackIcon sx={{ color: 'secondary.main' }} />
+    </IconButton>
+  );
+}
+
+function ContentEditor() {
+  const { selectedData } = useData();
   let content;
-  if (data?.length > 0) {
-    content = JSON.parse(data?.[0]?.value); // Conversion des données JSON en contenu
+  if (selectedData?.length > 0) {
+    content = selectedData?.[0]?.value; // Conversion des données JSON en contenu
   }
 
   // Initialisation de l'éditeur avec le contenu et les extensions
@@ -108,10 +145,17 @@ export default function EditorComponents({ data }) {
       }),
     ],
     onUpdate: ({ editor }) => {
-      const currentHeight =
-        document.querySelector('.fixed-editor').scrollHeight;
-      const text = editor.getJSON();
-      console.log(currentHeight, text);
+      const editorHeight = editor.view.dom.clientHeight;
+
+      const maxHeight = parseInt(process.env.PREVIEW_HEIGHT);
+      console.log('Editor height:', editorHeight, 'Max height:', maxHeight);
+      if (editorHeight >= maxHeight) {
+        console.log('Event prevented');
+
+        console.warn('Taille maximale atteinte :', maxHeight);
+        return true;
+      }
+      return false;
     },
   });
 
@@ -119,13 +163,20 @@ export default function EditorComponents({ data }) {
   return (
     <>
       <MenuBar editor={editor} />
-      <EditorContent
-        editor={editor}
-        className="fixed-editor max-width-editor"
-      />
+      <div
+        style={{
+          maxHeight: `${process.env.PREVIEW_HEIGHT}px`,
+          overflow: 'hidden',
+          scrollbarWidth: 'none',
+        }}
+      >
+        <EditorContent className="fixed-editor" editor={editor} />
+      </div>
     </>
   );
 }
+
+export default EditorComponents;
 
 EditorComponents.propTypes = {
   data: PropTypes.object.isRequired,

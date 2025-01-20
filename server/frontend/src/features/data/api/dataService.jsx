@@ -30,6 +30,21 @@ class DataService {
 
     return await response.json();
   }
+
+  static async addData(name, value, type) {
+    await fetchWithAuthorization(`${API_URL}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, value, type }),
+    });
+  }
+  static async deleteData(id) {
+    await fetchWithAuthorization(`${API_URL}${id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export default DataService;

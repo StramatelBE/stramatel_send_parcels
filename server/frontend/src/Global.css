@@ -127,7 +127,8 @@ body {
   font-size: 24px;
   width: 288px;
   height: 432px;
-
+  overflow: hidden;
+  scrollbar-width: none;
   font-family: 'G552 mono';
 
   overflow-y: auto;
