@@ -162,4 +162,6 @@ p.is-editor-empty:first-child::before {
   min-width: 288px; /* Adjust this value to control the number of characters per line */
   margin: 0 auto;
   font-size: 32px;
+
+  color: #ffffff;
 }

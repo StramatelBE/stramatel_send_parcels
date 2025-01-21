@@ -1,4 +1,6 @@
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import EditIcon from '@mui/icons-material/Edit';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
@@ -8,10 +10,7 @@ import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
 import PollIcon from '@mui/icons-material/Poll';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
-import TextStyle from '@tiptap/extension-text-style';
 import {
   FormControl,
   IconButton,
@@ -22,6 +21,7 @@ import {
 } from '@mui/material';
 import Placeholder from '@tiptap/extension-placeholder';
 import TextAlign from '@tiptap/extension-text-align';
+import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -29,36 +29,66 @@ import PropTypes from 'prop-types';
 import Container from '../../../components/ContainerComponents';
 import '../../../Global.css';
 
-import useData from '../hooks/useData';
-import AutoTimeExtension from '../extensions/AutoTimeExtension';
+import PaletteIcon from '@mui/icons-material/Palette';
+import { useEffect, useRef, useState } from 'react';
 import AutoDateExtension from '../extensions/AutoDateExtension';
+import AutoTimeExtension from '../extensions/AutoTimeExtension';
+import BackgroundExtension from '../extensions/BackgroundExtension';
 import TextColorExtension from '../extensions/TextColorExtension';
 import TextSizeExtension from '../extensions/TextSizeExtension';
-import PaletteIcon from '@mui/icons-material/Palette';
-import { SketchPicker } from 'react-color';
-import { useState } from 'react';
-import TextBackgroundExtension from '../extensions/TextBackgroundExtension';
+import useData from '../hooks/useData';
 
 const MenuBar = ({
   editor,
+  color,
+  setColor,
   editorBackgroundColor,
   setEditorBackgroundColor,
 }) => {
-  const [color, setColor] = useState('#000000');
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const [backgroundColor, setBackgroundColor] = useState('#000000');
-  const [showBackgroundColorPicker, setShowBackgroundColorPicker] =
-    useState(false);
-  const [showEditorBackgroundColorPicker, setShowEditorBackgroundColorPicker] =
-    useState(false);
+  const colorTextInputRef = useRef(null);
+  const colorBackgroundInputRef = useRef(null);
+  const { selectedData, updateData } = useData();
+  const updateTimer = useRef(null);
 
+  const triggerUpdate = (data) => {
+    // Si un timer existe déjà, l'annuler
+    if (updateTimer.current) {
+      clearTimeout(updateTimer.current);
+    }
+
+    // Démarrer un nouveau timer
+    updateTimer.current = setTimeout(() => {
+      updateData(data); // Envoyer les données après le délai
+      updateTimer.current = null; // Réinitialiser le timer après l'envoi
+    }, 2000); // Attendre 2 secondes après la dernière interaction
+  };
+
+  const handleTextColorChange = (event) => {
+    const newColor = event.target.value;
+    setColor(newColor);
+    editor.chain().focus().setTextColor(newColor).run();
+    const jsonData = JSON.parse(selectedData.value);
+    jsonData.attrs.textColor = newColor;
+    const newEditorData = { ...selectedData, value: JSON.stringify(jsonData) };
+    triggerUpdate(newEditorData);
+  };
+  const showColorPickerInput = (ref) => {
+    if (ref.current) {
+      ref.current.click(); // Simuler un clic sur l'input
+    }
+  };
   if (!editor) {
     return null;
   }
-  const handleColorChange = (newColor) => {
-    setColor(newColor.hex);
-    editor.chain().focus().setTextColor(newColor.hex).run();
+  const handleBackgroundColorChange = (event) => {
+    setEditorBackgroundColor(event.target.value);
+    editor.commands.setBackground(event.target.value);
+    const jsonData = JSON.parse(selectedData.value);
+    jsonData.attrs.backgroundColor = event.target.value;
+    const newEditorData = { ...selectedData, value: JSON.stringify(jsonData) };
+    triggerUpdate(newEditorData);
   };
+
   return (
     <div className="control-group">
       <div className="button-group">
@@ -147,64 +177,43 @@ const MenuBar = ({
             px
           </Typography>
         </FormControl>
-        <IconButton onClick={() => setShowColorPicker(!showColorPicker)}>
-          <PaletteIcon
-            sx={{
-              color: editor.getAttributes('textStyle').textColor || 'black',
+        <IconButton
+          onClick={() => showColorPickerInput(colorTextInputRef)}
+          color="default"
+        >
+          <PaletteIcon sx={{ color: color }} />
+        </IconButton>
+        <input
+          ref={colorTextInputRef}
+          type="color"
+          value={color}
+          onChange={handleTextColorChange}
+          style={{
+            position: 'absolute',
+
+            opacity: 0,
+            pointerEvents: 'none',
+          }}
+        />
+
+        <IconButton
+          onClick={() => showColorPickerInput(colorBackgroundInputRef)}
+        >
+          <input
+            ref={colorBackgroundInputRef}
+            type="color"
+            value={editorBackgroundColor}
+            onChange={handleBackgroundColorChange}
+            style={{
+              position: 'absolute',
+
+              opacity: 0,
+              pointerEvents: 'none',
             }}
           />
-        </IconButton>
-        {showColorPicker && (
-          <div style={{ margin: '10px 0', position: 'absolute', zIndex: 1000 }}>
-            <SketchPicker
-              color={color}
-              onChangeComplete={(newColor) => {
-                handleColorChange(newColor);
-                editor.chain().focus().setTextColor(newColor.hex).run();
-              }}
-            />
-          </div>
-        )}
-        <IconButton
-          onClick={() =>
-            setShowBackgroundColorPicker(!showBackgroundColorPicker)
-          }
-        >
-          <PaletteIcon
-            sx={{
-              color:
-                editor.getAttributes('textStyle').textBackground || 'black',
-            }}
-          />
-        </IconButton>
-        {showBackgroundColorPicker && (
-          <div style={{ margin: '10px 0', position: 'absolute', zIndex: 1000 }}>
-            <SketchPicker
-              color={backgroundColor}
-              onChangeComplete={(newColor) => {
-                setBackgroundColor(newColor.hex);
-                editor.chain().focus().setTextBackground(newColor.hex).run();
-              }}
-            />
-          </div>
-        )}
-        <IconButton
-          onClick={() =>
-            setShowEditorBackgroundColorPicker(!showEditorBackgroundColorPicker)
-          }
-        >
           <PaletteIcon sx={{ color: editorBackgroundColor }} />
         </IconButton>
-        {showEditorBackgroundColorPicker && (
-          <div style={{ margin: '10px 0', position: 'absolute', zIndex: 1000 }}>
-            <SketchPicker
-              color={editorBackgroundColor}
-              onChangeComplete={(newColor) => {
-                setEditorBackgroundColor(newColor.hex);
-              }}
-            />
-          </div>
-        )}
+
         <FormControl size="small">
           <Select
             variant="outlined"
@@ -266,6 +275,8 @@ const MenuBar = ({
           <AccessTimeIcon />
         </IconButton>
       </div>
+
+      <div></div>
     </div>
   );
 };
@@ -274,6 +285,8 @@ MenuBar.propTypes = {
   editor: PropTypes.object.isRequired,
   editorBackgroundColor: PropTypes.string.isRequired,
   setEditorBackgroundColor: PropTypes.func.isRequired,
+  color: PropTypes.string.isRequired,
+  setColor: PropTypes.func.isRequired,
 };
 
 function EditorComponents() {
@@ -297,7 +310,7 @@ function DataDetailsTittle() {
   const { selectedData } = useData();
   return (
     <Stack direction="row" alignItems="center" spacing={0}>
-      <Typography variant="h6">{selectedData.name}</Typography>
+      <Typography variant="h6">{selectedData.name || ''}</Typography>
       <IconButton>
         <EditIcon sx={{ color: 'secondary.main' }} />
       </IconButton>
@@ -320,13 +333,13 @@ function DataDetailsClose() {
 }
 
 function ContentEditor() {
-  const { selectedData } = useData();
+  const { selectedData, updateData } = useData();
   let content;
-  if (selectedData?.length > 0) {
-    content = selectedData?.[0]?.value; // Conversion des données JSON en contenu
+
+  if (selectedData?.value.length > 0) {
+    content = JSON.parse(selectedData?.value); // Conversion des données JSON en contenu
   }
 
-  // Initialisation de l'éditeur avec le contenu et les extensions
   const editor = useEditor({
     content: content,
     extensions: [
@@ -334,24 +347,42 @@ function ContentEditor() {
       Underline,
       TextStyle,
       Placeholder.configure({
-        placeholder: 'Enter your text here', // Texte de l'espace réservé
-        emptyNodeClass:
-          'first:before:text-gray-400 first:before:float-left first:before:content-[attr(data-placeholder)] first:before:pointer-events-none',
+        placeholder: 'Enter your text here',
       }),
       TextAlign.configure({
-        types: ['heading', 'paragraph'], // Types de nœuds auxquels appliquer l'alignement du texte
+        types: ['heading', 'paragraph'],
       }),
       AutoDateExtension,
       AutoTimeExtension,
       TextSizeExtension.configure({
         defaultSize: '32px',
       }),
-      TextColorExtension,
-      TextBackgroundExtension,
+      TextColorExtension.configure({
+        defaultColor: '#ffffff',
+      }),
+      BackgroundExtension.configure({
+        defaultBackgroundColor: '#000000',
+      }),
     ],
+    onUpdate: ({ editor }) => {
+      console.log(editor.getJSON());
+
+      const data = { ...selectedData, value: JSON.stringify(editor.getJSON()) };
+      updateData(data);
+    },
   });
 
-  const [editorBackgroundColor, setEditorBackgroundColor] = useState('#ffffff');
+  const [color, setColor] = useState('#ffffff');
+  const [editorBackgroundColor, setEditorBackgroundColor] = useState(
+    content?.attrs?.backgroundColor || '#000000'
+  );
+
+  // Utilisez un effet pour appliquer la couleur de fond
+  useEffect(() => {
+    if (editor) {
+      editor.commands.setBackground(editorBackgroundColor); // Appliquer la couleur de fond
+    }
+  }, [editor, editorBackgroundColor]); // Dépendance sur editorBackgroundColor
 
   // Rendu du composant MenuBar et de l'éditeur de contenu
   return (
@@ -360,6 +391,8 @@ function ContentEditor() {
         editor={editor}
         editorBackgroundColor={editorBackgroundColor}
         setEditorBackgroundColor={setEditorBackgroundColor}
+        color={color}
+        setColor={setColor}
       />
       <div
         className="tiptap-text-container"
@@ -367,7 +400,6 @@ function ContentEditor() {
           maxHeight: `${process.env.PREVIEW_HEIGHT}px`,
           overflow: 'hidden',
           scrollbarWidth: 'none',
-          backgroundColor: editorBackgroundColor,
         }}
       >
         <EditorContent className="fixed-editor" editor={editor} />
@@ -379,5 +411,5 @@ function ContentEditor() {
 export default EditorComponents;
 
 EditorComponents.propTypes = {
-  data: PropTypes.object.isRequired,
+  data: PropTypes.object,
 };

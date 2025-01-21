@@ -15,7 +15,7 @@ export default Extension.create({
         types: this.options.types,
         attributes: {
           textColor: {
-            default: null,
+            default: '#ffffff',
             parseHTML: element => element.style.color || null,
             renderHTML: attributes => {
               if (!attributes.textColor) {

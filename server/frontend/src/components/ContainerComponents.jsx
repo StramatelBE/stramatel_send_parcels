@@ -31,7 +31,7 @@ function Container({ icon, title, content, headerRight, headerLeft }) {
 
 Container.propTypes = {
   icon: PropTypes.node.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.node.isRequired,
   content: PropTypes.node.isRequired,
   headerRight: PropTypes.node,
   headerLeft: PropTypes.node,

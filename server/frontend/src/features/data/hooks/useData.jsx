@@ -17,6 +17,7 @@ function useData() {
 
   const updateData = useCallback(
     async (newData) => {
+      console.log('newData', newData);
       await DataService.updateData(newData);
       const updatedData = data.map((item) =>
         item.id === newData.id ? { ...item, ...newData } : item

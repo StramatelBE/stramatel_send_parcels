@@ -6,7 +6,6 @@ const dataStore = create((set) => ({
     set({ data });
   },
   setSelectedData: (data) => {
-    console.log('data', data);
     set({ selectedData: data });
   },
 }));
