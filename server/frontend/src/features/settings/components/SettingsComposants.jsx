@@ -1,3 +1,4 @@
+import Brightness4Icon from '@mui/icons-material/Brightness4';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import DateRangeIcon from '@mui/icons-material/DateRange';
@@ -17,6 +18,7 @@ import {
   Switch,
   Typography,
 } from '@mui/material';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import Container from '../../../components/ContainerComponents';
@@ -26,7 +28,6 @@ import modeStore from '../../playlist/stores/modeStore';
 import useSettings from '../hooks/useSettings';
 import settingsStore from '../stores/settingsStore';
 import ChangePasswordDialog from './dialogs/ChangePasswordDialog';
-import { debounce } from 'lodash';
 
 function SettingsComposants({ loading }) {
   const [ChangePasswordDialogOpen, setChangePasswordDialogOpen] =
@@ -217,6 +218,37 @@ function Settings({ setChangePasswordDialogOpen }) {
             >
               Changer le mot de passe
             </Button>
+          </Stack>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={3}
+          >
+            <Stack spacing={3} direction="row" alignItems="center">
+              <IconButton disabled>
+                <Brightness4Icon sx={{ color: 'text.secondary' }} />
+              </IconButton>
+              <Typography variant="h8" sx={{ color: 'text.primary' }}>
+                Brightness
+              </Typography>
+            </Stack>
+            <Slider
+              color="secondary"
+              value={settings.brightness}
+              onChange={(e) =>
+                updateSetting(settings.id, {
+                  ...settings,
+                  brightness: e.target.value,
+                })
+              }
+              aria-labelledby="brightness-slider"
+              min={0}
+              max={10}
+              step={1}
+              valueLabelDisplay="auto"
+              sx={{ width: 150 }}
+            />
           </Stack>
           <Stack
             direction="row"

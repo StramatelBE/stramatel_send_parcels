@@ -82,13 +82,13 @@ function Data() {
               hover
               key={data.id}
               style={{ position: 'relative' }}
-              onClick={() => setSelectedData(data)}
             >
-              <TableCell style={{ padding: '0 16px' }}>{data.name}</TableCell>
               <TableCell
-                style={{ width: 'auto', padding: '16px 0px' }}
-                align="right"
-              ></TableCell>
+                onClick={() => setSelectedData(data)}
+                style={{ padding: '0 16px' }}
+              >
+                {data.name}
+              </TableCell>
               <TableCell
                 style={{ width: 'auto', padding: '16px 0px' }}
                 align="right"

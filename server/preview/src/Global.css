@@ -6,7 +6,7 @@ body,
 #root {
   font-family: "G552 mono", sans-serif;
   margin: 0;
-  /*  background-color: #000000; */
+  background-color: #000000;
   color: rgb(255, 255, 255);
   overflow: hidden;
   width: 100%;

@@ -1,4 +1,4 @@
-import { IsBoolean, IsString, IsNotEmpty } from "class-validator";
+import { IsBoolean, IsString, IsNotEmpty, IsNumber } from "class-validator";
 
 export class SettingsDto {
   @IsBoolean()
@@ -24,4 +24,8 @@ export class SettingsDto {
   @IsString()
   @IsNotEmpty()
   theme: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  brightness: number;
 }

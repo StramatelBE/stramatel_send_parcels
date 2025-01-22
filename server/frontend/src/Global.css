@@ -133,6 +133,11 @@ body {
 
   overflow: hidden !important;
 }
+.ProseMirror {
+  outline: none;
+  height: 100%;
+}
+
 p.is-editor-empty:first-child::before {
   color: #d3d7df;
   content: attr(data-placeholder);

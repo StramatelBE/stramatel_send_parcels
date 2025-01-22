@@ -11,19 +11,25 @@ function App() {
   useData();
   const { socketData } = useSocketData();
   const { isStandby } = useStandbyStore();
-
+  console.log(socketData?.settings?.brightness);
   return (
     <>
       {isStandby ? (
         <></>
       ) : (
-        <>
+        <div
+          style={{
+            opacity: socketData?.settings?.brightness
+              ? socketData.settings.brightness / 10
+              : 1,
+          }}
+        >
           {socketData?.mode.name === "textEditor" && <EditorDataComponent />}
           {socketData?.mode.name === "test" && <TestComponent />}
           {socketData?.mode.name === "data" && <DataComponent />}
           {socketData?.mode.name === "playlist" && <PlaylistComponent />}
           {socketData?.mode.name === "information" && <InformationComponent />}
-        </>
+        </div>
       )}
     </>
   );

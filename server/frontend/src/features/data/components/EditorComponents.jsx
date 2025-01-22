@@ -370,7 +370,6 @@ function ContentEditor() {
       data.value.attrs.backgroundColor = editorBackgroundColor;
       data.value = JSON.stringify(data.value);
       updateData(data);
-      
     },
   });
 
