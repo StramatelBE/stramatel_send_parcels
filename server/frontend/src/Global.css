@@ -124,7 +124,14 @@ body {
 }
 
 .fixed-editor {
+  overflow: hidden;
+  width: 288px;
+  height: 432px;
+  font-size: 32px;
+
   font-family: 'G552 mono';
+
+  overflow: hidden !important;
 }
 p.is-editor-empty:first-child::before {
   color: #d3d7df;
@@ -158,10 +165,7 @@ p.is-editor-empty:first-child::before {
 }
 
 .tiptap-text-container {
-  max-width: 288px;
-  min-width: 288px; /* Adjust this value to control the number of characters per line */
   margin: 0 auto;
-  font-size: 32px;
 
   color: #ffffff;
 }

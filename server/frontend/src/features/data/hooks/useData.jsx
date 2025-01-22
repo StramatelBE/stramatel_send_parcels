@@ -18,13 +18,14 @@ function useData() {
   const updateData = useCallback(
     async (newData) => {
       console.log('newData', newData);
+      console.log("selectedData", selectedData);
+      
       await DataService.updateData(newData);
-      const updatedData = data.map((item) =>
-        item.id === newData.id ? { ...item, ...newData } : item
-      );
-      setData(updatedData);
+     
+    
+      setSelectedData(newData);
     },
-    [data, setData]
+    [data, setData, setSelectedData]
   );
 
   const addData = useCallback(

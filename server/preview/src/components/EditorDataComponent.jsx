@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import useSocketData from "../stores/socketDataStore";
@@ -8,28 +8,29 @@ import AutoDateExtension from "../extensions/AutoDateExtension";
 import AutoTimeExtension from "../extensions/AutoTimeExtension";
 import TextSizeExtension from "../extensions/TextSizeExtension";
 import TextStyle from "@tiptap/extension-text-style";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
+import TextColorExtension from "../extensions/TextColorExtension";
+import BackgroundExtension from "../extensions/BackgroundExtension";
 
 function EditorDataComponent({ currentMedia }) {
   const { socketData } = useSocketData();
 
   const content = useMemo(() => {
     if (socketData?.data?.length > 0 && currentMedia?.path) {
-      console.log(parseInt(currentMedia.path));
-      
-
-      // Trouver l'élément dans socketData qui correspond au path de currentMedia
-      const matchedData = socketData.data.find(item => item.id === parseInt(currentMedia.path));
+      const matchedData = socketData.data.find(
+        (item) => item.id === parseInt(currentMedia.path)
+      );
 
       if (matchedData) {
-        console.log('matchedData', matchedData);
         const parsed = JSON.parse(matchedData.value);
         return parsed;
       }
     }
     return ""; // Valeur par défaut si aucun contenu n'est disponible
   }, [socketData, currentMedia]);
-
+  const [editorBackgroundColor, setEditorBackgroundColor] = useState(
+    content?.attrs?.backgroundColor || "#ffffff"
+  );
   const editor = useEditor({
     content: content,
     extensions: [
@@ -41,28 +42,47 @@ function EditorDataComponent({ currentMedia }) {
       }),
       AutoDateExtension,
       AutoTimeExtension,
-      
-      TextSizeExtension,
+      TextSizeExtension.configure({
+        defaultSize: "32px",
+      }),
+      TextColorExtension.configure({
+        defaultColor: "#ffffff",
+      }),
+      BackgroundExtension.configure({
+        defaultBackgroundColor: "#000000",
+      }),
     ],
   });
 
   const previousContent = useRef(content);
+  useEffect(() => {
+    if (editor) {
+      editor.commands.setBackground(editorBackgroundColor);
+    }
+  }, [editor, editorBackgroundColor]);
 
   useEffect(() => {
     if (editor && content && previousContent.current !== content) {
       editor.commands.setContent(content);
       previousContent.current = content;
+      setEditorBackgroundColor(content?.attrs?.backgroundColor);
     }
   }, [content, editor]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {}, 1000);
 
-    return () => clearInterval(interval);
-  }, []);
 
   return (
-    <div>
+    <div
+      className="tiptap-text-container"
+      style={{
+        maxHeight: `${process.env.PREVIEW_HEIGHT}px`,
+        maxWidth: `${process.env.PREVIEW_WIDTH}px`,
+        minWidth: `${process.env.PREVIEW_WIDTH}px`,
+        overflow: "hidden",
+        scrollbarWidth: "none",
+        margin: "0 auto",
+      }}
+    >
       <EditorContent
         className="fixed-editor max-width-editor"
         editor={editor}

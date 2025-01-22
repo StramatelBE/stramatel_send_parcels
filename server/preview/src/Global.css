@@ -6,7 +6,7 @@ body,
 #root {
   font-family: "G552 mono", sans-serif;
   margin: 0;
-  background-color: #000000;
+  /*  background-color: #000000; */
   color: rgb(255, 255, 255);
   overflow: hidden;
   width: 100%;
@@ -46,7 +46,7 @@ body,
 .info-section {
   font-family: "G552 mono", sans-serif;
   height: 100%;
-  background-color: #000000;
+  /*   background-color: #000000; */
   padding: 7px 10px;
   display: flex;
   justify-content: space-between;
@@ -68,7 +68,7 @@ body,
 }
 
 .info-value {
-  background-color: black;
+  /*   background-color: black; */
   height: 35px;
   width: 68px;
   border: 2px solid white;
@@ -91,30 +91,36 @@ body,
   padding-top: 15px;
 }
 
+.editorTextArea {
+  font-family: "G552 mono", monospace;
+}
+.tiptap {
+  :first-child {
+    margin-top: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
 .fixed-editor {
-  font-size: 40px;
   width: 288px;
   height: 432px;
-
+  font-size: 32px;
   font-family: "G552 mono";
-
-  overflow-y: auto;
+  overflow: hidden !important;
 }
 p.is-editor-empty:first-child::before {
-  color: #adb5bd;
+  color: #d3d7df;
   content: attr(data-placeholder);
   float: left;
   height: 0;
-  margin: 0;
   pointer-events: none;
 }
 
-p {
-  margin: 0;
-}
 .auto-date-component {
   display: inline-block;
-  padding: 4px 8px;
 
   border-radius: 4px;
 }
@@ -125,11 +131,19 @@ p {
 
 .auto-time-component {
   display: inline-block;
-  padding: 4px 8px;
 
   border-radius: 4px;
 }
 
 .auto-time-component .label {
   font-weight: bold;
+}
+.ProseMirror {
+  margin: 1px;
+}
+
+.tiptap-text-container {
+  margin: 0 auto;
+
+  color: #ffffff;
 }

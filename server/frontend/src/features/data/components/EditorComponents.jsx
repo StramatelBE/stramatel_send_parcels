@@ -51,16 +51,14 @@ const MenuBar = ({
   const updateTimer = useRef(null);
 
   const triggerUpdate = (data) => {
-    // Si un timer existe déjà, l'annuler
     if (updateTimer.current) {
       clearTimeout(updateTimer.current);
     }
 
-    // Démarrer un nouveau timer
     updateTimer.current = setTimeout(() => {
-      updateData(data); // Envoyer les données après le délai
-      updateTimer.current = null; // Réinitialiser le timer après l'envoi
-    }, 2000); // Attendre 2 secondes après la dernière interaction
+      updateData(data);
+      updateTimer.current = null;
+    }, 2000);
   };
 
   const handleTextColorChange = (event) => {
@@ -181,7 +179,9 @@ const MenuBar = ({
           onClick={() => showColorPickerInput(colorTextInputRef)}
           color="default"
         >
-          <PaletteIcon sx={{ color: color }} />
+          <PaletteIcon
+            sx={{ color: editor.getAttributes('textStyle').textColor }}
+          />
         </IconButton>
         <input
           ref={colorTextInputRef}
@@ -365,10 +365,12 @@ function ContentEditor() {
       }),
     ],
     onUpdate: ({ editor }) => {
-      console.log(editor.getJSON());
+      const data = { ...selectedData, value: editor.getJSON() };
 
-      const data = { ...selectedData, value: JSON.stringify(editor.getJSON()) };
+      data.value.attrs.backgroundColor = editorBackgroundColor;
+      data.value = JSON.stringify(data.value);
       updateData(data);
+      
     },
   });
 
@@ -377,14 +379,12 @@ function ContentEditor() {
     content?.attrs?.backgroundColor || '#000000'
   );
 
-  // Utilisez un effet pour appliquer la couleur de fond
   useEffect(() => {
     if (editor) {
-      editor.commands.setBackground(editorBackgroundColor); // Appliquer la couleur de fond
+      editor.commands.setBackground(editorBackgroundColor);
     }
-  }, [editor, editorBackgroundColor]); // Dépendance sur editorBackgroundColor
+  }, [editor, editorBackgroundColor]);
 
-  // Rendu du composant MenuBar et de l'éditeur de contenu
   return (
     <>
       <MenuBar
@@ -398,6 +398,8 @@ function ContentEditor() {
         className="tiptap-text-container"
         style={{
           maxHeight: `${process.env.PREVIEW_HEIGHT}px`,
+          maxWidth: `${process.env.PREVIEW_WIDTH}px`,
+          minWidth: `${process.env.PREVIEW_WIDTH}px`,
           overflow: 'hidden',
           scrollbarWidth: 'none',
         }}
