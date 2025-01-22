@@ -19,9 +19,10 @@ function App() {
       ) : (
         <div
           style={{
-            opacity: socketData?.settings?.brightness
-              ? socketData.settings.brightness / 10
-              : 1,
+            opacity:
+              socketData?.settings?.brightness === 0
+                ? 0
+                : (socketData?.settings?.brightness || 10) / 10,
           }}
         >
           {socketData?.mode.name === "textEditor" && <EditorDataComponent />}

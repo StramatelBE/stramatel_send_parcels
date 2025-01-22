@@ -152,19 +152,12 @@ p.is-editor-empty:first-child::before {
   border-radius: 4px;
 }
 
-.auto-date-component .label {
-  font-weight: bold;
-}
-
 .auto-time-component {
   display: inline-block;
 
   border-radius: 4px;
 }
 
-.auto-time-component .label {
-  font-weight: bold;
-}
 .ProseMirror {
   margin: 1px;
 }

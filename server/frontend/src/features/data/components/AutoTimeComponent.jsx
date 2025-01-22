@@ -29,7 +29,7 @@ const AutoTimeComponent = (props) => {
 
   return (
     <NodeViewWrapper className="auto-time-component">
-      <span className="label" contentEditable={false}>
+      <span className="label">
         {currentTime.toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit',
