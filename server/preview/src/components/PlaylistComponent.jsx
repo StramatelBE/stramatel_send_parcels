@@ -74,7 +74,7 @@ function PlaylistComponent() {
       ) : currentMedia?.type === "information" ? (
         <InformationComponent />
       ) : currentMedia?.type === "textEditor" ? (
-        <EditorDataComponent />
+        <EditorDataComponent currentMedia={currentMedia} />
       ) : null}
     </div>
   );

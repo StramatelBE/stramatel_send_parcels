@@ -8,18 +8,27 @@ import AutoDateExtension from "../extensions/AutoDateExtension";
 import AutoTimeExtension from "../extensions/AutoTimeExtension";
 import TextSizeExtension from "../extensions/TextSizeExtension";
 import TextStyle from "@tiptap/extension-text-style";
+import PropTypes from 'prop-types';
 
-function EditorDataComponent() {
+function EditorDataComponent({ currentMedia }) {
   const { socketData } = useSocketData();
 
   const content = useMemo(() => {
-    if (socketData?.data?.length > 0) {
-      const parsed = JSON.parse(socketData.data[0].value);
+    if (socketData?.data?.length > 0 && currentMedia?.path) {
+      console.log(parseInt(currentMedia.path));
+      
 
-      return parsed;
+      // Trouver l'élément dans socketData qui correspond au path de currentMedia
+      const matchedData = socketData.data.find(item => item.id === parseInt(currentMedia.path));
+
+      if (matchedData) {
+        console.log('matchedData', matchedData);
+        const parsed = JSON.parse(matchedData.value);
+        return parsed;
+      }
     }
     return ""; // Valeur par défaut si aucun contenu n'est disponible
-  }, [socketData]);
+  }, [socketData, currentMedia]);
 
   const editor = useEditor({
     content: content,
@@ -61,5 +70,9 @@ function EditorDataComponent() {
     </div>
   );
 }
+
+EditorDataComponent.propTypes = {
+  currentMedia: PropTypes.object.isRequired, // Adjust the type as needed
+};
 
 export default EditorDataComponent;

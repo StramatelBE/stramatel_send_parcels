@@ -56,6 +56,20 @@ function useMedia() {
     [selectedPlaylist, setSelectedPlaylist]
   );
 
+  const updateMediaTextEditor = useCallback(
+    async (media) => {
+      await MediaService.updateMedia(media);
+      const updatedPlaylist = {
+        ...selectedPlaylist,
+        medias: selectedPlaylist.medias.map((m) =>
+          m.id === media.id ? media : m
+        ),
+      };
+      setSelectedPlaylist(updatedPlaylist);
+    },
+    [selectedPlaylist, setSelectedPlaylist]
+  );
+
   const handleAddData = useCallback(
     async (type, playlistId) => {
       try {
@@ -72,7 +86,8 @@ function useMedia() {
     deleteMedia,
     uploadMedia,
     updateMedia,
-    handleAddData
+    handleAddData,
+    updateMediaTextEditor,
   };
 }
 

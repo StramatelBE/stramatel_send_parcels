@@ -11,6 +11,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Select,
   Stack,
   Table,
   TableBody,
@@ -27,6 +28,7 @@ import useMedia from '../hooks/useMedias';
 import usePlaylists from '../hooks/usePlaylists';
 import selectedPlaylistStore from '../stores/selectedPlaylistStore';
 import UpdatePlaylistDialog from './dialogs/UpdatePLaylistDialog';
+import useData from '../../data/hooks/useData';
 
 function PlaylistDetailsComponents() {
   const [open, setOpen] = useState(false);
@@ -64,8 +66,9 @@ PlaylistDetailsTittle.propTypes = {
 };
 
 function PlaylistDetailsContent() {
+  const { data } = useData();
   const { selectedPlaylist } = selectedPlaylistStore();
-  const { deleteMedia, updateMedia } = useMedia();
+  const { deleteMedia, updateMedia, updateMediaTextEditor } = useMedia();
   const { updateMediasInPlaylist } = usePlaylists();
 
   const onDragEnd = (result) => {
@@ -82,6 +85,19 @@ function PlaylistDetailsContent() {
   const sortedMedias = selectedPlaylist.medias.sort(
     (a, b) => a.position - b.position
   );
+
+  function updataMediasTextEditor(event, media) {
+    const selectedDataId = String(event.target.value);
+    console.log('media', media, 'selectedDataId', selectedDataId);
+
+    const updatedMedia = {
+      ...media,
+      path: selectedDataId,
+    };
+    console.log('updatedMedia', updatedMedia);
+
+    updateMediaTextEditor(updatedMedia);
+  }
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -146,7 +162,28 @@ function PlaylistDetailsContent() {
                               src={`${media.path}`}
                             />
                           ) : (
-                            <Typography>Text editor</Typography>
+                            <>
+                              <Typography>Text editor</Typography>
+                              <Select
+                                value={
+                                  data.some(
+                                    (item) => item.id === parseInt(media.path)
+                                  )
+                                    ? parseInt(media.path)
+                                    : ''
+                                }
+                                onChange={(e) => {
+                                  updataMediasTextEditor(e, media);
+                                }}
+                                sx={{ width: '100%' }}
+                              >
+                                {data.map((item, index) => (
+                                  <MenuItem key={index} value={item.id}>
+                                    {item.name}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </>
                           )}
                         </TableCell>
                         <TableCell align="right">
