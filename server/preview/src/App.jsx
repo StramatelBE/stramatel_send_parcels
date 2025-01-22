@@ -11,7 +11,7 @@ function App() {
   useData();
   const { socketData } = useSocketData();
   const { isStandby } = useStandbyStore();
-  console.log(socketData?.settings?.brightness);
+
   return (
     <>
       {isStandby ? (
