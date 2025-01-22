@@ -12,6 +12,5 @@ exec(`vite preview --port ${port}`, (err, stdout, stderr) => {
     console.error(`Erreur: ${err}`);
     return;
   }
-  console.log(stdout);
   console.error(stderr);
 });

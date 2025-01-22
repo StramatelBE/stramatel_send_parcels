@@ -30,10 +30,8 @@ export default Extension.create({
 
   addCommands() {
     return {
-      setBackground: (color) => ({ commands }) => {
-        console.log('color', color);
+      setBackground: (color) => () => {
         const editorElement = document.querySelector('.tiptap-text-container');
-        console.log('editorElement', editorElement);
         if (editorElement) {
           editorElement.style.backgroundColor = color;
         }

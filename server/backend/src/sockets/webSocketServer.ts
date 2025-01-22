@@ -1,7 +1,6 @@
 import { Server } from "ws";
 import { PrismaClient } from "@prisma/client";
 
-
 const port: number = parseInt(process.env.WEBSOCKET_PORT) || 8080;
 const prisma = new PrismaClient();
 
@@ -34,11 +33,9 @@ server.on("connection", (ws) => {
         });
         if (playlist) {
           socketData = { ...socketData, playlist: playlist };
-          console.log(socketData.playlist);
         }
       }
-      /* console.log(socketData); */
-      
+
       ws.send(JSON.stringify(socketData));
     } catch (error) {
       console.error("Error fetching modes:", error);
@@ -58,4 +55,3 @@ server.on("connection", (ws) => {
 });
 
 console.log(`WebSocket Server is running on port ${port}`);
-

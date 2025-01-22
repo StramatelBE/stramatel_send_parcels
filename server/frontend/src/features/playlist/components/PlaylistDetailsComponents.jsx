@@ -88,8 +88,6 @@ function PlaylistDetailsContent() {
 
   function updataMediasTextEditor(event, media) {
     const selectedDataId = String(event.target.value);
-    console.log('media', media, 'selectedDataId', selectedDataId);
-
     const updatedMedia = {
       ...media,
       path: selectedDataId,

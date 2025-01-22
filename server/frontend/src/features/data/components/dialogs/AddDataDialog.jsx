@@ -17,7 +17,6 @@ function AddDataDialog({ open, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(name);
     await addData(name);
     onClose();
     setName('');

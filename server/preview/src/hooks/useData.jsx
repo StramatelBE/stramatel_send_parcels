@@ -9,7 +9,6 @@ const useData = () => {
     process.env.SOCKET_URL,
     (event) => {
       try {
-/*         console.log(event.data); */
         const parsedData = JSON.parse(event.data);
         setSocketData(parsedData);
       } catch (error) {

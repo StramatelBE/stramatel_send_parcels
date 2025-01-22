@@ -48,7 +48,6 @@ export class SettingController {
   };
 
   updateSetting = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("updateSetting");
     try {
       const settingId: number = parseInt(req.params.settingId);
       const settingData: SettingsDto = req.body;
@@ -65,8 +64,6 @@ export class SettingController {
   };
 
   updateDate = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("updateDate");
-
     try {
       const date: string = req.body.date as string;
       const updateddate = await this.settingService.updateDate(date);

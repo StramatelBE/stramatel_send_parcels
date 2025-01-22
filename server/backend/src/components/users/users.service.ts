@@ -35,7 +35,6 @@ export class UserService {
     );
     try {
       await mkdir(uploadPath, { recursive: true });
-      console.log(`Directory created at ${uploadPath}`);
     } catch (error) {
       console.error(`Failed to create directory: ${error}`);
       throw new HttpException(500, "Failed to create user directory");

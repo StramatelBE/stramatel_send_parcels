@@ -38,15 +38,13 @@ export class SettingService {
   }
 
   async updateDate(date: string): Promise<string> {
-    console.log(date);
-
     return new Promise((resolve, reject) => {
       exec(`sudo date -s "${date}"`, (error, stdout, stderr) => {
         if (error) {
           console.error(`exec error: ${error}`);
           return reject(error);
         }
-        console.log(`stdout: ${stdout}`);
+
         console.error(`stderr: ${stderr}`);
         resolve(stdout);
       });
