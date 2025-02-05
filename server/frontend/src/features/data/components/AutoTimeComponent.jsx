@@ -12,7 +12,7 @@ const AutoTimeComponent = (props) => {
       setCurrentTime(newTime);
       if (newTime.getMinutes() !== currentTime.getMinutes()) {
         props.updateAttributes({
-          time: newTime.toLocaleTimeString([], {
+          time: newTime.toLocaleTimeString('fr-FR', {
             hour: '2-digit',
             minute: '2-digit',
           }),
@@ -30,7 +30,7 @@ const AutoTimeComponent = (props) => {
   return (
     <NodeViewWrapper className="auto-time-component">
       <span className="label">
-        {currentTime.toLocaleTimeString([], {
+        {currentTime.toLocaleTimeString('fr-FR', {
           hour: '2-digit',
           minute: '2-digit',
         })}
