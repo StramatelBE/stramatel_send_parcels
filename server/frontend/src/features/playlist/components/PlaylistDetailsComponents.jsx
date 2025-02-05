@@ -29,9 +29,12 @@ import usePlaylists from '../hooks/usePlaylists';
 import selectedPlaylistStore from '../stores/selectedPlaylistStore';
 import UpdatePlaylistDialog from './dialogs/UpdatePLaylistDialog';
 import useData from '../../data/hooks/useData';
+import { useTranslation } from 'react-i18next';
 
 function PlaylistDetailsComponents() {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
+
   function closeDialog() {
     setOpen(false);
   }
@@ -41,8 +44,8 @@ function PlaylistDetailsComponents() {
       <Container
         icon={<PlaylistDetailsIcon />}
         title={<PlaylistDetailsTittle setOpen={setOpen} />}
-        content={PlaylistDetailsContent()}
-        headerRight={AddMedia()}
+        content={PlaylistDetailsContent(t)}
+        headerRight={AddMedia(t)}
         headerLeft={PlaylistDetailsClose()}
       />
       <UpdatePlaylistDialog open={open} onClose={closeDialog} />
@@ -65,7 +68,7 @@ PlaylistDetailsTittle.propTypes = {
   setOpen: PropTypes.func.isRequired,
 };
 
-function PlaylistDetailsContent() {
+function PlaylistDetailsContent(t) {
   const { data } = useData();
   const { selectedPlaylist } = selectedPlaylistStore();
   const { deleteMedia, updateMedia, updateMediaTextEditor } = useMedia();
@@ -161,7 +164,9 @@ function PlaylistDetailsContent() {
                             />
                           ) : (
                             <>
-                              <Typography>Text editor</Typography>
+                              <Typography>
+                                {t('playlistDetails.textEditor')}
+                              </Typography>
                               <Select
                                 value={
                                   data.some(
@@ -202,7 +207,7 @@ function PlaylistDetailsContent() {
                             display="block"
                             gutterBottom
                           >
-                            secondes
+                            {t('playlistDetails.seconds')}
                           </Typography>
                         </TableCell>
                         <TableCell sx={{ padding: '0px' }} align="right">
@@ -244,7 +249,7 @@ function PlaylistDetailsClose() {
     </IconButton>
   );
 }
-function AddMedia() {
+function AddMedia(t) {
   const { uploadMedia, handleAddData } = useMedia();
   const { selectedPlaylist } = selectedPlaylistStore();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -271,16 +276,8 @@ function AddMedia() {
           }}
         >
           <UploadIcon sx={{ color: 'secondary.main', mr: 1 }} />
-          Upload
+          {t('playlistDetails.upload')}
         </MenuItem>
-        {/*  <MenuItem
-          onClick={() => {
-            handleAddData('data', selectedPlaylist.id);
-            handleClose();
-          }}
-        >
-          Data
-        </MenuItem> */}
         <MenuItem
           onClick={() => {
             handleAddData('textEditor', selectedPlaylist.id);
@@ -288,16 +285,8 @@ function AddMedia() {
           }}
         >
           <EditIcon sx={{ color: 'secondary.main', mr: 1 }} />
-          Text Editor
+          {t('playlistDetails.textEditor')}
         </MenuItem>
-        {/* <MenuItem
-          onClick={() => {
-            handleAddData('information', selectedPlaylist.id);
-            handleClose();
-          }}
-        >
-          Information
-        </MenuItem> */}
       </Menu>
       <input
         type="file"

@@ -9,11 +9,13 @@ import {
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import useData from '../../hooks/useData'; // Added this line
+import useData from '../../hooks/useData';
+import { useTranslation } from 'react-i18next';
 
 function AddDataDialog({ open, onClose }) {
   const [name, setName] = useState('');
   const { addData } = useData();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,14 +26,14 @@ function AddDataDialog({ open, onClose }) {
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Ajouter une donnée</DialogTitle>
+      <DialogTitle>{t('dialogs.addData.title')}</DialogTitle>
       <form onSubmit={handleSubmit}>
         <FormControl sx={{ width: '35vh' }}>
           <DialogContent sx={{ pt: 1 }}>
             <TextField
               fullWidth
               id="standard-basic"
-              label="Nom de la donnée"
+              label={t('dialogs.addData.name')}
               autoComplete="off"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -45,14 +47,14 @@ function AddDataDialog({ open, onClose }) {
               }}
               sx={{ color: 'secondary.main' }}
             >
-              Annuler
+              {t('dialogs.changePassword.cancel')}
             </Button>
             <Button
               type="submit"
               sx={{ color: 'secondary.main' }}
               disabled={!name.trim()}
             >
-              Ajouter
+              {t('dialogs.addData.add')}
             </Button>
           </DialogActions>
         </FormControl>

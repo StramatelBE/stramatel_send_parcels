@@ -1,0 +1,70 @@
+{
+  "login": {
+    "title": "Login",
+    "password": "Password",
+    "submit": "Log In"
+  },
+  "accident": {
+    "title": "Accident",
+    "daysWithoutAccident": "Days without accident",
+    "recordDaysWithoutAccident": "Record days without accident",
+    "accidentsThisYear": "Accidents this year"
+  },
+  "dashboard": {
+    "data": "Data",
+    "preview": "Preview",
+    "playlist": "Playlist"
+  },
+  "dataList": {
+    "title": "Data"
+  },
+  "editor": {
+    "placeholder": "Enter your text here"
+  },
+  "playlistDetails": {
+    "textEditor": "Text Editor",
+    "upload": "Upload",
+    "seconds": "seconds"
+  },
+  "playlistList": {
+    "title": "Playlists"
+  },
+  "preview": {
+    "title": "Preview"
+  },
+  "settings": {
+    "title": "Settings",
+    "darkMode": "Dark mode",
+    "testPanel": "Test panel",
+    "syncDate": "Synchronize Date",
+    "changePassword": "Change Password",
+    "brightness": "Brightness",
+    "standby": "Standby"
+  },
+  "dialogs": {
+    "changePassword": {
+      "title": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "incorrectPassword": "Incorrect current password",
+      "cancel": "Cancel",
+      "submit": "Submit"
+    },
+    "addData": {
+      "title": "Add Data",
+      "name": "Data Name",
+      "add": "Add"
+    },
+    "addPlaylist": {
+      "title": "Add Playlist",
+      "name": "Playlist Name",
+      "add": "Add"
+    },
+    "updatePlaylist": {
+      "title": "Update Playlist",
+      "name": "Playlist Name",
+      "update": "Update"
+    }
+  }
+}

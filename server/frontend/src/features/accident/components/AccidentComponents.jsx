@@ -1,7 +1,14 @@
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import WarningIcon from '@mui/icons-material/Warning';
-import { Box, CircularProgress, IconButton, Skeleton, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  Skeleton,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import Container from '../../../components/ContainerComponents';
 import useLoadingStore from '../../../stores/loadingStore';
@@ -10,12 +17,14 @@ import modeStore from '../../playlist/stores/modeStore';
 import useAccident from '../hooks/useAccident';
 import accidentStore from '../stores/accidentStore';
 import ResetAccidentsOnNewYearDialog from './dialog/resetAccidentsOnNewYearDialog';
+import { useTranslation } from 'react-i18next';
 
 function AccidentComponents() {
   const { isLoading } = useLoadingStore();
   const { accidents } = accidentStore();
   const { updateAccident } = useAccident();
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (accidents.reset_on_new_year) {
@@ -38,7 +47,7 @@ function AccidentComponents() {
     <>
       <Container
         icon={Icon()}
-        title="Accident"
+        title={t('accident.title')}
         content={
           isLoading ? (
             <>
@@ -78,8 +87,11 @@ function HeaderRight() {
   return (
     <>
       {modes && modes.name === 'accident' ? (
-        <IconButton  className="headerButton" onClick={() => updateMode('null', null)}>
-          <StopIcon  sx={{ color: 'secondary.main' }} />
+        <IconButton
+          className="headerButton"
+          onClick={() => updateMode('null', null)}
+        >
+          <StopIcon sx={{ color: 'secondary.main' }} />
           <CircularProgress
             size={24}
             sx={{
@@ -91,8 +103,11 @@ function HeaderRight() {
           />
         </IconButton>
       ) : (
-        <IconButton  className="headerButton" onClick={() => updateMode('accident', null)}>
-          <PlayArrowIcon  sx={{ color: 'secondary.main' }} />
+        <IconButton
+          className="headerButton"
+          onClick={() => updateMode('accident', null)}
+        >
+          <PlayArrowIcon sx={{ color: 'secondary.main' }} />
         </IconButton>
       )}
     </>
@@ -102,6 +117,7 @@ function HeaderRight() {
 function Accident() {
   const { accidents } = accidentStore();
   const { updateAccident } = useAccident();
+  const { t } = useTranslation();
 
   const handleChange = (e, field) => {
     let value = parseInt(e.target.value, 10);
@@ -141,7 +157,9 @@ function Accident() {
         justifyContent="space-between"
         marginBottom={2}
       >
-        <Typography variant="body1">Jour sans accident</Typography>
+        <Typography variant="body1">
+          {t('accident.daysWithoutAccident')}
+        </Typography>
 
         <TextField
           style={{ width: '10vh' }}
@@ -157,7 +175,9 @@ function Accident() {
         justifyContent="space-between"
         marginBottom={2}
       >
-        <Typography variant="body1">Record de jours sans accident</Typography>
+        <Typography variant="body1">
+          {t('accident.recordDaysWithoutAccident')}
+        </Typography>
 
         <TextField
           style={{ width: '10vh' }}
@@ -173,7 +193,9 @@ function Accident() {
         justifyContent="space-between"
         marginBottom={2}
       >
-        <Typography variant="body1">Accidents cette année</Typography>
+        <Typography variant="body1">
+          {t('accident.accidentsThisYear')}
+        </Typography>
 
         <TextField
           style={{ width: '10vh' }}

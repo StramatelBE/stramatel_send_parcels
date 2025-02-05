@@ -37,6 +37,7 @@ import BackgroundExtension from '../extensions/BackgroundExtension';
 import TextColorExtension from '../extensions/TextColorExtension';
 import TextSizeExtension from '../extensions/TextSizeExtension';
 import useData from '../hooks/useData';
+import { useTranslation } from 'react-i18next';
 
 const MenuBar = ({
   editor,
@@ -290,12 +291,14 @@ MenuBar.propTypes = {
 };
 
 function EditorComponents() {
+  const { t } = useTranslation();
+
   return (
     <>
       <Container
         icon={<DataIcon />}
         title={<DataDetailsTittle />}
-        content={ContentEditor()}
+        content={ContentEditor(t)}
         headerLeft={DataDetailsClose()}
       />
     </>
@@ -332,7 +335,7 @@ function DataDetailsClose() {
   );
 }
 
-function ContentEditor() {
+function ContentEditor(t) {
   const { selectedData, updateData } = useData();
   let content;
 
@@ -347,7 +350,7 @@ function ContentEditor() {
       Underline,
       TextStyle,
       Placeholder.configure({
-        placeholder: 'Enter your text here',
+        placeholder: t('editor.placeholder'),
       }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],

@@ -11,12 +11,14 @@ import {
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import userService from '../../api/userService';
+import { useTranslation } from 'react-i18next';
 
 function ChangePasswordDialog({ open, onClose }) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     setError('');
@@ -26,7 +28,7 @@ function ChangePasswordDialog({ open, onClose }) {
       onClose();
     } catch (error) {
       if (error.status === 400) {
-        setError('Mot de passe actuel incorrect');
+        setError(t('dialogs.changePassword.incorrectPassword'));
       }
 
       if (error.errors[0] && error.errors[0].constraints.minLength) {
@@ -37,7 +39,7 @@ function ChangePasswordDialog({ open, onClose }) {
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Changer mot de passe</DialogTitle>
+      <DialogTitle>{t('dialogs.changePassword.title')}</DialogTitle>
       <form onSubmit={handleSubmit}>
         <FormControl sx={{ width: '35vh' }}>
           <DialogContent sx={{ pt: 1 }}>
@@ -45,7 +47,7 @@ function ChangePasswordDialog({ open, onClose }) {
               sx={{ marginBottom: '12px' }}
               fullWidth
               id="current-password"
-              label="Mot de passe actuel"
+              label={t('dialogs.changePassword.currentPassword')}
               type="password"
               autoComplete="off"
               value={currentPassword}
@@ -55,7 +57,7 @@ function ChangePasswordDialog({ open, onClose }) {
               sx={{ marginBottom: '12px' }}
               fullWidth
               id="new-password"
-              label="Nouveau mot de passe"
+              label={t('dialogs.changePassword.newPassword')}
               type="password"
               autoComplete="off"
               value={newPassword}
@@ -64,7 +66,7 @@ function ChangePasswordDialog({ open, onClose }) {
             <TextField
               fullWidth
               id="confirm-password"
-              label="Confirmer nouveau mot de passe"
+              label={t('dialogs.changePassword.confirmPassword')}
               type="password"
               autoComplete="off"
               value={confirmPassword}
@@ -93,14 +95,14 @@ function ChangePasswordDialog({ open, onClose }) {
               }}
               sx={{ color: 'secondary.main' }}
             >
-              Annuler
+              {t('dialogs.changePassword.cancel')}
             </Button>
             <Button
               type="submit"
               sx={{ color: 'secondary.main' }}
               disabled={!newPassword.trim() || newPassword !== confirmPassword}
             >
-              Valider
+              {t('dialogs.changePassword.submit')}
             </Button>
           </DialogActions>
         </FormControl>

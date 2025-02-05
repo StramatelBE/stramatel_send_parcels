@@ -1,0 +1,70 @@
+{
+  "login": {
+    "title": "Anmeldung",
+    "password": "Passwort",
+    "submit": "Einloggen"
+  },
+  "accident": {
+    "title": "Unfall",
+    "daysWithoutAccident": "Tage ohne Unfall",
+    "recordDaysWithoutAccident": "Rekordtage ohne Unfall",
+    "accidentsThisYear": "Unfälle in diesem Jahr"
+  },
+  "dashboard": {
+    "data": "Daten",
+    "preview": "Vorschau",
+    "playlist": "Wiedergabeliste"
+  },
+  "dataList": {
+    "title": "Daten"
+  },
+  "editor": {
+    "placeholder": "Geben Sie hier Ihren Text ein"
+  },
+  "playlistDetails": {
+    "textEditor": "Texteditor",
+    "upload": "Hochladen",
+    "seconds": "Sekunden"
+  },
+  "playlistList": {
+    "title": "Wiedergabelisten"
+  },
+  "preview": {
+    "title": "Vorschau"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "darkMode": "Dunkelmodus",
+    "testPanel": "Testpanel",
+    "syncDate": "Datum synchronisieren",
+    "changePassword": "Passwort ändern",
+    "brightness": "Helligkeit",
+    "standby": "Standby"
+  },
+  "dialogs": {
+    "changePassword": {
+      "title": "Passwort ändern",
+      "currentPassword": "Aktuelles Passwort",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Neues Passwort bestätigen",
+      "incorrectPassword": "Falsches aktuelles Passwort",
+      "cancel": "Abbrechen",
+      "submit": "Bestätigen"
+    },
+    "addData": {
+      "title": "Daten hinzufügen",
+      "name": "Datenname",
+      "add": "Hinzufügen"
+    },
+    "addPlaylist": {
+      "title": "Wiedergabeliste hinzufügen",
+      "name": "Name der Wiedergabeliste",
+      "add": "Hinzufügen"
+    },
+    "updatePlaylist": {
+      "title": "Wiedergabeliste aktualisieren",
+      "name": "Name der Wiedergabeliste",
+      "update": "Aktualisieren"
+    }
+  }
+}

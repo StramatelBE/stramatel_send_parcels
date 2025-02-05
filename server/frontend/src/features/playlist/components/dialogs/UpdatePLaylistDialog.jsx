@@ -6,18 +6,18 @@ import {
   TextField,
   Button,
   FormControl,
-} from "@mui/material";
-import PropTypes from "prop-types";
-import { useState } from "react";
-import usePlaylists from "../../hooks/usePlaylists";
-import selectedPlaylistStore from "../../stores/selectedPlaylistStore";
+} from '@mui/material';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
+import usePlaylists from '../../hooks/usePlaylists';
+import selectedPlaylistStore from '../../stores/selectedPlaylistStore';
+import { useTranslation } from 'react-i18next';
 
 function UpdatePlaylistDialog({ open, onClose }) {
   const { selectedPlaylist } = selectedPlaylistStore();
   const { updateNamePlaylist } = usePlaylists();
   const [name, setName] = useState(selectedPlaylist.name);
-  
- 
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,14 +27,14 @@ function UpdatePlaylistDialog({ open, onClose }) {
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Mettre à jour la playlist</DialogTitle>
+      <DialogTitle>{t('dialogs.updatePlaylist.title')}</DialogTitle>
       <form onSubmit={handleSubmit}>
-        <FormControl sx={{ width: "35vh" }}>
+        <FormControl sx={{ width: '35vh' }}>
           <DialogContent sx={{ pt: 1 }}>
             <TextField
               fullWidth
               id="standard-basic"
-              label="Nom du playlist"
+              label={t('dialogs.updatePlaylist.name')}
               autoComplete="off"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -46,16 +46,16 @@ function UpdatePlaylistDialog({ open, onClose }) {
                 onClose();
                 setName(initialName);
               }}
-              sx={{ color: "secondary.main" }}
+              sx={{ color: 'secondary.main' }}
             >
-              Annuler
+              {t('dialogs.changePassword.cancel')}
             </Button>
             <Button
               type="submit"
-              sx={{ color: "secondary.main" }}
+              sx={{ color: 'secondary.main' }}
               disabled={!name.trim()}
             >
-              Mettre à jour
+              {t('dialogs.updatePlaylist.update')}
             </Button>
           </DialogActions>
         </FormControl>

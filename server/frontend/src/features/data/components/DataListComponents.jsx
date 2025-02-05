@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import Container from '../../../components/ContainerComponents';
 import useLoadingStore from '../../../stores/loadingStore';
+import { useTranslation } from 'react-i18next';
 
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -22,11 +23,13 @@ function DataListComponents() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const { t } = useTranslation();
+
   return (
     <>
       <Container
         icon={Icon()}
-        title="Data"
+        title={t('dataList.title')}
         content={
           isLoading ? (
             <>

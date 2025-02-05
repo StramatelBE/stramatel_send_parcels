@@ -11,8 +11,10 @@ import {
 import { useState } from 'react';
 import useAuthStore from '../../../stores/authStore';
 import UserService from '../api/userService';
+import { useTranslation } from 'react-i18next';
 
 function LoginComponents() {
+  const { t } = useTranslation();
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { setToken } = useAuthStore();
@@ -54,7 +56,7 @@ function LoginComponents() {
               variant="h6"
               sx={{ color: 'primary.light' }}
             >
-              Connexion
+              {t('login.title')}
             </Typography>
           </Box>
         </Box>
@@ -63,7 +65,7 @@ function LoginComponents() {
           <form onSubmit={handleSubmit}>
             <FormControl sx={{ width: '35vh' }}>
               <TextField
-                label="Mot de passe"
+                label={t('login.password')}
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -81,7 +83,7 @@ function LoginComponents() {
                 {error || ' '}
               </Typography>
               <Button type="submit" sx={{ color: 'secondary.main' }}>
-                Se connecter
+                {t('login.submit')}
               </Button>
             </FormControl>
           </form>

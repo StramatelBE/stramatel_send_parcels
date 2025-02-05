@@ -21,20 +21,22 @@ import usePlaylists from '../hooks/usePlaylists';
 import modeStore from '../stores/modeStore';
 import playlistStore from '../stores/playlistsStores'; // Importez votre store ici
 import AddPlaylistDialog from './dialogs/AddPlaylistDialog';
+import { useTranslation } from 'react-i18next';
+
 function PlaylistListComponents() {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const { isLoading } = useLoadingStore();
+  const { t } = useTranslation();
 
   function closeDialog() {
     setAddDialogOpen(false);
   }
 
-
   return (
     <>
       <Container
         icon={<PlaylistIcon />}
-        title="Playlists"
+        title={t('playlistList.title')}
         content={
           isLoading ? (
             <>
@@ -59,10 +61,7 @@ function PlaylistListComponents() {
         }
         headerRight={<AddPlaylistButton setAddDialogOpen={setAddDialogOpen} />}
       />
-      <AddPlaylistDialog
-        open={addDialogOpen}
-        onClose={closeDialog}
-      />
+      <AddPlaylistDialog open={addDialogOpen} onClose={closeDialog} />
     </>
   );
 }
@@ -82,8 +81,8 @@ function PlaylistList() {
       <Table size="big">
         <TableBody>
           {playlists?.map((playlist) => (
-            <TableRow 
-              sx={{cursor: 'pointer'}} 
+            <TableRow
+              sx={{ cursor: 'pointer' }}
               hover
               key={playlist.id}
               style={{ position: 'relative' }}
@@ -96,7 +95,10 @@ function PlaylistList() {
               >
                 {playlist.name}
               </TableCell>
-              <TableCell style={{ width: 'auto', padding: "16px 0px" }} align="right">
+              <TableCell
+                style={{ width: 'auto', padding: '16px 0px' }}
+                align="right"
+              >
                 {modes &&
                 modes.playlist_id === playlist.id &&
                 modes.name === 'playlist' ? (
@@ -126,7 +128,10 @@ function PlaylistList() {
                   </IconButton>
                 )}
               </TableCell>
-              <TableCell style={{ width: 'auto',padding: "16px 0px" }} align="right">
+              <TableCell
+                style={{ width: 'auto', padding: '16px 0px' }}
+                align="right"
+              >
                 <IconButton
                   size="small"
                   onClick={() => deletePlaylist(playlist.id)}

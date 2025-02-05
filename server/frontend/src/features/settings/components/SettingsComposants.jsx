@@ -28,10 +28,12 @@ import modeStore from '../../playlist/stores/modeStore';
 import useSettings from '../hooks/useSettings';
 import settingsStore from '../stores/settingsStore';
 import ChangePasswordDialog from './dialogs/ChangePasswordDialog';
+import { useTranslation } from 'react-i18next';
 
 function SettingsComposants({ loading }) {
   const [ChangePasswordDialogOpen, setChangePasswordDialogOpen] =
     useState(false);
+  const { t } = useTranslation();
 
   function closeDialog() {
     setChangePasswordDialogOpen(false);
@@ -43,7 +45,7 @@ function SettingsComposants({ loading }) {
         <Grid item xs={12} sm={12}>
           <Container
             icon={Icon()}
-            title="Settings"
+            title={t('settings.title')}
             content={
               loading ? (
                 <>
@@ -93,6 +95,7 @@ function Settings({ setChangePasswordDialogOpen }) {
   const { updateSetting, updateSettingDate } = useSettings();
   const { updateMode } = useModes();
   const { theme, toggleTheme } = useThemeStore();
+  const { t } = useTranslation();
 
   const standbyStart = parseInt(settings.standby_start_time);
   const standbyEnd = parseInt(settings.standby_end_time);
@@ -143,7 +146,7 @@ function Settings({ setChangePasswordDialogOpen }) {
                 <DarkModeIcon sx={{ color: 'text.secondary' }} />
               </IconButton>
               <Typography variant="h8" sx={{ color: 'text.primary' }}>
-                Dark mode
+                {t('settings.darkMode')}
               </Typography>
             </Stack>
             <Switch
@@ -162,7 +165,7 @@ function Settings({ setChangePasswordDialogOpen }) {
                 <BugReportIcon sx={{ color: 'text.secondary' }} />
               </IconButton>
               <Typography variant="h8" sx={{ color: 'text.primary' }}>
-                Test panneau
+                {t('settings.testPanel')}
               </Typography>
             </Stack>
             {modes && modes.name === 'test' ? (
@@ -194,7 +197,7 @@ function Settings({ setChangePasswordDialogOpen }) {
               <DateRangeIcon sx={{ color: 'text.secondary' }} />
             </IconButton>
             <Typography variant="h8" sx={{ color: 'text.primary' }}>
-              Synchroniser la Date
+              {t('settings.syncDate')}
             </Typography>
           </Stack>
           <Stack
@@ -216,7 +219,7 @@ function Settings({ setChangePasswordDialogOpen }) {
                 padding: '0',
               }}
             >
-              Changer le mot de passe
+              {t('settings.changePassword')}
             </Button>
           </Stack>
           <Stack
@@ -230,7 +233,7 @@ function Settings({ setChangePasswordDialogOpen }) {
                 <Brightness4Icon sx={{ color: 'text.secondary' }} />
               </IconButton>
               <Typography variant="h8" sx={{ color: 'text.primary' }}>
-                Brightness
+                {t('settings.brightness')}
               </Typography>
             </Stack>
             <Slider
@@ -260,7 +263,7 @@ function Settings({ setChangePasswordDialogOpen }) {
               <IconButton disabled>
                 <ModeNightIcon sx={{ color: 'text.secondary' }} />
               </IconButton>
-              <Typography>Veille</Typography>
+              <Typography>{t('settings.standby')}</Typography>
             </Stack>
             <Switch
               color="secondary"
