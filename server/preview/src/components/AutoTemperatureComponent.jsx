@@ -9,22 +9,12 @@ const AutoTemperatureComponent = () => {
 
   const { socketData } = useSocketData();
   // Simulate fetching temperature from an API
-  const fetchTemperature = async () => {
-    const temperature = await socketData?.temperature;
-    console.log(temperature);
-    setTemperature(temperature + "°C");
-  };
 
   useEffect(() => {
-    // Fetch temperature initially
-    fetchTemperature();
-
-    // Set interval to fetch temperature every 30 seconds
-    const intervalId = setInterval(fetchTemperature, 30000);
-
-    // Cleanup interval on component unmount
-    return () => clearInterval(intervalId);
-  }, []);
+    const temperature = socketData?.temperature;
+    console.log(temperature);
+    setTemperature(temperature + "°C");
+  }, [socketData]);
 
   return (
     <NodeViewWrapper className="auto-date-component">
