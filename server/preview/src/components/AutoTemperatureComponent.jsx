@@ -9,7 +9,7 @@ const AutoTemperatureComponent = () => {
 
   return (
     <NodeViewWrapper className="auto-date-component">
-      <span className="label">{socketData?.temperature || "---"}°C</span>
+      <span className="label">{socketData?.temperature + "°C" || "---°C"}</span>
       <NodeViewContent className="content" />
     </NodeViewWrapper>
   );
