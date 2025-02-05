@@ -2,10 +2,10 @@
 Description=Node.js Backend Service
 
 [Service]
-WorkingDirectory=/home/mderoir/server/backend
-ExecStart=/home/mderoir/server/script/start_frontend.sh
-User=mderoir
-Group=mderoir
+WorkingDirectory=/home/STRAMATEL/server/backend
+ExecStart=/home/STRAMATEL/server/script/start_frontend.sh
+User=STRAMATEL
+Group=STRAMATEL
 Restart=always
 
 [Install]

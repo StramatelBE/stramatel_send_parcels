@@ -2,10 +2,10 @@
 Description=Python temperature Service
 
 [Service]
-WorkingDirectory=/home/mderoir/server/script/temperature/
-ExecStart=/home/mderoir/server/script/start_temperature.sh
-User=mderoir
-Group=mderoir
+WorkingDirectory=/home/STRAMATEL/server/script/temperature/
+ExecStart=/home/STRAMATEL/server/script/start_temperature.sh
+User=STRAMATEL
+Group=STRAMATEL
 Restart=always
 
 [Install]

@@ -2,10 +2,10 @@
 Description=Node.js Frontend Service
 
 [Service]
-WorkingDirectory=/home/mderoir/server/frontend
-ExecStart=/home/mderoir/server/script/start_frontend.sh
-User=mderoir
-Group=mderoir
+WorkingDirectory=/home/STRAMATEL/server/frontend
+ExecStart=/home/STRAMATEL/server/script/start_frontend.sh
+User=STRAMATEL
+Group=STRAMATEL
 Restart=always
 
 [Install]

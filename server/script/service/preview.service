@@ -2,10 +2,10 @@
 Description=Node.js Preview Service
 
 [Service]
-WorkingDirectory=/home/mderoir/server/preview
-ExecStart=/home/mderoir/server/script/start_preview.sh
-User=mderoir
-Group=mderoir
+WorkingDirectory=/home/STRAMATEL/server/preview
+ExecStart=/home/STRAMATEL/server/script/start_preview.sh
+User=STRAMATEL
+Group=STRAMATEL
 Restart=always
 
 [Install]
