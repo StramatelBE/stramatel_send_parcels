@@ -1,7 +1,7 @@
 // import React, { useEffect, useState } from 'react';
-import { useEffect, useState } from 'react';
-import { NodeViewWrapper, NodeViewContent } from '@tiptap/react';
-import PropTypes from 'prop-types';
+import { useEffect, useState } from "react";
+import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
+import PropTypes from "prop-types";
 
 const AutoTimeComponent = (props) => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -12,9 +12,9 @@ const AutoTimeComponent = (props) => {
       setCurrentTime(newTime);
       if (newTime.getMinutes() !== currentTime.getMinutes()) {
         props.updateAttributes({
-          time: newTime.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
+          time: newTime.toLocaleTimeString("fr-FR", {
+            hour: "2-digit",
+            minute: "2-digit",
           }),
         });
       }
@@ -29,10 +29,10 @@ const AutoTimeComponent = (props) => {
 
   return (
     <NodeViewWrapper className="auto-time-component">
-      <span className="label" contentEditable={false}>
-        {currentTime.toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
+      <span className="label">
+        {currentTime.toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
         })}
       </span>
       <NodeViewContent className="content" />
