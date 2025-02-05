@@ -10,6 +10,7 @@ import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
 import PollIcon from '@mui/icons-material/Poll';
+import ThermostatIcon from '@mui/icons-material/Thermostat';
 
 import {
   FormControl,
@@ -33,6 +34,7 @@ import PaletteIcon from '@mui/icons-material/Palette';
 import { useEffect, useRef, useState } from 'react';
 import AutoDateExtension from '../extensions/AutoDateExtension';
 import AutoTimeExtension from '../extensions/AutoTimeExtension';
+import AutoTemperatureExtension from '../extensions/AutoTemperatureExtension';
 import BackgroundExtension from '../extensions/BackgroundExtension';
 import TextColorExtension from '../extensions/TextColorExtension';
 import TextSizeExtension from '../extensions/TextSizeExtension';
@@ -275,6 +277,12 @@ const MenuBar = ({
         >
           <AccessTimeIcon />
         </IconButton>
+        <IconButton
+          onClick={() => editor.chain().focus().insertTemperature('25°C').run()}
+          color={editor.isActive('autoTemperature') ? 'primary' : 'default'}
+        >
+          <ThermostatIcon />
+        </IconButton>
       </div>
 
       <div></div>
@@ -366,6 +374,7 @@ function ContentEditor(t) {
       BackgroundExtension.configure({
         defaultBackgroundColor: '#000000',
       }),
+      AutoTemperatureExtension,
     ],
     onUpdate: ({ editor }) => {
       const data = { ...selectedData, value: editor.getJSON() };

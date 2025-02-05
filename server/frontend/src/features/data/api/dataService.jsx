@@ -14,7 +14,13 @@ class DataService {
 
     return await response.json();
   }
+  static async getOneData(id) {
+    const response = await fetchWithAuthorization(`${API_URL}${id}`, {
+      method: 'GET',
+    });
 
+    return await response.json();
+  }
   static async updateData(data) {
     const response = await fetchWithAuthorization(`${API_URL}${data.id}`, {
       method: 'PUT',

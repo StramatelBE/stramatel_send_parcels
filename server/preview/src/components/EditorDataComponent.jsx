@@ -11,6 +11,7 @@ import TextStyle from "@tiptap/extension-text-style";
 import PropTypes from "prop-types";
 import TextColorExtension from "../extensions/TextColorExtension";
 import BackgroundExtension from "../extensions/BackgroundExtension";
+import AutoTemperatureExtension from "../extensions/AutoTemperatureExtension";
 
 function EditorDataComponent({ currentMedia }) {
   const { socketData } = useSocketData();
@@ -51,6 +52,7 @@ function EditorDataComponent({ currentMedia }) {
       BackgroundExtension.configure({
         defaultBackgroundColor: "#000000",
       }),
+      AutoTemperatureExtension,
     ],
   });
 
@@ -68,8 +70,6 @@ function EditorDataComponent({ currentMedia }) {
       setEditorBackgroundColor(content?.attrs?.backgroundColor);
     }
   }, [content, editor]);
-
-
 
   return (
     <div

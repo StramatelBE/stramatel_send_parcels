@@ -9,12 +9,17 @@ function useData() {
 
   const getAllData = useCallback(async () => {
     setLoading(true);
-    const data = await DataService.getAllData();
-    setData(data.data);
+    const response = await DataService.getAllData();
+    const filteredData = response.data.filter((item) => item.type === 'EDIT');
+    setData(filteredData);
     setLoading(false);
-    return data;
+    return response;
   }, [setData, setLoading]);
-
+  const getTemperature = async () => {
+    const response = await DataService.getOneData(1);
+    console.log('response', response);
+    return response.data.value;
+  };
   const updateData = useCallback(
     async (newData) => {
       await DataService.updateData(newData);
@@ -61,6 +66,7 @@ function useData() {
 
   return {
     getAllData: getAllData,
+    getTemperature: getTemperature,
     updateData: updateData,
     addData: addData,
     deleteData: deleteData,
