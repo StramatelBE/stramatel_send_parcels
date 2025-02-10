@@ -23,6 +23,15 @@ export default Extension.create({
               };
             },
           },
+          backgroundImage: {
+            default: '',
+            parseHTML: (element) => element.style.backgroundImage,
+            renderHTML: (attributes) => {
+              return {
+                style: `background-image: url(${attributes.backgroundImage}); background-size: 288px 432px;`,
+              };
+            },
+          },
         },
       },
     ];
@@ -30,10 +39,12 @@ export default Extension.create({
 
   addCommands() {
     return {
-      setBackground: (color) => ({ commands }) => {
+      setBackground: (color, imageUrl) => () => {
         const editorElement = document.querySelector('.tiptap-text-container');
         if (editorElement) {
           editorElement.style.backgroundColor = color;
+          editorElement.style.backgroundImage = `url(${imageUrl})`;
+          editorElement.style.backgroundSize = `${process.env.PREVIEW_WIDTH}px ${process.env.PREVIEW_HEIGHT}px`;
         }
         return true;
       },

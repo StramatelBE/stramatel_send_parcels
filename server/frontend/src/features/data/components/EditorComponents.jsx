@@ -47,6 +47,8 @@ const MenuBar = ({
   setColor,
   editorBackgroundColor,
   setEditorBackgroundColor,
+  editorBackgroundImage,
+  setEditorBackgroundImage,
 }) => {
   const colorTextInputRef = useRef(null);
   const colorBackgroundInputRef = useRef(null);
@@ -86,6 +88,16 @@ const MenuBar = ({
     editor.commands.setBackground(event.target.value);
     const jsonData = JSON.parse(selectedData.value);
     jsonData.attrs.backgroundColor = event.target.value;
+    const newEditorData = { ...selectedData, value: JSON.stringify(jsonData) };
+    triggerUpdate(newEditorData);
+  };
+
+  const handleBackgroundImageChange = (event) => {
+    const imageUrl = event.target.value;
+    setEditorBackgroundImage(imageUrl);
+    editor.commands.setBackground(editorBackgroundColor, imageUrl);
+    const jsonData = JSON.parse(selectedData.value);
+    jsonData.attrs.backgroundImage = imageUrl;
     const newEditorData = { ...selectedData, value: JSON.stringify(jsonData) };
     triggerUpdate(newEditorData);
   };
@@ -283,6 +295,18 @@ const MenuBar = ({
         >
           <ThermostatIcon />
         </IconButton>
+        <input
+          type="text"
+          placeholder="Enter image URL"
+          value={editorBackgroundImage}
+          onChange={handleBackgroundImageChange}
+          style={{
+            marginLeft: '10px',
+            padding: '5px',
+            borderRadius: '4px',
+            border: '1px solid #ccc',
+          }}
+        />
       </div>
 
       <div></div>
@@ -296,6 +320,8 @@ MenuBar.propTypes = {
   setEditorBackgroundColor: PropTypes.func.isRequired,
   color: PropTypes.string.isRequired,
   setColor: PropTypes.func.isRequired,
+  editorBackgroundImage: PropTypes.string.isRequired,
+  setEditorBackgroundImage: PropTypes.func.isRequired,
 };
 
 function EditorComponents() {
@@ -389,12 +415,18 @@ function ContentEditor(t) {
   const [editorBackgroundColor, setEditorBackgroundColor] = useState(
     content?.attrs?.backgroundColor || '#000000'
   );
+  const [editorBackgroundImage, setEditorBackgroundImage] = useState(
+    content?.attrs?.backgroundImage || ''
+  );
 
   useEffect(() => {
     if (editor) {
-      editor.commands.setBackground(editorBackgroundColor);
+      editor.commands.setBackground(
+        editorBackgroundColor,
+        editorBackgroundImage
+      );
     }
-  }, [editor, editorBackgroundColor]);
+  }, [editor, editorBackgroundColor, editorBackgroundImage]);
 
   return (
     <>
@@ -402,6 +434,8 @@ function ContentEditor(t) {
         editor={editor}
         editorBackgroundColor={editorBackgroundColor}
         setEditorBackgroundColor={setEditorBackgroundColor}
+        editorBackgroundImage={editorBackgroundImage}
+        setEditorBackgroundImage={setEditorBackgroundImage}
         color={color}
         setColor={setColor}
       />
