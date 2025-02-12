@@ -7,12 +7,16 @@ import {
   UpdateMediasInPlaylistDto,
 } from "./playlistItem.validation";
 import { CustomRequest } from "../../middlewares/extractUserId.middleware";
+import { PlaylistService } from "../playlist/playlist.service";
+import { log } from "console";
 
 @Service()
 export class PlaylistItemController {
   constructor(
     @Inject(() => PlaylistItemService)
-    private playlistItemService: PlaylistItemService
+    private playlistItemService: PlaylistItemService,
+    @Inject(() => PlaylistService)
+    private playlistService: PlaylistService
   ) {}
 
   createPlaylistItem = async (
@@ -21,9 +25,13 @@ export class PlaylistItemController {
     next: NextFunction
   ) => {
     try {
-      const playlistData: CreatePlaylistItemDto = req.body;
+      let playlistItemData: CreatePlaylistItemDto = req.body;
+      playlistItemData =
+        await this.playlistItemService.setPositionForPlaylistItem(
+          playlistItemData
+        );
       const newPlaylistItem: PlaylistItem =
-        await this.playlistItemService.createPlaylistItem(playlistData);
+        await this.playlistItemService.createPlaylistItem(playlistItemData);
       if (!newPlaylistItem) {
         res.status(404).json({ message: "PlaylistItem not found" });
       } else {
@@ -80,6 +88,7 @@ export class PlaylistItemController {
     try {
       const playlistItemId: number = parseInt(req.params.playlistItemId);
       const playlistData: UpdateMediasInPlaylistDto = req.body;
+      console.log("playlistData", playlistData);
       const updatedPlaylistItem: PlaylistItem | null =
         await this.playlistItemService.updatePlaylistItem(
           playlistItemId,

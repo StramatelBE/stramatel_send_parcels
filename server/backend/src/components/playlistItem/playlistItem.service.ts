@@ -5,7 +5,7 @@ import {
   UpdateMediasInPlaylistDto,
 } from "./playlistItem.validation";
 import { UploadService } from "../medias/upload.service";
-
+import { PlaylistService } from "../playlist/playlist.service";
 const prisma = new PrismaClient();
 
 interface PlaylistItemWithMedia extends PlaylistItem {
@@ -15,7 +15,8 @@ interface PlaylistItemWithMedia extends PlaylistItem {
 @Service()
 export class PlaylistItemService {
   constructor(
-    @Inject(() => UploadService) private uploadService: UploadService
+    @Inject(() => UploadService) private uploadService: UploadService,
+    @Inject(() => PlaylistService) private playlistService: PlaylistService
   ) {}
 
   async getAllPlaylists(): Promise<Playlist[]> {
@@ -50,7 +51,7 @@ export class PlaylistItemService {
         media_id: playlistItemData.media_id,
         data_id: playlistItemData.data_id,
         position: playlistItemData.position,
-        duration: playlistItemData.duration,
+        duration: playlistItemData.duration || 10,
       },
     });
 
@@ -66,9 +67,17 @@ export class PlaylistItemService {
       data: {
         position: playlistItemData.position,
         duration: playlistItemData.duration,
+        media_id: playlistItemData.media_id,
+        data_id: playlistItemData.data_id,
       },
     });
-    return playlistItem;
+    return prisma.playlistItem.findUnique({
+      where: { id },
+      include: {
+        media: true,
+        data: true,
+      },
+    });
   }
 
   async deletePlaylistItem(id: number, req: any): Promise<PlaylistItem | null> {
@@ -151,5 +160,15 @@ export class PlaylistItemService {
       where: { id },
       include: { media: true },
     });
+  }
+
+  async setPositionForPlaylistItem(
+    playlistItemData: CreatePlaylistItemDto
+  ): Promise<CreatePlaylistItemDto> {
+    const playlist = await this.playlistService.getPlaylistById(
+      playlistItemData.playlist_id
+    );
+    playlistItemData.position = playlist.PlaylistItem.length + 1;
+    return playlistItemData;
   }
 }

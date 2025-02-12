@@ -37,10 +37,15 @@ export class PlaylistService {
         PlaylistItem: {
           include: {
             media: true,
+            data: true,
+          },
+          orderBy: {
+            position: "asc",
           },
         },
       },
     });
+
     return playlist;
   }
 

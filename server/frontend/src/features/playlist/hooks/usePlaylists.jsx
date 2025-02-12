@@ -3,13 +3,13 @@ import PlaylistService from '../api/playlistService';
 import playlistStore from '../stores/playlistsStores';
 import selectedPlaylistStore from '../stores/selectedPlaylistStore';
 import useModes from './useMode';
-import modeStore from '../stores/modeStore';
+import PlaylistItemService from '../api/playlistItemService';
 
 const usePlaylists = () => {
-  const { setPlaylists, removePlaylist, playlists, updatePlaylistName } = playlistStore();
-  const { setSelectedPlaylist } = selectedPlaylistStore();
+  const { setPlaylists, removePlaylist, playlists, updatePlaylistName } =
+    playlistStore();
+  const { setSelectedPlaylist, selectedPlaylist } = selectedPlaylistStore();
   const { updateMode } = useModes();
-  const { modes } = modeStore();
 
   const getAllPlaylists = useCallback(async () => {
     try {
@@ -35,7 +35,7 @@ const usePlaylists = () => {
   const deletePlaylist = useCallback(
     async (id) => {
       try {
-        updateMode('null', null)
+        updateMode('null', null);
         await PlaylistService.deletePlaylist(id);
         removePlaylist(id);
       } catch (error) {
@@ -82,14 +82,57 @@ const usePlaylists = () => {
     },
     [setSelectedPlaylist, updatePlaylistName]
   );
+  const deletePlaylistItem = useCallback(
+    async (id, selectedPlaylist) => {
+      await PlaylistItemService.deletePlaylistItem(id);
+      setSelectedPlaylist({
+        ...selectedPlaylist,
+        PlaylistItem: selectedPlaylist.PlaylistItem.filter(
+          (item) => item.id !== id
+        ),
+      });
+    },
+    [setSelectedPlaylist]
+  );
+
+  const addPlaylistItemEditor = useCallback(
+    async (playlistId) => {
+      await PlaylistItemService.addPlaylistItem(playlistId);
+
+      setSelectedPlaylist({
+        ...selectedPlaylist,
+        PlaylistItem: [...selectedPlaylist.PlaylistItem, { id: playlistId }],
+      });
+    },
+    [selectedPlaylist, setSelectedPlaylist]
+  );
+
+  const updatePlaylistItem = useCallback(async (PlaylistItemUpdate) => {
+    const updatedPlaylistItem = await PlaylistItemService.updatePlaylistItem(
+      PlaylistItemUpdate
+    );
+    console.log('updatedPlaylistItem', updatedPlaylistItem.data);
+
+    setSelectedPlaylist({
+      ...selectedPlaylist,
+      PlaylistItem: selectedPlaylist.PlaylistItem.map((item) =>
+        item.id === updatedPlaylistItem.data.id
+          ? updatedPlaylistItem.data
+          : item
+      ),
+    });
+  }, []);
 
   return {
     addPlaylist,
-    getAllPlaylists: getAllPlaylists,
+    getAllPlaylists,
     deletePlaylist,
     getPlaylistById,
     updateMediasInPlaylist,
-    updateNamePlaylist
+    updateNamePlaylist,
+    deletePlaylistItem,
+    addPlaylistItemEditor,
+    updatePlaylistItem,
   };
 };
 

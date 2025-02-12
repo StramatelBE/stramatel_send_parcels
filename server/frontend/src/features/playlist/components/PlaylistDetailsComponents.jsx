@@ -45,7 +45,7 @@ function PlaylistDetailsComponents() {
         icon={<PlaylistDetailsIcon />}
         title={<PlaylistDetailsTittle setOpen={setOpen} />}
         content={PlaylistDetailsContent(t)}
-        headerRight={AddMedia(t)}
+        headerRight={AddPlaylistItem(t)}
         headerLeft={PlaylistDetailsClose()}
       />
       <UpdatePlaylistDialog open={open} onClose={closeDialog} />
@@ -71,8 +71,8 @@ PlaylistDetailsTittle.propTypes = {
 function PlaylistDetailsContent(t) {
   const { data } = useData();
   const { selectedPlaylist } = selectedPlaylistStore();
-  const { deleteMedia, updateMedia, updateMediaTextEditor } = useMedia();
-  const { updateMediasInPlaylist } = usePlaylists();
+  const { updateMediasInPlaylist, deletePlaylistItem, updatePlaylistItem } =
+    usePlaylists();
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -85,20 +85,10 @@ function PlaylistDetailsContent(t) {
 
     updateMediasInPlaylist(items, selectedPlaylist);
   };
-  const sortedMedias = selectedPlaylist.medias.sort(
+
+  /*   const sortedMedias = selectedPlaylist.medias.sort(
     (a, b) => a.position - b.position
-  );
-
-  function updataMediasTextEditor(event, media) {
-    const selectedDataId = String(event.target.value);
-    const updatedMedia = {
-      ...media,
-      path: selectedDataId,
-    };
-    console.log('updatedMedia', updatedMedia);
-
-    updateMediaTextEditor(updatedMedia);
-  }
+  ); */
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -116,10 +106,10 @@ function PlaylistDetailsContent(t) {
           >
             <Table size="big">
               <TableBody>
-                {sortedMedias.map((media, index) => (
+                {selectedPlaylist.PlaylistItem.map((item, index) => (
                   <Draggable
-                    key={media.id}
-                    draggableId={String(media.id)}
+                    key={item.id}
+                    draggableId={String(item.id)}
                     index={index}
                   >
                     {(provided) => (
@@ -140,17 +130,17 @@ function PlaylistDetailsContent(t) {
                             maxHeight: '7vh',
                           }}
                         >
-                          {media.type.split('/')[0] === 'video' ? (
+                          {item.media?.type?.split('/')[0] === 'video' ? (
                             <Box
                               sx={{
                                 maxWidth: '14vh',
                                 maxHeight: '7vh',
                               }}
                               component="video"
-                              alt={media.originalFilename}
-                              src={`${media.path}#t=10`}
+                              alt={item.media.originalFilename}
+                              src={`${item.media.path}#t=10`}
                             />
-                          ) : media.type.split('/')[0] === 'image' ? (
+                          ) : item.media?.type?.split('/')[0] === 'image' ? (
                             <Box
                               sx={{
                                 height: '100%',
@@ -159,8 +149,8 @@ function PlaylistDetailsContent(t) {
                                 maxHeight: '7vh',
                               }}
                               component="img"
-                              alt={media.originalFilename}
-                              src={`${media.path}`}
+                              alt={item.media.originalFilename}
+                              src={`${item.media.path}`}
                             />
                           ) : (
                             <>
@@ -168,19 +158,16 @@ function PlaylistDetailsContent(t) {
                                 {t('playlistDetails.textEditor')}
                               </Typography>
                               <Select
-                                value={
-                                  data.some(
-                                    (item) => item.id === parseInt(media.path)
-                                  )
-                                    ? parseInt(media.path)
-                                    : ''
-                                }
+                                value={item?.data?.id}
                                 onChange={(e) => {
-                                  updataMediasTextEditor(e, media);
+                                  updatePlaylistItem({
+                                    data_id: e.target.value,
+                                    id: item.id,
+                                  });
                                 }}
                                 sx={{ width: '100%' }}
                               >
-                                {data.map((item, index) => (
+                                {data?.map((item, index) => (
                                   <MenuItem key={index} value={item.id}>
                                     {item.name}
                                   </MenuItem>
@@ -191,14 +178,19 @@ function PlaylistDetailsContent(t) {
                         </TableCell>
                         <TableCell align="right">
                           <TextField
-                            value={media.duration}
+                            value={item.duration}
                             onChange={(e) => {
                               e.preventDefault();
-                              updateMedia(e, media, selectedPlaylist.id);
+                              updatePlaylistItem({
+                                duration: parseInt(e.target.value),
+                                id: item.id,
+                              });
                             }}
                             size="small"
                             type="number"
-                            disabled={media.type.split('/')[0] === 'video'}
+                            disabled={
+                              item.media?.type?.split('/')[0] === 'video'
+                            }
                             inputProps={{ min: 0, max: 999 }}
                             style={{ width: '100%', maxWidth: '90px' }}
                           />
@@ -214,7 +206,7 @@ function PlaylistDetailsContent(t) {
                           <IconButton
                             onClick={(e) => {
                               e.stopPropagation();
-                              deleteMedia(media.id, selectedPlaylist.id);
+                              deletePlaylistItem(item.id, selectedPlaylist);
                             }}
                           >
                             <ClearIcon sx={{ color: 'secondary.main' }} />
@@ -249,8 +241,9 @@ function PlaylistDetailsClose() {
     </IconButton>
   );
 }
-function AddMedia(t) {
-  const { uploadMedia, handleAddData } = useMedia();
+function AddPlaylistItem(t) {
+  const { uploadMedia } = useMedia();
+  const { addPlaylistItemEditor } = usePlaylists();
   const { selectedPlaylist } = selectedPlaylistStore();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -280,7 +273,7 @@ function AddMedia(t) {
         </MenuItem>
         <MenuItem
           onClick={() => {
-            handleAddData('textEditor', selectedPlaylist.id);
+            addPlaylistItemEditor(selectedPlaylist.id);
             handleClose();
           }}
         >

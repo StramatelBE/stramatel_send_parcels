@@ -44,7 +44,7 @@ function UpdatePlaylistDialog({ open, onClose }) {
             <Button
               onClick={() => {
                 onClose();
-                setName(initialName);
+                setName(selectedPlaylist.name);
               }}
               sx={{ color: 'secondary.main' }}
             >
