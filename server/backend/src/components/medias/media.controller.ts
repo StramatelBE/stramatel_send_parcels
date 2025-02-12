@@ -5,55 +5,63 @@ import { MediaService } from "./media.service";
 import { UploadService } from "./upload.service";
 import { PlaylistService } from "../playlist/playlist.service";
 import { UserPayload } from "../../types/UserPayload";
-import { log } from "console";
+import { PlaylistItemService } from "../playlistItem/playlistItem.service";
+import { CustomRequest } from "../../middlewares/extractUserId.middleware";
+import { HttpException } from "../../exceptions/HttpException";
 
-interface CustomRequest extends Request {
-  user?: UserPayload;
-}
 @Service()
 export class MediaController {
   constructor(
     @Inject(() => MediaService) private mediaService: MediaService,
     @Inject(() => UploadService) private uploadService: UploadService,
-    @Inject(() => PlaylistService) private playlistService: PlaylistService
+    @Inject(() => PlaylistService) private playlistService: PlaylistService,
+    @Inject(() => PlaylistItemService)
+    private playlistItemService: PlaylistItemService
   ) {}
 
-  uploadFile = async (req: Request, res: Response, next: NextFunction) => {
+  uploadFile = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       await this.uploadService.handleUpload(req, res, async () => {
-        const playlistId = parseInt(req.body.playlistId, 10);
-        const playlist = await this.playlistService.getPlaylistById(playlistId);
-
-        const mediaPosition = playlist.medias.length;
-        const newMedia = await this.mediaService.createMedia(
-          req,
-          mediaPosition
-        );
-
-        if (playlistId) {
-          await this.playlistService.addMediaToPlaylist(
-            playlistId,
-            newMedia.id
-          );
+        if (!req.file) {
+          throw new HttpException(400, "Aucun fichier n'a été reçu");
         }
 
+        const playlistId = parseInt(req.body.playlistId, 10);
+        if (isNaN(playlistId)) {
+          throw new HttpException(400, "ID de playlist invalide");
+        }
+
+        const playlist = await this.playlistService.getPlaylistById(playlistId);
+
+        const media = await this.mediaService.createMedia(
+          req,
+          playlist.PlaylistItem.length + 1
+        );
+        const playlistItems = await this.playlistItemService.createPlaylistItem(
+          {
+            position: playlist.PlaylistItem.length + 1,
+            duration: await this.mediaService.getDuration(
+              req.file.path,
+              media.type
+            ),
+            playlist_id: playlistId,
+            media_id: media.id,
+          }
+        );
+        console.log(playlistItems);
+
         res.status(201).json({
-          message: "File uploaded and added to playlist successfully",
+          message: "Fichier uploadé et ajouté à la playlist avec succès",
+          data: {
+            media: media,
+            playlistItem: playlistItems,
+          },
         });
       });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  addData = async (req: CustomRequest, res: Response, next: NextFunction) => {
-    try {
-      console.log(req.body);
-      const mediaCount = await this.mediaService.getMediaCount(req.body.playlistId);
-      console.log(mediaCount);
-      
-      const media = await this.mediaService.addData(req.body.type, req.user.id, mediaCount, req.body.playlistId);
-      res.status(200).json({ data: media, message: "added" });
     } catch (error) {
       next(error);
     }
@@ -99,7 +107,7 @@ export class MediaController {
       const { media_id } = req.params;
       const media = await this.mediaService.findMedia(parseInt(media_id));
       await this.mediaService.deleteMedia(parseInt(media_id)).then(() => {
-        if(media.type=== 'image' || media.type === 'video'){
+        if (media.type === "image" || media.type === "video") {
           this.uploadService.deleteMedia(media, req);
         }
         res.status(200).json({ message: "deleted" });

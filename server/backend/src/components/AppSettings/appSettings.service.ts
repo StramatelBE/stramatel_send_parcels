@@ -1,26 +1,26 @@
-import { Settings, PrismaClient } from "@prisma/client";
+import { AppSettings, PrismaClient } from "@prisma/client";
 import { Service } from "typedi";
-import { SettingsDto } from "./settings.validation";
+import { SettingsDto } from "./appSettings.validation";
 import { exec } from "child_process";
 
 @Service()
 export class SettingService {
   private prisma = new PrismaClient();
 
-  async getSettings(): Promise<Settings[]> {
-    const settings = await this.prisma.settings.findMany();
+  async getSettings(): Promise<AppSettings[]> {
+    const settings = await this.prisma.appSettings.findMany();
     return settings;
   }
 
-  async createSetting(settingData: SettingsDto): Promise<Settings> {
-    const newSetting = await this.prisma.settings.create({
+  async createSetting(settingData: SettingsDto): Promise<AppSettings> {
+    const newSetting = await this.prisma.appSettings.create({
       data: settingData,
     });
     return newSetting;
   }
 
-  async getSettingById(settingId: number): Promise<Settings | null> {
-    const setting = await this.prisma.settings.findUnique({
+  async getSettingById(settingId: number): Promise<AppSettings | null> {
+    const setting = await this.prisma.appSettings.findUnique({
       where: { id: settingId },
     });
     return setting;
@@ -29,8 +29,8 @@ export class SettingService {
   async updateSetting(
     settingId: number,
     settingData: SettingsDto
-  ): Promise<Settings | null> {
-    const updatedSetting = await this.prisma.settings.update({
+  ): Promise<AppSettings | null> {
+    const updatedSetting = await this.prisma.appSettings.update({
       where: { id: settingId },
       data: settingData,
     });
@@ -51,8 +51,8 @@ export class SettingService {
     });
   }
 
-  async deleteSetting(settingId: number): Promise<Settings | null> {
-    const deletedSetting = await this.prisma.settings.delete({
+  async deleteSetting(settingId: number): Promise<AppSettings | null> {
+    const deletedSetting = await this.prisma.appSettings.delete({
       where: { id: settingId },
     });
     return deletedSetting;

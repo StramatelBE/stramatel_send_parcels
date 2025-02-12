@@ -23,8 +23,16 @@ export class UploadService {
 
   public handleUpload = async (req: any, res: any, next: NextFunction) => {
     try {
+      console.log("Starting upload process...");
+      console.log("User:", req.user);
+
       const env = process.env.NODE_ENV;
       const uploadDir = process.env[`UPLOAD_DIR_${env}`];
+
+      if (!uploadDir) {
+        throw new HttpException(500, "Upload directory not configured");
+      }
+
       const destination = `${uploadDir}${req.user.username}`;
 
       const upload = multer({
@@ -38,18 +46,48 @@ export class UploadService {
             cb(null, filename);
           },
         }),
-      });
+        fileFilter: (req, file, cb) => {
+          // Vérifier les types de fichiers acceptés
+          if (
+            file.mimetype.startsWith("video/") ||
+            file.mimetype.startsWith("image/")
+          ) {
+            cb(null, true);
+          } else {
+            cb(
+              new Error(
+                "Format de fichier non supporté. Seuls les images et vidéos sont acceptés."
+              )
+            );
+          }
+        },
+        limits: {
+          fileSize: 100 * 1024 * 1024, // Limite à 100MB
+        },
+      }).single("file");
 
-      upload.single("file")(req, res, function (err) {
-        if (err) {
-          console.log(err);
-          throw new HttpException(500, "Cannot upload file");
-        }
-        next();
+      return new Promise((resolve, reject) => {
+        upload(req, res, function (err) {
+          if (err) {
+            console.error("Upload error:", err);
+            reject(
+              new HttpException(
+                400,
+                err.message || "Erreur lors de l'upload du fichier"
+              )
+            );
+          } else {
+            if (!req.file) {
+              reject(new HttpException(400, "Aucun fichier n'a été uploadé"));
+            } else {
+              console.log("File uploaded successfully:", req.file);
+              resolve(next());
+            }
+          }
+        });
       });
     } catch (error) {
-      console.log(error);
-
+      console.error("Upload service error:", error);
       next(error);
     }
   };
@@ -63,8 +101,6 @@ export class UploadService {
           media.file_name
         )
       );
-    } catch (error) {
-    
-    }
+    } catch (error) {}
   };
 }

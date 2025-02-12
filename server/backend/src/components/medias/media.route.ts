@@ -3,14 +3,12 @@ import { Container } from "typedi";
 import { MediaController } from "./media.controller";
 import { authMiddleware } from "../../middlewares/auth.middleware";
 import { extractUserId } from "../../middlewares/extractUserId.middleware";
+import multer from "multer";
 const router = Router();
 const mediaController = Container.get(MediaController);
 
 router.post("/", authMiddleware, extractUserId, (req, res, next) =>
   mediaController.uploadFile(req, res, next)
-);
-router.post("/addData", authMiddleware, extractUserId, (req, res, next) =>
-  mediaController.addData(req, res, next)
 );
 
 router.get("/", authMiddleware, (req, res, next) =>

@@ -31,6 +31,8 @@ export class AuthService {
         ...userData,
         username: userData.username,
         password: hashedPassword,
+        language: "fr",
+        theme: "dark",
       },
     });
     const env = process.env.NODE_ENV;

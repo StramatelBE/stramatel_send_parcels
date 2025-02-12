@@ -3,6 +3,7 @@ import { UserPayload } from "../types/UserPayload";
 
 export interface CustomRequest extends Request {
   user?: UserPayload;
+  file?: Express.Multer.File;
 }
 
 export const extractUserId = (

@@ -13,44 +13,64 @@ model User {
   id        Int        @id @default(autoincrement())
   username  String     @unique
   password  String
-  role      String     @default("USER") //Role: USER, ADMIN
-  media     Media[]
+  role      String     @default("USER")
+  language  String
+  theme     String
   playlists Playlist[]
+  data      Data[]
+  medias    Media[]
 }
 
 model Media {
-  id                 Int       @id @default(autoincrement())
+  id                 Int            @id @default(autoincrement())
+  user_id            Int
+  user               User           @relation(fields: [user_id], references: [id])
   original_file_name String
   file_name          String
   path               String
   format             String
   type               String
   size               Int
-  uploaded_at        DateTime  @updatedAt()
-  user_id            Int
-  duration           Int
-  position           Int
-  user               User      @relation(fields: [user_id], references: [id])
-  Playlist           Playlist? @relation(fields: [playlistId], references: [id], onDelete: Cascade)
-  playlistId         Int?
+  uploaded_at        DateTime       @updatedAt
+  thumbnail_id       Int?
+  thumbnail          Media?         @relation("ThumbnailRelation", fields: [thumbnail_id], references: [id])
+  thumbnailFor       Media[]        @relation("ThumbnailRelation")
+  PlaylistItem       PlaylistItem[]
+  DataBackground     Data[]         @relation("BackgroundRelation")
+}
+
+model Data {
+  id            Int            @id @default(autoincrement())
+  name          String?
+  value         String?
+  type          String?
+  edit          Boolean        @default(true)
+  user_id       Int
+  background_id Int?
+  user          User           @relation(fields: [user_id], references: [id])
+  background    Media?         @relation("BackgroundRelation", fields: [background_id], references: [id])
+  PlaylistItem  PlaylistItem[]
+}
+
+model PlaylistItem {
+  id          Int      @id @default(autoincrement())
+  playlist_id Int
+  media_id    Int?
+  data_id     Int?
+  position    Int
+  duration    Int
+  playlist    Playlist @relation(fields: [playlist_id], references: [id], onDelete: Cascade)
+  media       Media?   @relation(fields: [media_id], references: [id])
+  data        Data?    @relation(fields: [data_id], references: [id])
 }
 
 model Playlist {
-  id      Int     @id @default(autoincrement())
-  name    String
-  user_id Int
-  user    User    @relation(fields: [user_id], references: [id])
-  medias  Media[] @relation
-  Mode    Mode[]
-}
-
-model Accident {
-  id                           Int      @id @default(autoincrement())
-  days_without_accident        Int
-  record_days_without_accident Int
-  accidents_this_year          Int
-  reset_on_new_year            Boolean
-  last_updated                 DateTime @updatedAt()
+  id           Int            @id @default(autoincrement())
+  name         String
+  user_id      Int
+  user         User           @relation(fields: [user_id], references: [id])
+  PlaylistItem PlaylistItem[]
+  Mode         Mode[]
 }
 
 model Mode {
@@ -60,22 +80,14 @@ model Mode {
   playlist    Playlist? @relation(fields: [playlist_id], references: [id])
 }
 
-model Settings {
+model AppSettings {
   id                 Int      @id @default(autoincrement())
   standby            Boolean
   standby_start_time String
   standby_end_time   String
   restart_at         String
-  date               DateTime @updatedAt()
+  updated_at         DateTime @updatedAt
   language           String
   theme              String
   brightness         Int
-}
-
-model Data {
-  id    Int     @id @default(autoincrement())
-  name  String?
-  value String?
-  type  String?
-  edit  Boolean @default(true)
 }

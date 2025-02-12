@@ -4,13 +4,17 @@ import { NextFunction, Request, Response } from "express";
 import { Inject, Service } from "typedi";
 import { DataService } from "./data.service";
 import { CreateDataDto, UpdateDataDto } from "./data.validation";
-import { log } from "console";
+import { CustomRequest } from "../../middlewares/extractUserId.middleware";
 
 @Service()
 export class DataController {
   constructor(@Inject(() => DataService) private dataService: DataService) {}
 
-  createData = async (req: Request, res: Response, next: NextFunction) => {
+  createData = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const dataDto: CreateDataDto = req.body;
       const errors = await validate(dataDto);
@@ -19,7 +23,10 @@ export class DataController {
         return res.status(400).json({ errors });
       }
 
-      const newData: Data = await this.dataService.createData(dataDto);
+      const newData: Data = await this.dataService.createData({
+        ...dataDto,
+        user_id: req.user.id,
+      });
       res.status(201).json({ data: newData, message: "Data created" });
     } catch (error) {
       console.log(error);
@@ -42,10 +49,9 @@ export class DataController {
   };
 
   updateData = async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body);
     try {
       const dataId: number = parseInt(req.params.dataId);
-      const dataDto = req.body;
+      const dataDto: UpdateDataDto = req.body;
       const updatedData: Data | null = await this.dataService.updateData(
         dataId,
         dataDto

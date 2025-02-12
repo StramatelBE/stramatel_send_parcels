@@ -6,7 +6,9 @@ import { UploadService } from "../medias/upload.service";
 const prisma = new PrismaClient();
 
 interface PlaylistWithMedia extends Playlist {
-  medias: Media[];
+  PlaylistItem: {
+    media: Media;
+  }[];
 }
 
 @Service()
@@ -18,7 +20,11 @@ export class PlaylistService {
   async getAllPlaylists(): Promise<Playlist[]> {
     const playlists = await prisma.playlist.findMany({
       include: {
-        medias: true,
+        PlaylistItem: {
+          include: {
+            media: true,
+          },
+        },
       },
     });
     return playlists;
@@ -28,7 +34,11 @@ export class PlaylistService {
     const playlist = await prisma.playlist.findUnique({
       where: { id },
       include: {
-        medias: true,
+        PlaylistItem: {
+          include: {
+            media: true,
+          },
+        },
       },
     });
     return playlist;
@@ -62,7 +72,7 @@ export class PlaylistService {
     // Récupérer les médias associés à la playlist
     const playlist = await prisma.playlist.findUnique({
       where: { id },
-      include: { medias: true },
+      include: { PlaylistItem: { include: { media: true } } },
     });
 
     if (!playlist) {
@@ -70,12 +80,18 @@ export class PlaylistService {
     }
 
     // Supprimer les fichiers médias du système de fichiers
-    for (const media of playlist.medias) {
-      if (media.type === "image" || media.type === "video") {
-        await this.uploadService.deleteMedia(media, req);
+    for (const item of playlist.PlaylistItem) {
+      if (
+        item.media &&
+        (item.media.type === "image" || item.media.type === "video")
+      ) {
+        await this.uploadService.deleteMedia(item.media, req);
       }
     }
-
+    // Supprimer les médias associés à la playlist
+    await prisma.media.deleteMany({
+      where: { id: { in: playlist.PlaylistItem.map((item) => item.media_id) } },
+    });
     // Supprimer la playlist et les médias associés de la base de données
     await prisma.playlist.delete({
       where: { id },
@@ -94,7 +110,7 @@ export class PlaylistService {
     const playlist = await prisma.playlist.update({
       where: { id },
       data: {
-        medias: {
+        PlaylistItem: {
           connect: { id: mediaId },
         },
       },
@@ -105,7 +121,7 @@ export class PlaylistService {
   async updateMediasInPlaylist(id: number, medias: Media[]): Promise<Playlist> {
     const playlist = await prisma.playlist.findUnique({
       where: { id },
-      include: { medias: true },
+      include: { PlaylistItem: { include: { media: true } } },
     });
 
     if (!playlist) throw new Error("Playlist not found");
@@ -114,13 +130,13 @@ export class PlaylistService {
     for (const media of medias) {
       await prisma.media.update({
         where: { id: media.id },
-        data: { position: media.position },
+        data: {},
       });
     }
 
     return prisma.playlist.findUnique({
       where: { id },
-      include: { medias: true },
+      include: { PlaylistItem: { include: { media: true } } },
     });
   }
 }

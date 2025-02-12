@@ -7,8 +7,12 @@ const prisma = new PrismaClient();
 @Service()
 export class DataService {
   async createData(dataDto: CreateDataDto): Promise<Data> {
+    const { user_id, ...rest } = dataDto;
     const data = await prisma.data.create({
-      data: dataDto,
+      data: {
+        ...rest,
+        user: { connect: { id: user_id } },
+      },
     });
     return data;
   }
@@ -22,7 +26,9 @@ export class DataService {
   async updateData(id: number, dataDto: UpdateDataDto): Promise<Data | null> {
     return prisma.data.update({
       where: { id },
-      data: dataDto,
+      data: {
+        ...dataDto,
+      },
     });
   }
 
