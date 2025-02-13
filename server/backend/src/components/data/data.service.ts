@@ -1,11 +1,16 @@
 import { PrismaClient, Data } from "@prisma/client";
-import { Service } from "typedi";
+import { Service, Inject } from "typedi";
 import { CreateDataDto, UpdateDataDto } from "./data.validation";
+import { UploadService } from "../medias/upload.service";
 
 const prisma = new PrismaClient();
 
 @Service()
 export class DataService {
+  constructor(
+    @Inject(() => UploadService) private uploadService: UploadService
+  ) {}
+
   async createData(dataDto: CreateDataDto): Promise<Data> {
     const { user_id, ...rest } = dataDto;
     const data = await prisma.data.create({
@@ -26,18 +31,34 @@ export class DataService {
     });
   }
 
-  async updateData(id: number, dataDto: UpdateDataDto): Promise<Data | null> {
-    return prisma.data.update({
+  async updateData(
+    id: number,
+    updateDataDto: UpdateDataDto,
+    userId: number
+  ): Promise<Data> {
+    const existingData = await prisma.data.findUnique({
+      where: { id },
+      include: { background: true },
+    });
+    console.log("updateDataDto", updateDataDto);
+
+    if (existingData?.background_id) {
+      await this.uploadService.removeMediaFile(existingData.background, userId);
+      await prisma.media.delete({
+        where: { id: existingData.background_id },
+      });
+    }
+
+    const updatedData = await prisma.data.update({
       where: { id },
       data: {
-        value: dataDto.value,
-        name: dataDto.name,
-        background_id: dataDto.background_id,
-      },
-      include: {
-        background: true,
+        value: updateDataDto.value,
+        name: updateDataDto.name,
+        background_id: updateDataDto.background_id,
       },
     });
+    console.log("updatedData", updatedData);
+    return updatedData;
   }
 
   async deleteData(id: number): Promise<Data | null> {

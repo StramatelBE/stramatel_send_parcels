@@ -55,10 +55,14 @@ export class MediaController {
     }
   };
 
-  deleteMedia = async (req: Request, res: Response, next: NextFunction) => {
+  deleteMedia = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const { media_id } = req.params;
-      await this.mediaService.deleteMedia(parseInt(media_id), req);
+      await this.mediaService.deleteMedia(parseInt(media_id), req.user.id);
       res.status(200).json({ message: "deleted" });
     } catch (error) {
       next(error);

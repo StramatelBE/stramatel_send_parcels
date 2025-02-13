@@ -42,7 +42,7 @@ const usePlaylists = () => {
         console.error('Failed to delete playlist:', error);
       }
     },
-    [removePlaylist]
+    [removePlaylist, updateMode]
   );
 
   const getPlaylistById = useCallback(

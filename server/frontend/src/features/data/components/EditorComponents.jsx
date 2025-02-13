@@ -56,29 +56,21 @@ const MenuBar = ({
   const colorTextInputRef = useRef(null);
   const colorBackgroundInputRef = useRef(null);
   const fileInputRef = useRef(null);
-  const { selectedData, updateData, uploadBackground, deleteBackground } =
-    useData();
-  const updateTimer = useRef(null);
-
-  const triggerUpdate = (data) => {
-    if (updateTimer.current) {
-      clearTimeout(updateTimer.current);
-    }
-
-    updateTimer.current = setTimeout(() => {
-      updateData(data);
-      updateTimer.current = null;
-    }, 2000);
-  };
+  const { selectedData, updateData, updateBackgroundData } = useData();
 
   const handleTextColorChange = (event) => {
     const newColor = event.target.value;
     setColor(newColor);
     editor.chain().focus().setTextColor(newColor).run();
     const jsonData = JSON.parse(selectedData.value);
+
+    if (!jsonData.attrs) {
+      jsonData.attrs = {};
+    }
+
     jsonData.attrs.textColor = newColor;
     const newEditorData = { ...selectedData, value: JSON.stringify(jsonData) };
-    triggerUpdate(newEditorData);
+    updateData(newEditorData);
   };
   const showColorPickerInput = (ref) => {
     if (ref.current) {
@@ -92,16 +84,21 @@ const MenuBar = ({
     setEditorBackgroundColor(event.target.value);
     editor.commands.setBackground(event.target.value);
     const jsonData = JSON.parse(selectedData.value);
+
+    if (!jsonData.attrs) {
+      jsonData.attrs = {};
+    }
+
     jsonData.attrs.backgroundColor = event.target.value;
     const newEditorData = { ...selectedData, value: JSON.stringify(jsonData) };
-    triggerUpdate(newEditorData);
+    updateData(newEditorData);
   };
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
       try {
-        const updatedData = await uploadBackground(file);
+        const updatedData = await updateBackgroundData(file);
         if (updatedData.background) {
           const backgroundPath = `${updatedData.background.path}`;
           setEditorBackgroundImage(backgroundPath);
@@ -114,13 +111,14 @@ const MenuBar = ({
   };
 
   const deleteBackgroundHandle = () => {
-    deleteBackground();
+    updateData({
+      id: selectedData.id,
+      background_id: null,
+    });
     setEditorBackgroundImage('');
     editor.commands.setBackground(editorBackgroundColor, '');
     const jsonData = JSON.parse(selectedData.value);
     delete jsonData.attrs.background;
-    const newEditorData = { ...selectedData, value: JSON.stringify(jsonData) };
-    triggerUpdate(newEditorData);
   };
 
   return (
@@ -398,7 +396,7 @@ function ContentEditor(t) {
   const { selectedData, updateData } = useData();
   let content;
 
-  if (selectedData?.value.length > 0) {
+  if (selectedData?.value?.length > 0) {
     content = JSON.parse(selectedData?.value);
   }
 

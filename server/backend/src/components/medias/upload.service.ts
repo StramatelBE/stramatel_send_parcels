@@ -86,12 +86,15 @@ export class UploadService {
     });
   };
 
-  public removeMediaFile = async (media: Media, req: any): Promise<void> => {
+  public removeMediaFile = async (
+    media: Media,
+    userId: number
+  ): Promise<void> => {
     try {
       unlinkSync(
         path.join(
           process.env[`UPLOAD_DIR_${process.env.NODE_ENV}`],
-          req.user.username,
+          userId.toString(),
           media.file_name
         )
       );

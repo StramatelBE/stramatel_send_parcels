@@ -121,7 +121,10 @@ export class PlaylistItemController {
     try {
       const playlistItemId: number = parseInt(req.params.playlistItemId);
       const deletedPlaylistItem: PlaylistItem | null =
-        await this.playlistItemService.deletePlaylistItem(playlistItemId, req);
+        await this.playlistItemService.deletePlaylistItem(
+          playlistItemId,
+          req.user.id
+        );
       if (!deletedPlaylistItem) {
         res.status(404).json({ message: "PlaylistItem not found" });
       } else {

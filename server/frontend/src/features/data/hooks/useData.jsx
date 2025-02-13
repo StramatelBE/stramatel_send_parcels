@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import DataService from '../api/dataService';
 import dataStore from '../stores/dataStore';
 import useLoadingStore from '../../../stores/loadingStore';
+import MediaService from '../../playlist/api/mediaService';
 
 function useData() {
   const { setData, data, setSelectedData, selectedData } = dataStore();
@@ -21,38 +22,37 @@ function useData() {
   };
   const updateData = useCallback(
     async (newData) => {
-      await DataService.updateData(newData);
+      const response = await DataService.updateData(newData);
       const updatedData = data.map((item) =>
-        item.id === newData.id ? { ...item, ...newData } : item
+        item.id === newData.id ? { ...item, ...response.data } : item
       );
       setData(updatedData);
-      setSelectedData(newData);
+      setSelectedData(response.data);
+      return response.data;
     },
     [data, setData, setSelectedData]
   );
 
-  const uploadBackground = useCallback(
-    async (file) => {
-      if (!selectedData) return;
+  const updateBackgroundData = useCallback(async (file) => {
+    if (!selectedData) return;
 
-      try {
-        const response = await DataService.uploadBackground(
-          selectedData.id,
-          file
-        );
-        const updatedData = data.map((item) =>
-          item.id === selectedData.id ? { ...item, ...response.data } : item
-        );
-        setData(updatedData);
-        setSelectedData(response.data);
-        return response.data;
-      } catch (error) {
-        console.error("Erreur lors de l'upload de l'image:", error);
-        throw error;
-      }
-    },
-    [data, selectedData, setData, setSelectedData]
-  );
+    try {
+      const uploadFile = await MediaService.uploadFile(file);
+      const response = await updateData({
+        id: selectedData.id,
+        background_id: uploadFile.file.id,
+      });
+      const updatedData = data.map((item) =>
+        item.id === selectedData.id ? { ...item, ...response.data } : item
+      );
+      setData(updatedData);
+      setSelectedData(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de l'upload de l'image:", error);
+      throw error;
+    }
+  }, []);
 
   const addData = useCallback(
     async (name) => {
@@ -82,11 +82,6 @@ function useData() {
     [getAllData]
   );
 
-  const deleteBackground = useCallback(async () => {
-    await DataService.deleteBackground(selectedData);
-    setSelectedData({ ...selectedData, background: null });
-  }, [selectedData, setSelectedData]);
-
   const clearSelectedData = useCallback(() => {
     setSelectedData(null);
   }, [setSelectedData]);
@@ -95,10 +90,9 @@ function useData() {
     getAllData: getAllData,
     getTemperature: getTemperature,
     updateData: updateData,
-    uploadBackground: uploadBackground,
+    updateBackgroundData: updateBackgroundData,
     addData: addData,
     deleteData: deleteData,
-    deleteBackground: deleteBackground,
     data: data,
     setSelectedData: setSelectedData,
     selectedData: selectedData,

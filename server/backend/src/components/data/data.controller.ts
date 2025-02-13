@@ -48,17 +48,19 @@ export class DataController {
     }
   };
 
-  updateData = async (req: Request, res: Response, next: NextFunction) => {
+  updateData = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const dataId: number = parseInt(req.params.dataId);
       const dataDto: UpdateDataDto = req.body;
-      console.log("dataDto");
       console.log(dataDto);
-      console.log("dataId");
-      console.log(dataId);
       const updatedData: Data | null = await this.dataService.updateData(
         dataId,
-        dataDto
+        dataDto,
+        req.user.id
       );
       if (!updatedData) {
         res.status(404).json({ message: "Data not found" });
@@ -66,72 +68,7 @@ export class DataController {
         res.status(200).json({ data: updatedData, message: "Data updated" });
       }
     } catch (error) {
-      console.log("error");
       console.log(error);
-      next(error);
-    }
-  };
-
-  uploadBackground = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const dataId: number = parseInt(req.params.dataId);
-      /*  await this.uploadService.handleUpload(req, res, async () => {
-        if (!req.file) {
-          res.status(400).json({ message: "No file uploaded" });
-          return;
-        }
-        const oldData = await this.dataService.getDataById(dataId);
-        if (oldData?.background_id) {
-          const oldMedia = await this.mediaService.findMedia(
-            oldData.background_id
-          );
-          await this.mediaService.deleteMedia(oldData.background_id);
-          await this.uploadService.removeMediaFile(oldMedia, req);
-        }
-        const media = await this.mediaService.createMedia(req, 0);
-        const updatedData: Data | null = await this.dataService.updateData(
-          dataId,
-          { background_id: media.id }
-        );
-
-        if (!updatedData) {
-          res.status(404).json({ message: "Data not found" });
-        } else {
-          res.status(200).json({
-            data: updatedData,
-            message: "Background uploaded successfully",
-          });
-        }
-      }); */
-    } catch (error) {
-      next(error);
-    }
-  };
-  deleteBackground = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      /* const dataId: number = parseInt(req.params.dataId);
-
-      const deletedData: Data | null = await this.dataService.deleteData(
-        dataId
-      );
-      if (!deletedData) {
-        res.status(404).json({ message: "Data not found" });
-      } else {
-        const oldMedia = await this.mediaService.findMedia(
-          deletedData.background_id
-        );
-        await this.mediaService.deleteMedia(deletedData.background_id);
-        await this.uploadService.deleteMedia(oldMedia, req);
-      } */
-    } catch (error) {
       next(error);
     }
   };

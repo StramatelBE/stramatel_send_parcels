@@ -73,7 +73,7 @@ export class PlaylistService {
     return playlist;
   }
 
-  async deletePlaylist(id: number, req: any): Promise<Playlist | null> {
+  async deletePlaylist(id: number, userId: number): Promise<Playlist | null> {
     // Récupérer les médias associés à la playlist
     const playlist = await prisma.playlist.findUnique({
       where: { id },
@@ -90,7 +90,7 @@ export class PlaylistService {
         item.media &&
         (item.media.type === "image" || item.media.type === "video")
       ) {
-        await this.uploadService.removeMediaFile(item.media, req);
+        await this.uploadService.removeMediaFile(item.media, userId);
       }
     }
     // Supprimer les médias associés à la playlist
