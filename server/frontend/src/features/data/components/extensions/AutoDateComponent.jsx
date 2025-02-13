@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
 import { NodeViewWrapper, NodeViewContent } from '@tiptap/react';
+import { useEffect, useState } from 'react';
 
 const AutoDateComponent = (props) => {
   const [currentDate, setCurrentDate] = useState(new Date());

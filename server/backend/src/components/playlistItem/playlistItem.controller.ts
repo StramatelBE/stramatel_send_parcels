@@ -86,18 +86,27 @@ export class PlaylistItemController {
     next: NextFunction
   ) => {
     try {
-      const playlistItemId: number = parseInt(req.params.playlistItemId);
-      const playlistData: UpdateMediasInPlaylistDto = req.body;
-      console.log("playlistData", playlistData);
-      const updatedPlaylistItem: PlaylistItem | null =
-        await this.playlistItemService.updatePlaylistItem(
+      const playlistData = req.body;
+      let result;
+
+      // Si c'est un tableau, on utilise la mise à jour multiple
+      if (Array.isArray(playlistData)) {
+        result = await this.playlistItemService.updateMultiplePlaylistItems(
+          playlistData
+        );
+      } else {
+        // Sinon on utilise la mise à jour simple
+        const playlistItemId: number = parseInt(req.params.playlistItemId);
+        result = await this.playlistItemService.updatePlaylistItem(
           playlistItemId,
           playlistData
         );
-      if (!updatedPlaylistItem) {
+      }
+
+      if (!result) {
         res.status(404).json({ message: "PlaylistItem not found" });
       } else {
-        res.status(200).json({ data: updatedPlaylistItem, message: "updated" });
+        res.status(200).json({ data: result, message: "updated" });
       }
     } catch (error) {
       next(error);
@@ -145,6 +154,23 @@ export class PlaylistItemController {
     } catch (error) {
       console.log(error);
 
+      next(error);
+    }
+  };
+
+  updateMultiplePlaylistItems = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const playlistItems = req.body;
+      const updatedItems =
+        await this.playlistItemService.updateMultiplePlaylistItems(
+          playlistItems
+        );
+      res.status(200).json({ data: updatedItems, message: "updated" });
+    } catch (error) {
       next(error);
     }
   };

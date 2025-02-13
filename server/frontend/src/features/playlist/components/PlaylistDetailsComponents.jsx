@@ -71,19 +71,20 @@ PlaylistDetailsTittle.propTypes = {
 function PlaylistDetailsContent(t) {
   const { data } = useData();
   const { selectedPlaylist } = selectedPlaylistStore();
-  const { updateMediasInPlaylist, deletePlaylistItem, updatePlaylistItem } =
+  const { updatePlaylistItem, deletePlaylistItem, updatePlaylistItems } =
     usePlaylists();
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
-    const items = Array.from(selectedPlaylist.medias);
+    const items = Array.from(selectedPlaylist.PlaylistItem);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
     items.forEach((item, index) => {
       item.position = index;
     });
+    console.log(items);
 
-    updateMediasInPlaylist(items, selectedPlaylist);
+    updatePlaylistItems(items);
   };
 
   /*   const sortedMedias = selectedPlaylist.medias.sort(

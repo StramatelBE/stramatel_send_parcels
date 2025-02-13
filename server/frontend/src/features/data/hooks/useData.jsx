@@ -17,7 +17,6 @@ function useData() {
   }, [setData, setLoading]);
   const getTemperature = async () => {
     const response = await DataService.getOneData(1);
-    console.log('response', response);
     return response.data.value;
   };
   const updateData = useCallback(
@@ -30,6 +29,29 @@ function useData() {
       setSelectedData(newData);
     },
     [data, setData, setSelectedData]
+  );
+
+  const uploadBackground = useCallback(
+    async (file) => {
+      if (!selectedData) return;
+
+      try {
+        const response = await DataService.uploadBackground(
+          selectedData.id,
+          file
+        );
+        const updatedData = data.map((item) =>
+          item.id === selectedData.id ? { ...item, ...response.data } : item
+        );
+        setData(updatedData);
+        setSelectedData(response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Erreur lors de l'upload de l'image:", error);
+        throw error;
+      }
+    },
+    [data, selectedData, setData, setSelectedData]
   );
 
   const addData = useCallback(
@@ -68,6 +90,7 @@ function useData() {
     getAllData: getAllData,
     getTemperature: getTemperature,
     updateData: updateData,
+    uploadBackground: uploadBackground,
     addData: addData,
     deleteData: deleteData,
     data: data,

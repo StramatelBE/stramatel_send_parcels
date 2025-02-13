@@ -56,15 +56,23 @@ const usePlaylists = () => {
     },
     [setSelectedPlaylist]
   );
-  const updateMediasInPlaylist = useCallback(
-    async (items, selectedPlaylist) => {
-      setSelectedPlaylist({
-        ...selectedPlaylist,
-        medias: items,
-      });
-      await PlaylistService.updateMediasInPlaylist(items, selectedPlaylist.id);
+  const updatePlaylistItems = useCallback(
+    async (items) => {
+      try {
+        setSelectedPlaylist({
+          ...selectedPlaylist,
+          PlaylistItem: items,
+        });
+        const response = await PlaylistItemService.updatePlaylistItem(items);
+        setSelectedPlaylist({
+          ...selectedPlaylist,
+          PlaylistItem: response.data,
+        });
+      } catch (error) {
+        console.error('Failed to update playlist items:', error);
+      }
     },
-    [setSelectedPlaylist]
+    [setSelectedPlaylist, selectedPlaylist]
   );
 
   const updateNamePlaylist = useCallback(
@@ -97,38 +105,46 @@ const usePlaylists = () => {
 
   const addPlaylistItemEditor = useCallback(
     async (playlistId) => {
-      await PlaylistItemService.addPlaylistItem(playlistId);
+      try {
+        const response = await PlaylistItemService.addPlaylistItem(playlistId);
 
-      setSelectedPlaylist({
-        ...selectedPlaylist,
-        PlaylistItem: [...selectedPlaylist.PlaylistItem, { id: playlistId }],
-      });
+        setSelectedPlaylist({
+          ...selectedPlaylist,
+          PlaylistItem: [...selectedPlaylist.PlaylistItem, response.data],
+        });
+      } catch (error) {
+        console.error('Failed to add playlist item:', error);
+      }
     },
     [selectedPlaylist, setSelectedPlaylist]
   );
 
-  const updatePlaylistItem = useCallback(async (PlaylistItemUpdate) => {
-    const updatedPlaylistItem = await PlaylistItemService.updatePlaylistItem(
-      PlaylistItemUpdate
-    );
-    console.log('updatedPlaylistItem', updatedPlaylistItem.data);
+  const updatePlaylistItem = useCallback(
+    async (PlaylistItemUpdate) => {
+      try {
+        const response = await PlaylistItemService.updatePlaylistItem(
+          PlaylistItemUpdate
+        );
 
-    setSelectedPlaylist({
-      ...selectedPlaylist,
-      PlaylistItem: selectedPlaylist.PlaylistItem.map((item) =>
-        item.id === updatedPlaylistItem.data.id
-          ? updatedPlaylistItem.data
-          : item
-      ),
-    });
-  }, []);
+        setSelectedPlaylist({
+          ...selectedPlaylist,
+          PlaylistItem: selectedPlaylist.PlaylistItem.map((item) =>
+            item.id === response.data.id ? response.data : item
+          ),
+        });
+      } catch (error) {
+        console.error('Failed to update playlist item:', error);
+      }
+    },
+    [selectedPlaylist, setSelectedPlaylist]
+  );
 
   return {
     addPlaylist,
     getAllPlaylists,
     deletePlaylist,
     getPlaylistById,
-    updateMediasInPlaylist,
+    updatePlaylistItems,
     updateNamePlaylist,
     deletePlaylistItem,
     addPlaylistItemEditor,

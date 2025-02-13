@@ -2,7 +2,7 @@
 
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import { useState, useEffect } from 'react';
-import useData from '../hooks/useData';
+import useData from '../../hooks/useData';
 
 const AutoTemperatureComponent = () => {
   const [temperature, setTemperature] = useState('20°C');

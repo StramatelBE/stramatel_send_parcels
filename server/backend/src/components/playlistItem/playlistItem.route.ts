@@ -36,7 +36,7 @@ router.get(
 );
 
 router.put(
-  "/:playlistItemId",
+  "/:playlistItemId?",
   authMiddleware,
   extractUserId,
   validateDto(UpdateMediasInPlaylistDto),

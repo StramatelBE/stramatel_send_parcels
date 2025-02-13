@@ -20,6 +20,9 @@ export class DataService {
   async getDataById(id: number): Promise<Data | null> {
     return prisma.data.findUnique({
       where: { id },
+      include: {
+        background: true,
+      },
     });
   }
 
@@ -27,7 +30,12 @@ export class DataService {
     return prisma.data.update({
       where: { id },
       data: {
-        ...dataDto,
+        value: dataDto.value,
+        name: dataDto.name,
+        background_id: dataDto.background_id,
+      },
+      include: {
+        background: true,
       },
     });
   }
@@ -39,6 +47,10 @@ export class DataService {
   }
 
   async getAllData(): Promise<Data[]> {
-    return prisma.data.findMany();
+    return prisma.data.findMany({
+      include: {
+        background: true,
+      },
+    });
   }
 }

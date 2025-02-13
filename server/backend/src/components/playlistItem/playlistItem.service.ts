@@ -171,4 +171,26 @@ export class PlaylistItemService {
     playlistItemData.position = playlist.PlaylistItem.length + 1;
     return playlistItemData;
   }
+
+  async updateMultiplePlaylistItems(
+    playlistItems: { id: number; position: number; duration: number }[]
+  ): Promise<PlaylistItem[]> {
+    const updatedItems = await Promise.all(
+      playlistItems.map(async (item) => {
+        return prisma.playlistItem.update({
+          where: { id: item.id },
+          data: {
+            position: item.position,
+            duration: item.duration,
+          },
+          include: {
+            media: true,
+            data: true,
+          },
+        });
+      })
+    );
+
+    return updatedItems;
+  }
 }

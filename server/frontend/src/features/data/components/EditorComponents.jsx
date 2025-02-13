@@ -11,6 +11,7 @@ import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
 import PollIcon from '@mui/icons-material/Poll';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
+import UploadIcon from '@mui/icons-material/Upload';
 
 import {
   FormControl,
@@ -30,6 +31,7 @@ import PropTypes from 'prop-types';
 import Container from '../../../components/ContainerComponents';
 import '../../../Global.css';
 
+import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
 import PaletteIcon from '@mui/icons-material/Palette';
 import { useEffect, useRef, useState } from 'react';
 import AutoDateExtension from '../extensions/AutoDateExtension';
@@ -47,12 +49,12 @@ const MenuBar = ({
   setColor,
   editorBackgroundColor,
   setEditorBackgroundColor,
-  editorBackgroundImage,
   setEditorBackgroundImage,
 }) => {
   const colorTextInputRef = useRef(null);
   const colorBackgroundInputRef = useRef(null);
-  const { selectedData, updateData } = useData();
+  const fileInputRef = useRef(null);
+  const { selectedData, updateData, uploadBackground } = useData();
   const updateTimer = useRef(null);
 
   const triggerUpdate = (data) => {
@@ -92,14 +94,20 @@ const MenuBar = ({
     triggerUpdate(newEditorData);
   };
 
-  const handleBackgroundImageChange = (event) => {
-    const imageUrl = event.target.value;
-    setEditorBackgroundImage(imageUrl);
-    editor.commands.setBackground(editorBackgroundColor, imageUrl);
-    const jsonData = JSON.parse(selectedData.value);
-    jsonData.attrs.backgroundImage = imageUrl;
-    const newEditorData = { ...selectedData, value: JSON.stringify(jsonData) };
-    triggerUpdate(newEditorData);
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      try {
+        const updatedData = await uploadBackground(file);
+        if (updatedData.background) {
+          const backgroundPath = `${updatedData.background.path}`;
+          setEditorBackgroundImage(backgroundPath);
+          editor.commands.setBackground(editorBackgroundColor, backgroundPath);
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'upload:", error);
+      }
+    }
   };
 
   return (
@@ -194,7 +202,7 @@ const MenuBar = ({
           onClick={() => showColorPickerInput(colorTextInputRef)}
           color="default"
         >
-          <PaletteIcon
+          <FormatColorTextIcon
             sx={{ color: editor.getAttributes('textStyle').textColor }}
           />
         </IconButton>
@@ -296,20 +304,16 @@ const MenuBar = ({
           <ThermostatIcon />
         </IconButton>
         <input
-          type="text"
-          placeholder="Enter image URL"
-          value={editorBackgroundImage}
-          onChange={handleBackgroundImageChange}
-          style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileUpload}
+          style={{ display: 'none' }}
         />
+        <IconButton onClick={() => fileInputRef.current.click()}>
+          <UploadIcon sx={{ color: 'text.secondary' }} />
+        </IconButton>
       </div>
-
-      <div></div>
     </div>
   );
 };
@@ -374,7 +378,7 @@ function ContentEditor(t) {
   let content;
 
   if (selectedData?.value.length > 0) {
-    content = JSON.parse(selectedData?.value); // Conversion des données JSON en contenu
+    content = JSON.parse(selectedData?.value);
   }
 
   const editor = useEditor({
@@ -404,7 +408,6 @@ function ContentEditor(t) {
     ],
     onUpdate: ({ editor }) => {
       const data = { ...selectedData, value: editor.getJSON() };
-
       data.value.attrs.backgroundColor = editorBackgroundColor;
       data.value = JSON.stringify(data.value);
       updateData(data);
@@ -415,18 +418,15 @@ function ContentEditor(t) {
   const [editorBackgroundColor, setEditorBackgroundColor] = useState(
     content?.attrs?.backgroundColor || '#000000'
   );
-  const [editorBackgroundImage, setEditorBackgroundImage] = useState(
-    content?.attrs?.backgroundImage || ''
-  );
+  const [editorBackgroundImage, setEditorBackgroundImage] = useState('');
 
   useEffect(() => {
-    if (editor) {
-      editor.commands.setBackground(
-        editorBackgroundColor,
-        editorBackgroundImage
-      );
+    if (editor && selectedData?.background) {
+      const backgroundPath = `${selectedData.background.path}`;
+      setEditorBackgroundImage(backgroundPath);
+      editor.commands.setBackground(editorBackgroundColor, backgroundPath);
     }
-  }, [editor, editorBackgroundColor, editorBackgroundImage]);
+  }, [editor, selectedData, editorBackgroundColor]);
 
   return (
     <>

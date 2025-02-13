@@ -38,5 +38,5 @@ export class UpdateDataDto {
 
   @IsNumber()
   @IsOptional()
-  public backgroundImage?: number;
+  public background_id?: number;
 }

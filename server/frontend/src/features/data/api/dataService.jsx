@@ -51,6 +51,25 @@ class DataService {
       method: 'DELETE',
     });
   }
+
+  static async uploadBackground(dataId, file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetchWithAuthorization(
+      `${API_URL}uploadBackground/${dataId}`,
+      {
+        method: 'PUT',
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Échec de l'upload de l'image de fond");
+    }
+
+    return await response.json();
+  }
 }
 
 export default DataService;
