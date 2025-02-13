@@ -82,6 +82,11 @@ function useData() {
     [getAllData]
   );
 
+  const deleteBackground = useCallback(async () => {
+    await DataService.deleteBackground(selectedData);
+    setSelectedData({ ...selectedData, background: null });
+  }, [selectedData, setSelectedData]);
+
   const clearSelectedData = useCallback(() => {
     setSelectedData(null);
   }, [setSelectedData]);
@@ -93,6 +98,7 @@ function useData() {
     uploadBackground: uploadBackground,
     addData: addData,
     deleteData: deleteData,
+    deleteBackground: deleteBackground,
     data: data,
     setSelectedData: setSelectedData,
     selectedData: selectedData,

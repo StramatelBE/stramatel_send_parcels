@@ -90,7 +90,7 @@ export class PlaylistService {
         item.media &&
         (item.media.type === "image" || item.media.type === "video")
       ) {
-        await this.uploadService.deleteMedia(item.media, req);
+        await this.uploadService.removeMediaFile(item.media, req);
       }
     }
     // Supprimer les médias associés à la playlist

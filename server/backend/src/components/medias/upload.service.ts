@@ -1,36 +1,34 @@
+import { Media } from "@prisma/client";
 import { NextFunction } from "express";
 import { unlinkSync } from "fs";
 import multer from "multer";
-import { Inject, Service } from "typedi";
+import path from "path";
+import { Service } from "typedi";
 import { v4 as uuidv4 } from "uuid";
 import { HttpException } from "../../exceptions/HttpException";
-import { MediaService } from "./media.service";
-import { UserService } from "../users/users.service";
-import { Media } from "@prisma/client";
-import path from "path";
 
 @Service()
 export class UploadService {
-  constructor(
-    @Inject(() => UserService) private userService: UserService,
-    @Inject(() => MediaService) private mediaService: MediaService
-  ) {}
+  constructor() {}
 
   private getExtension(mimetype: string) {
     const parts = mimetype.split("/");
     return parts[parts.length - 1];
   }
 
-  public handleUpload = async (req: any, res: any, next: NextFunction) => {
-    try {
-      console.log("Starting upload process...");
-      console.log("User:", req.user);
-
+  public handleUpload = async (
+    req: any,
+    res: any,
+    next: NextFunction
+  ): Promise<any> => {
+    return new Promise((resolve, reject) => {
       const env = process.env.NODE_ENV;
       const uploadDir = process.env[`UPLOAD_DIR_${env}`];
 
       if (!uploadDir) {
-        throw new HttpException(500, "Upload directory not configured");
+        return reject(
+          new HttpException(500, "Upload directory not configured")
+        );
       }
 
       const destination = `${uploadDir}${req.user.username}`;
@@ -66,33 +64,29 @@ export class UploadService {
         },
       }).single("file");
 
-      return new Promise((resolve, reject) => {
-        upload(req, res, function (err) {
-          if (err) {
-            console.error("Upload error:", err);
-            reject(
-              new HttpException(
-                400,
-                err.message || "Erreur lors de l'upload du fichier"
-              )
+      upload(req, res, function (err) {
+        if (err) {
+          console.error("Upload error:", err);
+          return reject(
+            new HttpException(
+              400,
+              err.message || "Erreur lors de l'upload du fichier"
+            )
+          );
+        } else {
+          if (!req.file) {
+            return reject(
+              new HttpException(400, "Aucun fichier n'a été uploadé")
             );
           } else {
-            if (!req.file) {
-              reject(new HttpException(400, "Aucun fichier n'a été uploadé"));
-            } else {
-              console.log("File uploaded successfully:", req.file);
-              resolve(next());
-            }
+            resolve(req.file);
           }
-        });
+        }
       });
-    } catch (error) {
-      console.error("Upload service error:", error);
-      next(error);
-    }
+    });
   };
 
-  public deleteMedia = async (media: Media, req: any): Promise<void> => {
+  public removeMediaFile = async (media: Media, req: any): Promise<void> => {
     try {
       unlinkSync(
         path.join(

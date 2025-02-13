@@ -3,10 +3,9 @@ import { fetchWithAuthorization } from '../../../utils/fetchWithAuthorization';
 const API_URL = `${process.env.API_URL}medias/`;
 
 class MediaService {
-  static async uploadFile(fileData, playlistId) {
+  static async uploadFile(fileData) {
     const formData = new FormData();
     formData.append('file', fileData);
-    formData.append('playlistId', playlistId);
     const response = await fetchWithAuthorization(`${API_URL}`, {
       method: 'POST',
       body: formData,
@@ -46,16 +45,6 @@ class MediaService {
     }
 
     return await response.json();
-  }
-
-  static async addData(type, playlistId) {
-    const response = await fetchWithAuthorization(`${API_URL}/addData`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ type, playlistId }),
-    });
   }
 }
 

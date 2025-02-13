@@ -1,21 +1,14 @@
+import { Data } from "@prisma/client";
 import { validate } from "class-validator";
-import { Data, Media } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import { Inject, Service } from "typedi";
+import { CustomRequest } from "../../middlewares/extractUserId.middleware";
 import { DataService } from "./data.service";
 import { CreateDataDto, UpdateDataDto } from "./data.validation";
-import { CustomRequest } from "../../middlewares/extractUserId.middleware";
-import { UploadService } from "../medias/upload.service";
-import { MediaService } from "../medias/media.service";
-import { log } from "console";
 
 @Service()
 export class DataController {
-  constructor(
-    @Inject(() => DataService) private dataService: DataService,
-    @Inject(() => UploadService) private uploadService: UploadService,
-    @Inject(() => MediaService) private mediaService: MediaService
-  ) {}
+  constructor(@Inject(() => DataService) private dataService: DataService) {}
 
   createData = async (
     req: CustomRequest,
@@ -86,7 +79,7 @@ export class DataController {
   ) => {
     try {
       const dataId: number = parseInt(req.params.dataId);
-      await this.uploadService.handleUpload(req, res, async () => {
+      /*  await this.uploadService.handleUpload(req, res, async () => {
         if (!req.file) {
           res.status(400).json({ message: "No file uploaded" });
           return;
@@ -97,7 +90,7 @@ export class DataController {
             oldData.background_id
           );
           await this.mediaService.deleteMedia(oldData.background_id);
-          await this.uploadService.deleteMedia(oldMedia, req);
+          await this.uploadService.removeMediaFile(oldMedia, req);
         }
         const media = await this.mediaService.createMedia(req, 0);
         const updatedData: Data | null = await this.dataService.updateData(
@@ -113,7 +106,31 @@ export class DataController {
             message: "Background uploaded successfully",
           });
         }
-      });
+      }); */
+    } catch (error) {
+      next(error);
+    }
+  };
+  deleteBackground = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      /* const dataId: number = parseInt(req.params.dataId);
+
+      const deletedData: Data | null = await this.dataService.deleteData(
+        dataId
+      );
+      if (!deletedData) {
+        res.status(404).json({ message: "Data not found" });
+      } else {
+        const oldMedia = await this.mediaService.findMedia(
+          deletedData.background_id
+        );
+        await this.mediaService.deleteMedia(deletedData.background_id);
+        await this.uploadService.deleteMedia(oldMedia, req);
+      } */
     } catch (error) {
       next(error);
     }

@@ -70,6 +70,15 @@ class DataService {
 
     return await response.json();
   }
+  static async deleteBackground(data) {
+    await fetchWithAuthorization(`${API_URL}deleteBackground/${data.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ background_id: data.background_id }),
+    });
+  }
 }
 
 export default DataService;

@@ -16,13 +16,20 @@ router.post(
   extractUserId,
   (req, res, next) => dataController.createData(req, res, next)
 );
-
+/* 
 router.put(
   "/uploadBackground/:dataId",
   authMiddleware,
   validateDto(UpdateDataDto),
   (req, res, next) => dataController.uploadBackground(req, res, next)
 );
+
+router.put(
+  "/deleteBackground/:dataId",
+  authMiddleware,
+  validateDto(UpdateDataDto),
+  (req, res, next) => dataController.deleteBackground(req, res, next)
+); */
 
 router.get("/", authMiddleware, (req, res, next) =>
   dataController.getAllData(req, res, next)

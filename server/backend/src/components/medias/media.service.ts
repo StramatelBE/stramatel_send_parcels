@@ -1,25 +1,29 @@
 import { Media, PrismaClient } from "@prisma/client";
-import { Service } from "typedi";
+import { Inject, Service } from "typedi";
 import { HttpException } from "../../exceptions/HttpException";
 import * as ffmpeg from "fluent-ffmpeg";
+import { UploadService } from "./upload.service";
+import { NextFunction } from "express";
 const prisma = new PrismaClient();
 
 @Service()
 export class MediaService {
-  async createMedia(req: any, mediaPosition: number): Promise<Media> {
-    const file = req.file;
-
-    const media = {
-      original_file_name: file.originalname,
-      file_name: file.filename,
-      path: `/medias/${req.user.username}/${file.filename}`,
-      format: file.mimetype.split("/")[1],
-      type: file.mimetype.split("/")[0],
-      size: file.size,
-      uploaded_at: new Date(),
-      user_id: req.user.id,
-    };
+  constructor(
+    @Inject(() => UploadService) private uploadService: UploadService
+  ) {}
+  async createMedia(req: any, res: any, next: NextFunction): Promise<Media> {
     try {
+      const file = await this.uploadService.handleUpload(req, res, next);
+      const media = {
+        original_file_name: file.originalname,
+        file_name: file.filename,
+        path: `/medias/${req.user.username}/${file.filename}`,
+        format: file.mimetype.split("/")[1],
+        type: file.mimetype.split("/")[0],
+        size: file.size,
+        uploaded_at: new Date(),
+        user_id: req.user.id,
+      };
       const newMedia = await prisma.media.create({
         data: media,
       });
@@ -80,10 +84,13 @@ export class MediaService {
     return mediaCount;
   }
 
-  async deleteMedia(mediaId: number): Promise<Media> {
+  async deleteMedia(mediaId: number, req: any): Promise<Media> {
     const media = await prisma.media.findUnique({
       where: { id: mediaId },
     });
+
+    await this.uploadService.removeMediaFile(media, req);
+
     if (!media) {
       throw new HttpException(404, `Media with ID ${mediaId} doesn't exist.`);
     }

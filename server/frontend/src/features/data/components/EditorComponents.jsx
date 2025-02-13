@@ -12,6 +12,7 @@ import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
 import PollIcon from '@mui/icons-material/Poll';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
 import UploadIcon from '@mui/icons-material/Upload';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import {
   FormControl,
@@ -50,11 +51,13 @@ const MenuBar = ({
   editorBackgroundColor,
   setEditorBackgroundColor,
   setEditorBackgroundImage,
+  editorBackgroundImage,
 }) => {
   const colorTextInputRef = useRef(null);
   const colorBackgroundInputRef = useRef(null);
   const fileInputRef = useRef(null);
-  const { selectedData, updateData, uploadBackground } = useData();
+  const { selectedData, updateData, uploadBackground, deleteBackground } =
+    useData();
   const updateTimer = useRef(null);
 
   const triggerUpdate = (data) => {
@@ -108,6 +111,16 @@ const MenuBar = ({
         console.error("Erreur lors de l'upload:", error);
       }
     }
+  };
+
+  const deleteBackgroundHandle = () => {
+    deleteBackground();
+    setEditorBackgroundImage('');
+    editor.commands.setBackground(editorBackgroundColor, '');
+    const jsonData = JSON.parse(selectedData.value);
+    delete jsonData.attrs.background;
+    const newEditorData = { ...selectedData, value: JSON.stringify(jsonData) };
+    triggerUpdate(newEditorData);
   };
 
   return (
@@ -303,16 +316,24 @@ const MenuBar = ({
         >
           <ThermostatIcon />
         </IconButton>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileUpload}
-          style={{ display: 'none' }}
-        />
-        <IconButton onClick={() => fileInputRef.current.click()}>
-          <UploadIcon sx={{ color: 'text.secondary' }} />
-        </IconButton>
+        {editorBackgroundImage ? (
+          <IconButton onClick={deleteBackgroundHandle}>
+            <DeleteIcon sx={{ color: 'text.secondary' }} />
+          </IconButton>
+        ) : (
+          <>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              style={{ display: 'none' }}
+            />
+            <IconButton onClick={() => fileInputRef.current.click()}>
+              <UploadIcon sx={{ color: 'text.secondary' }} />
+            </IconButton>
+          </>
+        )}
       </div>
     </div>
   );

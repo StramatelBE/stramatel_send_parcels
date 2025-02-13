@@ -44,7 +44,7 @@ export class PlaylistItemService {
 
   async createPlaylistItem(
     playlistItemData: CreatePlaylistItemDto
-  ): Promise<PlaylistItem> {
+  ): Promise<PlaylistItemWithMedia> {
     const playlistItem = await prisma.playlistItem.create({
       data: {
         playlist_id: playlistItemData.playlist_id,
@@ -52,6 +52,9 @@ export class PlaylistItemService {
         data_id: playlistItemData.data_id,
         position: playlistItemData.position,
         duration: playlistItemData.duration || 10,
+      },
+      include: {
+        media: true,
       },
     });
 
@@ -97,7 +100,7 @@ export class PlaylistItemService {
         playlistItem.media.type === "image" ||
         playlistItem.media.type === "video"
       ) {
-        await this.uploadService.deleteMedia(playlistItem.media, req);
+        await this.uploadService.removeMediaFile(playlistItem.media, req);
         // Supprimer le média de la base de données
         await prisma.media.delete({
           where: { id: playlistItem.media.id },

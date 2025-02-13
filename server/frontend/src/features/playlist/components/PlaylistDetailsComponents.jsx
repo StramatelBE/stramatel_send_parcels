@@ -23,13 +23,13 @@ import {
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { useTranslation } from 'react-i18next';
 import Container from '../../../components/ContainerComponents';
-import useMedia from '../hooks/useMedias';
+import useData from '../../data/hooks/useData';
 import usePlaylists from '../hooks/usePlaylists';
+import usePlaylistsItem from '../hooks/usePlaylistsItem';
 import selectedPlaylistStore from '../stores/selectedPlaylistStore';
 import UpdatePlaylistDialog from './dialogs/UpdatePLaylistDialog';
-import useData from '../../data/hooks/useData';
-import { useTranslation } from 'react-i18next';
 
 function PlaylistDetailsComponents() {
   const [open, setOpen] = useState(false);
@@ -243,8 +243,8 @@ function PlaylistDetailsClose() {
   );
 }
 function AddPlaylistItem(t) {
-  const { uploadMedia } = useMedia();
-  const { addPlaylistItemEditor } = usePlaylists();
+  const { createPlaylistItemMedias, createPlaylistItemEditor } =
+    usePlaylistsItem();
   const { selectedPlaylist } = selectedPlaylistStore();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -274,7 +274,7 @@ function AddPlaylistItem(t) {
         </MenuItem>
         <MenuItem
           onClick={() => {
-            addPlaylistItemEditor(selectedPlaylist.id);
+            createPlaylistItemEditor(selectedPlaylist.id);
             handleClose();
           }}
         >
@@ -287,8 +287,7 @@ function AddPlaylistItem(t) {
         id="inputFile"
         style={{ display: 'none' }}
         onChange={(e) => {
-          e.preventDefault();
-          uploadMedia(e.target.files[0], selectedPlaylist.id);
+          createPlaylistItemMedias(e.target.files[0]);
         }}
       />
     </>

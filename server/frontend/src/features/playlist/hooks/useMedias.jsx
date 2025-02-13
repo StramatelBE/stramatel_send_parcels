@@ -18,17 +18,13 @@ function useMedia() {
     [getPlaylistById]
   );
 
-  const uploadMedia = useCallback(
-    async (fileData, playlistId) => {
-      try {
-        await MediaService.uploadFile(fileData, playlistId);
-        getPlaylistById(playlistId);
-      } catch (error) {
-        console.error('Failed to upload media:', error);
-      }
-    },
-    [getPlaylistById]
-  );
+  const uploadMedia = useCallback(async (fileData) => {
+    try {
+      await MediaService.uploadFile(fileData);
+    } catch (error) {
+      console.error('Failed to upload media:', error);
+    }
+  }, []);
 
   const updateMedia = useCallback(
     async (e, media) => {
