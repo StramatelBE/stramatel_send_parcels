@@ -42,11 +42,26 @@ export default Extension.create({
       setBackground: (color, imageUrl) => () => {
         const editorElement = document.querySelector('.tiptap-text-container');
         if (editorElement) {
-          editorElement.style.backgroundColor = color;
-          editorElement.style.backgroundImage = `url(${imageUrl})`;
-          editorElement.style.backgroundSize = `${process.env.PREVIEW_WIDTH}px ${process.env.PREVIEW_HEIGHT}px`;
+          editorElement.style.backgroundColor = color || '#000000';
+          editorElement.style.backgroundImage = imageUrl ? `url(${imageUrl})` : '';
+          if (imageUrl) {
+            editorElement.style.backgroundSize = `${process.env.PREVIEW_WIDTH}px ${process.env.PREVIEW_HEIGHT}px`;
+          }
         }
         return true;
+      },
+      getBackground: () => () => {
+        const editorElement = document.querySelector('.tiptap-text-container');
+        if (!editorElement) {
+          return {
+            backgroundColor: '#000000',
+            backgroundImage: '',
+          };
+        }
+        return {
+          backgroundColor: editorElement.style.backgroundColor || '#000000',
+          backgroundImage: editorElement.style.backgroundImage || '',
+        };
       },
     };
   },

@@ -24,7 +24,7 @@ function useData() {
     async (newData) => {
       const response = await DataService.updateData(newData);
       const updatedData = data.map((item) =>
-        item.id === newData.id ? { ...item, ...response.data } : item
+        item.id === newData.id ? { ...response.data } : item
       );
       setData(updatedData);
       setSelectedData(response.data);
@@ -43,7 +43,13 @@ function useData() {
         background_id: uploadFile.file.id,
       });
       const updatedData = data.map((item) =>
-        item.id === selectedData.id ? { ...item, ...response.data } : item
+        item.id === selectedData.id
+          ? {
+              ...item,
+              ...response.data,
+              background: { ...item.background, path: uploadFile.file.path },
+            }
+          : item
       );
       setData(updatedData);
       setSelectedData(response.data);
@@ -54,6 +60,20 @@ function useData() {
     }
   }, []);
 
+  const deleteBackgroundData = useCallback(async () => {
+    if (!selectedData) return;
+    console.log('selectedData', selectedData);
+    await MediaService.deleteMedia(selectedData.background.id);
+    await updateData({
+      id: selectedData.id,
+      background_id: null,
+    });
+    const updatedData = data.map((item) =>
+      item.id === selectedData.id ? { ...item, background: null } : item
+    );
+    setData(updatedData);
+    setSelectedData(updatedData);
+  }, []);
   const addData = useCallback(
     async (name) => {
       const data = {
@@ -87,16 +107,17 @@ function useData() {
   }, [setSelectedData]);
 
   return {
-    getAllData: getAllData,
-    getTemperature: getTemperature,
-    updateData: updateData,
-    updateBackgroundData: updateBackgroundData,
-    addData: addData,
-    deleteData: deleteData,
-    data: data,
-    setSelectedData: setSelectedData,
-    selectedData: selectedData,
-    clearSelectedData: clearSelectedData,
+    getAllData,
+    getTemperature,
+    updateData,
+    updateBackgroundData,
+    addData,
+    deleteData,
+    data,
+    setSelectedData,
+    selectedData,
+    clearSelectedData,
+    deleteBackgroundData,
   };
 }
 
