@@ -35,7 +35,6 @@ class PlaylistItemService {
   }
 
   static async updatePlaylistItem(playlistItemUpdate) {
-    console.log(playlistItemUpdate);
     const isArray = Array.isArray(playlistItemUpdate);
     const url = isArray ? `${API_URL}` : `${API_URL}${playlistItemUpdate.id}`;
 

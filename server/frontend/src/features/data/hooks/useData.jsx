@@ -7,6 +7,7 @@ import MediaService from '../../playlist/api/mediaService';
 function useData() {
   const { setData, data, setSelectedData, selectedData } = dataStore();
   const { setLoading } = useLoadingStore();
+ 
 
   const getAllData = useCallback(async () => {
     setLoading(true);
@@ -20,66 +21,34 @@ function useData() {
     const response = await DataService.getOneData(1);
     return response.data.value;
   };
+
   const updateData = useCallback(
     async (newData) => {
-      const response = await DataService.updateData(newData);
+      
+      const dataUpdate = { ...selectedData, value: newData };
+      const response = await DataService.updateData(dataUpdate);
       const updatedData = data.map((item) =>
-        item.id === newData.id ? { ...response.data } : item
+        item.id === dataUpdate.id ? { ...response.data } : item
       );
+      
+
       setData(updatedData);
-      setSelectedData(response.data);
-      return response.data;
+ 
+      
     },
-    [data, setData, setSelectedData]
+    []
   );
 
-  const updateBackgroundData = useCallback(async (file) => {
-    if (!selectedData) return;
 
-    try {
-      const uploadFile = await MediaService.uploadFile(file);
-      const response = await updateData({
-        id: selectedData.id,
-        background_id: uploadFile.file.id,
-      });
-      const updatedData = data.map((item) =>
-        item.id === selectedData.id
-          ? {
-              ...item,
-              ...response.data,
-              background: { ...item.background, path: uploadFile.file.path },
-            }
-          : item
-      );
-      setData(updatedData);
-      setSelectedData(response.data);
-      return response.data;
-    } catch (error) {
-      console.error("Erreur lors de l'upload de l'image:", error);
-      throw error;
-    }
-  }, []);
-
-  const deleteBackgroundData = useCallback(async () => {
-    if (!selectedData) return;
-    console.log('selectedData', selectedData);
-    await MediaService.deleteMedia(selectedData.background.id);
-    await updateData({
-      id: selectedData.id,
-      background_id: null,
-    });
-    const updatedData = data.map((item) =>
-      item.id === selectedData.id ? { ...item, background: null } : item
-    );
-    setData(updatedData);
-    setSelectedData(updatedData);
-  }, []);
   const addData = useCallback(
     async (name) => {
       const data = {
         type: 'doc',
         content: [
           {
+            background: {
+              color: '#000000',
+            },
             type: 'paragraph',
             attrs: {
               textAlign: 'center',
@@ -110,14 +79,12 @@ function useData() {
     getAllData,
     getTemperature,
     updateData,
-    updateBackgroundData,
     addData,
     deleteData,
     data,
     setSelectedData,
     selectedData,
     clearSelectedData,
-    deleteBackgroundData,
   };
 }
 

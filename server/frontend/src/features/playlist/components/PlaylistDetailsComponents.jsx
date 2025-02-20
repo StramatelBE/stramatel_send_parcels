@@ -82,7 +82,6 @@ function PlaylistDetailsContent(t) {
     items.forEach((item, index) => {
       item.position = index;
     });
-    console.log(items);
 
     updatePlaylistItems(items);
   };

@@ -59,21 +59,19 @@ function DataDetailsClose() {
 }
 
 function ContentEditor() {
-  const { editor, color, setColor, fontFamily, initialBackgroundColor } =
-    useEditor();
+  const { editor } = useEditor();
+  const { selectedData } = useData();
 
   if (!editor) {
     return null;
   }
 
+  // Récupérer la couleur de fond depuis les données sélectionnées
+  const backgroundColor = editor.getAttributes('doc').backgroundColor || '#ffffff';
+
   return (
     <>
-      <MenuBarComponent
-        editor={editor}
-        color={color}
-        setColor={setColor}
-        fontFamily={fontFamily}
-      />
+      <MenuBarComponent editor={editor} />
       <div
         className="tiptap-text-container"
         style={{
@@ -82,7 +80,7 @@ function ContentEditor() {
           minWidth: `${process.env.PREVIEW_WIDTH}px`,
           overflow: 'hidden',
           scrollbarWidth: 'none',
-          backgroundColor: initialBackgroundColor,
+          backgroundColor: backgroundColor,
         }}
       >
         <EditorContent className="fixed-editor" editor={editor} />

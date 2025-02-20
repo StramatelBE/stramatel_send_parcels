@@ -1,3 +1,15 @@
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
+import FormatBoldIcon from '@mui/icons-material/FormatBold';
+import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
+import FormatItalicIcon from '@mui/icons-material/FormatItalic';
+import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough';
+import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
+import PaletteIcon from '@mui/icons-material/Palette';
+import ThermostatIcon from '@mui/icons-material/Thermostat';
 import {
   FormControl,
   IconButton,
@@ -5,38 +17,14 @@ import {
   Select,
   Typography,
 } from '@mui/material';
-import FormatBoldIcon from '@mui/icons-material/FormatBold';
-import FormatItalicIcon from '@mui/icons-material/FormatItalic';
-import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough';
-import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
-import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
-import PaletteIcon from '@mui/icons-material/Palette';
-import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
-import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
-import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import ThermostatIcon from '@mui/icons-material/Thermostat';
-import UploadIcon from '@mui/icons-material/Upload';
-import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
 import { useRef } from 'react';
-import useData from '../hooks/useData';
 import useEditor from '../hooks/useEditor';
 
-const MenuBarComponent = ({
-  editor,
-
-  fontFamily,
-}) => {
+const MenuBarComponent = ({ editor }) => {
   const colorTextInputRef = useRef(null);
   const colorBackgroundInputRef = useRef(null);
-  const fileInputRef = useRef(null);
-  const { selectedData, updateBackgroundData, deleteBackgroundData } =
-    useData();
-
-  const { handleFontFamilyChange, handleBackgroundColorChange } = useEditor();
-
+  const { handleBackgroundColorChange } = useEditor();
   const showColorPickerInput = (ref) => {
     if (ref.current) {
       ref.current.click();
@@ -46,37 +34,6 @@ const MenuBarComponent = ({
   if (!editor) {
     return null;
   }
-
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      try {
-        const updatedData = await updateBackgroundData(file);
-        if (updatedData.background) {
-          const backgroundPath = `${updatedData.background.path}`;
-          const jsonData = JSON.parse(selectedData.value);
-          const backgroundColor = jsonData.attrs?.backgroundColor || '#000000';
-          editor.commands.setBackground(backgroundColor, backgroundPath);
-        }
-      } catch (error) {
-        console.error("Erreur lors de l'upload:", error);
-      }
-    }
-  };
-
-  const deleteBackgroundHandle = () => {
-    deleteBackgroundData();
-    const jsonData = JSON.parse(selectedData.value);
-    const backgroundColor = jsonData.attrs?.backgroundColor || '#000000';
-    editor.commands.setBackground(backgroundColor, '');
-    delete jsonData.attrs.background;
-  };
-
-  const jsonData = JSON.parse(selectedData.value);
-  const backgroundColor = jsonData.attrs?.backgroundColor || '#000000';
-  const editorElement = document.querySelector('.tiptap-text-container');
-  const backgroundImage = editorElement?.style.backgroundImage || '';
-  const hasBackgroundImage = backgroundImage && backgroundImage !== 'none';
 
   const fonts = [
     { value: 'Arial', label: 'Arial' },
@@ -89,24 +46,22 @@ const MenuBarComponent = ({
     { value: 'Lato', label: 'Lato' },
   ];
 
+  
+
   return (
     <div className="control-group">
       <div className="button-group">
         <FormControl size="small" sx={{ minWidth: 120, marginRight: 1 }}>
           <Select
-            value={fontFamily || 'Arial'}
+            value={editor.getAttributes('textStyle').fontFamily || 'Arial'}
             onChange={(event) => {
-              if (
-                handleFontFamilyChange &&
-                typeof handleFontFamilyChange === 'function'
-              ) {
-                handleFontFamilyChange(event.target.value);
-              }
+              editor.chain().focus().setFontFamily(event.target.value).run();
             }}
             sx={{
               height: '40px',
               '& .MuiSelect-select': {
-                fontFamily: fontFamily || 'Arial',
+                fontFamily:
+                  editor.getAttributes('textStyle').fontFamily || 'Arial',
               },
             }}
           >
@@ -230,21 +185,23 @@ const MenuBarComponent = ({
           }}
         />
 
-        <IconButton
-          onClick={() => showColorPickerInput(colorBackgroundInputRef)}
-        >
+        <IconButton onClick={() => showColorPickerInput(colorBackgroundInputRef)}>
           <input
             ref={colorBackgroundInputRef}
             type="color"
-            value={backgroundColor}
-            onChange={(e) => handleBackgroundColorChange(e, editor)}
+            onInput={(event) => handleBackgroundColorChange(event.target.value)}
+            value={editor.getAttributes('doc').backgroundColor || '#ffffff'}
             style={{
               position: 'absolute',
               opacity: 0,
               pointerEvents: 'none',
             }}
           />
-          <PaletteIcon sx={{ color: backgroundColor }} />
+          <PaletteIcon
+            sx={{
+              color: editor.getAttributes('doc').backgroundColor || '#ffffff',
+            }}
+          />
         </IconButton>
 
         <FormControl size="small">
@@ -315,7 +272,7 @@ const MenuBarComponent = ({
           <ThermostatIcon />
         </IconButton>
 
-        {hasBackgroundImage ? (
+       {/*  {hasBackgroundImage ? (
           <IconButton onClick={deleteBackgroundHandle}>
             <DeleteIcon sx={{ color: 'text.secondary' }} />
           </IconButton>
@@ -332,7 +289,7 @@ const MenuBarComponent = ({
               <UploadIcon sx={{ color: 'text.secondary' }} />
             </IconButton>
           </>
-        )}
+        )} */}
       </div>
     </div>
   );
@@ -340,12 +297,6 @@ const MenuBarComponent = ({
 
 MenuBarComponent.propTypes = {
   editor: PropTypes.object.isRequired,
-  color: PropTypes.string.isRequired,
-  setColor: PropTypes.func.isRequired,
-  handleTextColorChange: PropTypes.func.isRequired,
-  handleBackgroundColorChange: PropTypes.func.isRequired,
-  fontFamily: PropTypes.string.isRequired,
-  handleFontFamilyChange: PropTypes.func.isRequired,
 };
 
 export default MenuBarComponent;

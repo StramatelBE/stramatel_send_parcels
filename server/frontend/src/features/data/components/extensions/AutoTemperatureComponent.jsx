@@ -10,7 +10,6 @@ const AutoTemperatureComponent = () => {
   // Simulate fetching temperature from an API
   const fetchTemperature = async () => {
     const temperature = await getTemperature();
-    console.log(temperature);
     setTemperature(temperature + '°C');
   };
 

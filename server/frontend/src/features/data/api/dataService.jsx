@@ -22,7 +22,6 @@ class DataService {
     return await response.json();
   }
   static async updateData(data) {
-    console.log(data);
     const response = await fetchWithAuthorization(`${API_URL}${data.id}`, {
       method: 'PUT',
       headers: {

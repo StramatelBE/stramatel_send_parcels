@@ -40,7 +40,6 @@ export class DataService {
       where: { id },
       include: { background: true },
     });
-    console.log("updateDataDto", updateDataDto);
 
     if (existingData?.background_id) {
       await this.uploadService.removeMediaFile(existingData.background, userId);
