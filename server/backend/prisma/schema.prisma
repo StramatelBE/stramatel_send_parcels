@@ -41,6 +41,7 @@ model Media {
 
 model Data {
   id            Int            @id @default(autoincrement())
+  backgroundColor String?
   name          String?
   value         String?
   type          String?

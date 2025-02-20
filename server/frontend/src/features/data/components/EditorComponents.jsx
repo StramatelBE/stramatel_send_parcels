@@ -60,14 +60,11 @@ function DataDetailsClose() {
 
 function ContentEditor() {
   const { editor } = useEditor();
-  const { selectedData } = useData();
 
   if (!editor) {
     return null;
   }
 
-  // Récupérer la couleur de fond depuis les données sélectionnées
-  const backgroundColor = editor.getAttributes('doc').backgroundColor || '#ffffff';
 
   return (
     <>
@@ -80,7 +77,6 @@ function ContentEditor() {
           minWidth: `${process.env.PREVIEW_WIDTH}px`,
           overflow: 'hidden',
           scrollbarWidth: 'none',
-          backgroundColor: backgroundColor,
         }}
       >
         <EditorContent className="fixed-editor" editor={editor} />

@@ -5,10 +5,10 @@ import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
 import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
+import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
-import PaletteIcon from '@mui/icons-material/Palette';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
 import {
   FormControl,
@@ -19,12 +19,15 @@ import {
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useRef } from 'react';
+import useData from '../hooks/useData';
 import useEditor from '../hooks/useEditor';
 
 const MenuBarComponent = ({ editor }) => {
   const colorTextInputRef = useRef(null);
-  const colorBackgroundInputRef = useRef(null);
-  const { handleBackgroundColorChange } = useEditor();
+  const backgroundColorInputRef = useRef(null);
+  const { selectedData,  } = useData();
+  const { handleBackgroundColor} = useEditor();
+
   const showColorPickerInput = (ref) => {
     if (ref.current) {
       ref.current.click();
@@ -34,6 +37,8 @@ const MenuBarComponent = ({ editor }) => {
   if (!editor) {
     return null;
   }
+
+
 
   const fonts = [
     { value: 'Arial', label: 'Arial' },
@@ -45,8 +50,6 @@ const MenuBarComponent = ({ editor }) => {
     { value: 'Open Sans', label: 'Open Sans' },
     { value: 'Lato', label: 'Lato' },
   ];
-
-  
 
   return (
     <div className="control-group">
@@ -185,24 +188,25 @@ const MenuBarComponent = ({ editor }) => {
           }}
         />
 
-        <IconButton onClick={() => showColorPickerInput(colorBackgroundInputRef)}>
-          <input
-            ref={colorBackgroundInputRef}
-            type="color"
-            onInput={(event) => handleBackgroundColorChange(event.target.value)}
-            value={editor.getAttributes('doc').backgroundColor || '#ffffff'}
-            style={{
-              position: 'absolute',
-              opacity: 0,
-              pointerEvents: 'none',
-            }}
-          />
-          <PaletteIcon
-            sx={{
-              color: editor.getAttributes('doc').backgroundColor || '#ffffff',
-            }}
+        <IconButton
+          onClick={() => showColorPickerInput(backgroundColorInputRef)}
+          color="default"
+        >
+          <FormatColorFillIcon
+            sx={{ color: selectedData?.backgroundColor || '#000000' }}
           />
         </IconButton>
+        <input
+          ref={backgroundColorInputRef}
+          type="color"
+          onInput={(event) => handleBackgroundColor(event.target.value)}
+          value={selectedData?.backgroundColor || '#000000'}
+          style={{
+            position: 'absolute',
+            opacity: 0,
+            pointerEvents: 'none',
+          }}
+        />
 
         <FormControl size="small">
           <Select
@@ -271,25 +275,6 @@ const MenuBarComponent = ({ editor }) => {
         >
           <ThermostatIcon />
         </IconButton>
-
-       {/*  {hasBackgroundImage ? (
-          <IconButton onClick={deleteBackgroundHandle}>
-            <DeleteIcon sx={{ color: 'text.secondary' }} />
-          </IconButton>
-        ) : (
-          <>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileUpload}
-              style={{ display: 'none' }}
-            />
-            <IconButton onClick={() => fileInputRef.current.click()}>
-              <UploadIcon sx={{ color: 'text.secondary' }} />
-            </IconButton>
-          </>
-        )} */}
       </div>
     </div>
   );

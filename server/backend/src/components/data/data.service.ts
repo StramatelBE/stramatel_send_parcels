@@ -54,9 +54,9 @@ export class DataService {
         value: updateDataDto.value,
         name: updateDataDto.name,
         background_id: updateDataDto.background_id,
+        backgroundColor: updateDataDto.backgroundColor,
       },
     });
-    console.log("updatedData", updatedData);
     return updatedData;
   }
 

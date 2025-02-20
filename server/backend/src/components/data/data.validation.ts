@@ -12,6 +12,10 @@ export class CreateDataDto {
   public name: string;
 
   @IsString()
+  @IsOptional()
+  public backgroundColor?: string;
+
+  @IsString()
   public value: string;
 
   @IsIn(["INT", "BOOLEAN", "STRING", "EDIT", "DATA"])
@@ -39,4 +43,8 @@ export class UpdateDataDto {
   @IsNumber()
   @IsOptional()
   public background_id?: number;
+
+  @IsString()
+  @IsOptional()
+  public backgroundColor?: string;
 }

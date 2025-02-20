@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
+import useLoadingStore from '../../../stores/loadingStore';
 import DataService from '../api/dataService';
 import dataStore from '../stores/dataStore';
-import useLoadingStore from '../../../stores/loadingStore';
-import MediaService from '../../playlist/api/mediaService';
 
 function useData() {
   const { setData, data, setSelectedData, selectedData } = dataStore();
@@ -24,11 +23,11 @@ function useData() {
 
   const updateData = useCallback(
     async (newData) => {
-      
-      const dataUpdate = { ...selectedData, value: newData };
-      const response = await DataService.updateData(dataUpdate);
+      console.log(newData);
+ 
+      const response = await DataService.updateData(newData);
       const updatedData = data.map((item) =>
-        item.id === dataUpdate.id ? { ...response.data } : item
+        item.id === newData.id ? { ...response.data } : item
       );
       
 
@@ -44,11 +43,9 @@ function useData() {
     async (name) => {
       const data = {
         type: 'doc',
+        backgroundColor: '#000000',
         content: [
           {
-            background: {
-              color: '#000000',
-            },
             type: 'paragraph',
             attrs: {
               textAlign: 'center',
