@@ -28,7 +28,7 @@ export default function useEditor() {
 
     initialTextColor = content?.attrs?.textColor || '#ffffff';
     initialFontFamily = content?.attrs?.fontFamily || 'Arial';
-    initialBackgroundColor = content?.content?.[0]?.attrs?.editorBackground || '#000000';
+    initialBackgroundColor = selectedData?.backgroundColor || '#000000';
   }
 
   const [color, setColor] = useState(initialTextColor);
@@ -61,25 +61,24 @@ export default function useEditor() {
       updateData(JSON.stringify(json));
     },
   });
-const handleBackgroundColor = (newColor) => {
-  const editorElement = document.querySelector('.tiptap-text-container');
-  editorElement.style.backgroundColor = newColor;
-  const updatedData = {
-    ...selectedData,
-    backgroundColor: newColor
+  const handleBackgroundColor = (newColor) => {
+    const editorElement = document.querySelector('.tiptap-text-container');
+    editorElement.style.backgroundColor = newColor;
+    const updatedData = {
+      ...selectedData,
+      backgroundColor: newColor,
+    };
+    console.log(updatedData);
+
+    updateData(updatedData);
   };
-  console.log(updatedData);
-  
-  updateData(updatedData);
-}
   useEffect(() => {
     if (editor) {
       editor.chain().focus().setColor(initialTextColor).run();
       editor.chain().focus().setFontFamily(initialFontFamily).run();
-        const editorElement = document.querySelector('.tiptap-text-container');
-        
-          editorElement.style.backgroundColor = initialBackgroundColor;
-        
+      const editorElement = document.querySelector('.tiptap-text-container');
+
+      editorElement.style.backgroundColor = initialBackgroundColor;
     }
   }, [editor, initialTextColor, initialFontFamily, initialBackgroundColor]);
 
@@ -89,8 +88,6 @@ const handleBackgroundColor = (newColor) => {
     setColor,
     initialTextColor,
     initialBackgroundColor,
-    handleBackgroundColor
+    handleBackgroundColor,
   };
 }
-
-

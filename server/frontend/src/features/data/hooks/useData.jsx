@@ -6,7 +6,6 @@ import dataStore from '../stores/dataStore';
 function useData() {
   const { setData, data, setSelectedData, selectedData } = dataStore();
   const { setLoading } = useLoadingStore();
- 
 
   const getAllData = useCallback(async () => {
     setLoading(true);
@@ -21,23 +20,17 @@ function useData() {
     return response.data.value;
   };
 
-  const updateData = useCallback(
-    async (newData) => {
-      console.log(newData);
- 
-      const response = await DataService.updateData(newData);
-      const updatedData = data.map((item) =>
-        item.id === newData.id ? { ...response.data } : item
-      );
-      
+  const updateData = useCallback(async (newData) => {
+    console.log(newData);
 
-      setData(updatedData);
- 
-      
-    },
-    []
-  );
+    const response = await DataService.updateData(newData);
+    const updatedData = data.map((item) =>
+      item.id === newData.id ? { ...response.data } : item
+    );
 
+    setSelectedData(response.data);
+    setData(updatedData);
+  }, []);
 
   const addData = useCallback(
     async (name) => {
