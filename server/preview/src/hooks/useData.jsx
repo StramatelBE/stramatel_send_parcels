@@ -5,19 +5,19 @@ import useStandby from "../hooks/useStandby";
 
 const useData = () => {
   const { setSocketData } = useSocketData();
-  const { connectWebSocket, closeWebSocket } = useWebSocket(
-    process.env.SOCKET_URL,
-    (event) => {
-      try {
-        const parsedData = JSON.parse(event.data);
-        setSocketData(parsedData);
-      } catch (error) {
-        console.error("Failed to parse JSON data:", error);
-      }
+  const WEBSOCKET_URL = "ws://localhost:8080";
+  const { connectWebSocket } = useWebSocket(WEBSOCKET_URL, (event) => {
+    try {
+      const parsedData = JSON.parse(event.data);
+      console.log("Données WebSocket reçues:", parsedData);
+      setSocketData(parsedData);
+    } catch (error) {
+      console.error("Échec d'analyse des données JSON:", error);
     }
-  );
+  });
 
   useEffect(() => {
+    console.log("Connexion au WebSocket...");
     connectWebSocket();
   }, []);
 

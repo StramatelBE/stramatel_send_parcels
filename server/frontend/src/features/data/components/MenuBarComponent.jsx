@@ -10,6 +10,8 @@ import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatStrikethroughIcon from '@mui/icons-material/FormatStrikethrough';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
+import DeleteIcon from '@mui/icons-material/Delete';
+import UploadIcon from '@mui/icons-material/Upload';
 import {
   FormControl,
   IconButton,
@@ -25,8 +27,10 @@ import useEditor from '../hooks/useEditor';
 const MenuBarComponent = ({ editor }) => {
   const colorTextInputRef = useRef(null);
   const backgroundColorInputRef = useRef(null);
-  const { selectedData,  } = useData();
-  const { handleBackgroundColor} = useEditor();
+  const fileInputRef = useRef(null);
+  const { selectedData, updateBackgroundData, deleteBackgroundData } =
+    useData();
+  const { handleBackgroundColor } = useEditor();
 
   const showColorPickerInput = (ref) => {
     if (ref.current) {
@@ -37,8 +41,6 @@ const MenuBarComponent = ({ editor }) => {
   if (!editor) {
     return null;
   }
-
-
 
   const fonts = [
     { value: 'Arial', label: 'Arial' },
@@ -207,6 +209,24 @@ const MenuBarComponent = ({ editor }) => {
             pointerEvents: 'none',
           }}
         />
+        {selectedData?.background ? (
+          <IconButton onClick={deleteBackgroundData}>
+            <DeleteIcon sx={{ color: 'text.secondary' }} />
+          </IconButton>
+        ) : (
+          <>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={(event) => updateBackgroundData(event.target.files[0])}
+              style={{ display: 'none' }}
+            />
+            <IconButton onClick={() => fileInputRef.current.click()}>
+              <UploadIcon sx={{ color: 'text.secondary' }} />
+            </IconButton>
+          </>
+        )}
 
         <FormControl size="small">
           <Select

@@ -156,6 +156,6 @@ p.is-editor-empty:first-child::before {
 
 .tiptap-text-container {
   margin: 0 auto;
-
+  background-size: 100% 100%;
   color: #ffffff;
 }

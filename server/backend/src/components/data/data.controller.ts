@@ -56,11 +56,10 @@ export class DataController {
     try {
       const dataId: number = parseInt(req.params.dataId);
       const dataDto: UpdateDataDto = req.body;
-      console.log(dataDto);
       const updatedData: Data | null = await this.dataService.updateData(
         dataId,
         dataDto,
-        req.user.id
+        req.user.username
       );
       if (!updatedData) {
         res.status(404).json({ message: "Data not found" });

@@ -1,4 +1,4 @@
-import { Media } from "@prisma/client";
+import { Media, User } from "@prisma/client";
 import { NextFunction } from "express";
 import { unlinkSync } from "fs";
 import multer from "multer";
@@ -88,16 +88,18 @@ export class UploadService {
 
   public removeMediaFile = async (
     media: Media,
-    userId: number
+    username: string
   ): Promise<void> => {
     try {
       unlinkSync(
         path.join(
           process.env[`UPLOAD_DIR_${process.env.NODE_ENV}`],
-          userId.toString(),
+          username,
           media.file_name
         )
       );
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error removing media file:", error);
+    }
   };
 }

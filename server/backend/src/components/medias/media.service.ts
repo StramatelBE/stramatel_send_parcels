@@ -84,12 +84,12 @@ export class MediaService {
     return mediaCount;
   }
 
-  async deleteMedia(mediaId: number, userId: number): Promise<Media> {
+  async deleteMedia(mediaId: number, username: string): Promise<Media> {
     const media = await prisma.media.findUnique({
       where: { id: mediaId },
     });
 
-    await this.uploadService.removeMediaFile(media, userId);
+    await this.uploadService.removeMediaFile(media, username);
 
     if (!media) {
       throw new HttpException(404, `Media with ID ${mediaId} doesn't exist.`);

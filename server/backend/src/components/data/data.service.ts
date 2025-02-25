@@ -1,4 +1,4 @@
-import { PrismaClient, Data } from "@prisma/client";
+import { PrismaClient, Data, User } from "@prisma/client";
 import { Service, Inject } from "typedi";
 import { CreateDataDto, UpdateDataDto } from "./data.validation";
 import { UploadService } from "../medias/upload.service";
@@ -34,15 +34,20 @@ export class DataService {
   async updateData(
     id: number,
     updateDataDto: UpdateDataDto,
-    userId: number
+    username: string
   ): Promise<Data> {
     const existingData = await prisma.data.findUnique({
       where: { id },
       include: { background: true },
     });
-
-    if (existingData?.background_id) {
-      await this.uploadService.removeMediaFile(existingData.background, userId);
+    if (
+      updateDataDto?.background_id !== existingData?.background_id &&
+      existingData?.background_id !== null
+    ) {
+      await this.uploadService.removeMediaFile(
+        existingData.background,
+        username
+      );
       await prisma.media.delete({
         where: { id: existingData.background_id },
       });
@@ -56,6 +61,7 @@ export class DataService {
         background_id: updateDataDto.background_id,
         backgroundColor: updateDataDto.backgroundColor,
       },
+      include: { background: true },
     });
     return updatedData;
   }

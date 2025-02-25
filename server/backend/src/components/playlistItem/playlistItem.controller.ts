@@ -123,7 +123,7 @@ export class PlaylistItemController {
       const deletedPlaylistItem: PlaylistItem | null =
         await this.playlistItemService.deletePlaylistItem(
           playlistItemId,
-          req.user.id
+          req.user.username
         );
       if (!deletedPlaylistItem) {
         res.status(404).json({ message: "PlaylistItem not found" });
