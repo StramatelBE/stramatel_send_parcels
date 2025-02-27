@@ -3,8 +3,8 @@ import Editor from "./components/Editor";
 import Medias from "./components/Medias";
 import useData from "./hooks/useData";
 import useSocketData from "./stores/socketDataStore";
+import TestComponent from "./components/TestComponent";
 function App() {
-
   const { socketData } = useSocketData();
 
   useData();
@@ -19,10 +19,9 @@ function App() {
         <Medias media={socketData.PlaylistItem.media} />
       )}
       {socketData?.mode === "data" && (
-       <div>
         <Editor data={socketData.PlaylistItem.data} />
-       </div>
       )}
+      {socketData?.mode === "test" && <TestComponent />}
     </>
   );
 }

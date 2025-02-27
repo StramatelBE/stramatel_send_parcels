@@ -15,7 +15,12 @@ function TestComponent() {
   }, []);
 
   return (
-    <>
+    <div
+      style={{
+        height: `${process.env.PREVIEW_HEIGHT}px`,
+        width: `${process.env.PREVIEW_WIDTH}px`,
+      }}
+    >
       <div
         style={{
           width: `100%`,
@@ -23,8 +28,7 @@ function TestComponent() {
           backgroundColor: colors[colorIndex],
         }}
       />
-      test
-    </>
+    </div>
   );
 }
 
