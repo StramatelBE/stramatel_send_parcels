@@ -8,7 +8,7 @@ export default Extension.create({
   addOptions() {
     return {
       types: ['textStyle'],
-      defaultFont: 'Arial',
+      defaultFont: '"Arial", sans-serif',
     }
   },
 
@@ -27,10 +27,16 @@ export default Extension.create({
           fontFamily: {
             default: this.options.defaultFont,
             parseHTML: element => {
-              return element.style.fontFamily?.replace(/['"]/g, '') || this.options.defaultFont
+              // Récupérer la valeur de font-family depuis le style
+              const fontFamily = element.style.fontFamily;
+              if (!fontFamily) return this.options.defaultFont;
+
+              // Nous prenons la valeur telle quelle, car nous utilisons maintenant
+              // des piles de polices complètes (avec guillemets et virgules)
+              return fontFamily;
             },
             renderHTML: attributes => {
-              if (!attributes.fontFamily || attributes.fontFamily === this.options.defaultFont) {
+              if (!attributes.fontFamily) {
                 return {}
               }
               return {
@@ -46,7 +52,7 @@ export default Extension.create({
   addCommands() {
     return {
       setFontFamily: fontFamily => ({ chain }) => {
-        if (!fontFamily || fontFamily === this.options.defaultFont) {
+        if (!fontFamily) {
           return chain().unsetMark('textStyle').run()
         }
         return chain()

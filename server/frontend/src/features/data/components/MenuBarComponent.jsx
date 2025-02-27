@@ -43,14 +43,17 @@ const MenuBarComponent = ({ editor }) => {
   }
 
   const fonts = [
-    { value: 'Arial', label: 'Arial' },
-    { value: 'Times New Roman', label: 'Times New Roman' },
-    { value: 'Helvetica', label: 'Helvetica' },
-    { value: 'Georgia', label: 'Georgia' },
-    { value: 'Verdana', label: 'Verdana' },
-    { value: 'Roboto', label: 'Roboto' },
-    { value: 'Open Sans', label: 'Open Sans' },
-    { value: 'Lato', label: 'Lato' },
+    { value: '"Arial", sans-serif', label: 'Arial' },
+    { value: '"Times New Roman", serif', label: 'Times New Roman' },
+    { value: '"Helvetica", Arial, sans-serif', label: 'Helvetica' },
+    { value: '"Georgia", serif', label: 'Georgia' },
+    { value: '"Verdana", sans-serif', label: 'Verdana' },
+    { value: '"Roboto", "Helvetica Neue", Arial, sans-serif', label: 'Roboto' },
+    {
+      value: '"Open Sans", "Helvetica Neue", Arial, sans-serif',
+      label: 'Open Sans',
+    },
+    { value: '"Lato", "Helvetica Neue", Arial, sans-serif', label: 'Lato' },
   ];
 
   return (
@@ -58,7 +61,10 @@ const MenuBarComponent = ({ editor }) => {
       <div className="button-group">
         <FormControl size="small" sx={{ minWidth: 120, marginRight: 1 }}>
           <Select
-            value={editor.getAttributes('textStyle').fontFamily || 'Arial'}
+            value={
+              editor.getAttributes('textStyle').fontFamily ||
+              '"Arial", sans-serif'
+            }
             onChange={(event) => {
               editor.chain().focus().setFontFamily(event.target.value).run();
             }}
@@ -66,7 +72,8 @@ const MenuBarComponent = ({ editor }) => {
               height: '40px',
               '& .MuiSelect-select': {
                 fontFamily:
-                  editor.getAttributes('textStyle').fontFamily || 'Arial',
+                  editor.getAttributes('textStyle').fontFamily ||
+                  '"Arial", sans-serif',
               },
             }}
           >

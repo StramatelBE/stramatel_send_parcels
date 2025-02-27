@@ -18,7 +18,7 @@ export default function useEditor({ data }) {
   // Utiliser useState pour stocker les valeurs qui doivent être réactives
   const [editorContent, setEditorContent] = useState(null);
   const [textColor, setTextColor] = useState("#ffffff");
-  const [fontFamily, setFontFamily] = useState("Arial");
+  const [fontFamily, setFontFamily] = useState('"Arial", sans-serif');
   const [backgroundColor, setBackgroundColor] = useState("#000000");
   const [color, setColor] = useState("#ffffff");
 
@@ -29,13 +29,15 @@ export default function useEditor({ data }) {
         const parsedContent = JSON.parse(data.value);
         setEditorContent(parsedContent);
         setTextColor(parsedContent?.attrs?.textColor || "#ffffff");
-        setFontFamily(parsedContent?.attrs?.fontFamily || "Arial");
+        setFontFamily(
+          parsedContent?.attrs?.fontFamily || '"Arial", sans-serif'
+        );
         setBackgroundColor(data?.backgroundColor || "#000000");
         setColor(parsedContent?.attrs?.textColor || "#ffffff");
       } else {
         setEditorContent(null);
         setTextColor("#ffffff");
-        setFontFamily("Arial");
+        setFontFamily('"Arial", sans-serif');
         setBackgroundColor("#000000");
         setColor("#ffffff");
       }
@@ -72,37 +74,45 @@ export default function useEditor({ data }) {
   // Effet pour mettre à jour l'éditeur lorsque l'éditeur est disponible et que les données changent
   useEffect(() => {
     if (!editor) return;
-    try {
-      // Appliquer les styles à l'éditeur sans forcer le focus
-      editor.chain().setColor(textColor).run();
-      editor.chain().setFontFamily(fontFamily).run();
 
-      // Mettre à jour le contenu de l'éditeur si nécessaire
-      if (
-        editorContent &&
-        JSON.stringify(editor.getJSON()) !== JSON.stringify(editorContent)
-      ) {
-        editor.commands.setContent(editorContent);
-      }
+    // Utiliser un setTimeout pour déplacer les opérations hors du cycle de rendu React
+    // Cela résout le problème d'avertissement "flushSync was called from inside a lifecycle method"
+    const timeoutId = setTimeout(() => {
+      try {
+        // Appliquer les styles à l'éditeur sans forcer le focus
+        editor.chain().setColor(textColor).run();
+        editor.chain().setFontFamily(fontFamily).run();
 
-      // Mettre à jour les styles d'arrière-plan
-      const editorElement = document.querySelector(".tiptap-text-container");
-      if (editorElement) {
-        if (data?.background?.path) {
-          editorElement.style.backgroundImage = `url(${process.env.FRONT_URL}${data.background.path})`;
-        } else {
-          editorElement.style.backgroundImage = "none";
+        // Mettre à jour le contenu de l'éditeur si nécessaire
+        if (
+          editorContent &&
+          JSON.stringify(editor.getJSON()) !== JSON.stringify(editorContent)
+        ) {
+          editor.commands.setContent(editorContent);
         }
-        editorElement.style.backgroundColor = backgroundColor;
-      }
 
-      // Marquer que le rendu initial est terminé
-      isInitialRenderRef.current = false;
-    } catch (error) {
-      console.error("Erreur dans useEffect de l'éditeur:", error);
-      isUpdatingRef.current = false;
-      isInitialRenderRef.current = false;
-    }
+        // Mettre à jour les styles d'arrière-plan
+        const editorElement = document.querySelector(".tiptap-text-container");
+        if (editorElement) {
+          if (data?.background?.path) {
+            editorElement.style.backgroundImage = `url(${process.env.FRONT_URL}${data.background.path})`;
+          } else {
+            editorElement.style.backgroundImage = "none";
+          }
+          editorElement.style.backgroundColor = backgroundColor;
+        }
+
+        // Marquer que le rendu initial est terminé
+        isInitialRenderRef.current = false;
+      } catch (error) {
+        console.error("Erreur dans useEffect de l'éditeur:", error);
+        isUpdatingRef.current = false;
+        isInitialRenderRef.current = false;
+      }
+    }, 0);
+
+    // Nettoyer le timeout en cas de démontage du composant
+    return () => clearTimeout(timeoutId);
   }, [editor, data, editorContent, textColor, fontFamily, backgroundColor]);
 
   return {

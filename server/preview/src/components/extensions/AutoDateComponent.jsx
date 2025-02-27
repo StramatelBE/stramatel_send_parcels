@@ -1,5 +1,6 @@
-import { NodeViewWrapper, NodeViewContent } from '@tiptap/react';
-import { useEffect, useState } from 'react';
+import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
+import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
 const AutoDateComponent = (props) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -23,6 +24,10 @@ const AutoDateComponent = (props) => {
       <NodeViewContent className="content" />
     </NodeViewWrapper>
   );
+};
+
+AutoDateComponent.propTypes = {
+  updateAttributes: PropTypes.func.isRequired,
 };
 
 export default AutoDateComponent;

@@ -122,6 +122,11 @@ p.is-editor-empty:first-child::before {
   border-radius: 4px;
 }
 
+.auto-temperature-component {
+  display: inline-block;
+  border-radius: 4px;
+}
+
 .ProseMirror {
   margin: 1px;
 }
@@ -155,22 +160,6 @@ p.is-editor-empty:first-child::before {
   float: left;
   height: 0;
   pointer-events: none;
-}
-
-.auto-date-component {
-  display: inline-block;
-
-  border-radius: 4px;
-}
-
-.auto-time-component {
-  display: inline-block;
-
-  border-radius: 4px;
-}
-
-.ProseMirror {
-  margin: 1px;
 }
 
 .tiptap-text-container {

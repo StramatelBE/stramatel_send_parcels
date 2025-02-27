@@ -33,7 +33,7 @@ let standbyCheckInterval: NodeJS.Timeout | null = null;
 
 // Fonction pour vérifier si on est en mode veille
 const isInStandbyMode = (): boolean => {
-  if (!appSettings || !appSettings.standby) {
+  if (!appSettings || appSettings.standby) {
     return false;
   }
 

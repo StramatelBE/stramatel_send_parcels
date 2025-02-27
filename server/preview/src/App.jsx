@@ -9,9 +9,9 @@ function App() {
 
   useData();
 
-  /*   useEffect(() => {
+  useEffect(() => {
     console.log("Données actuelles du socket:", socketData);
-  }, [socketData]); */
+  }, [socketData]);
 
   return (
     <>

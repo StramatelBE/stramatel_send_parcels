@@ -1,16 +1,16 @@
 // @AutoTemperatureComponent.jsx
 
-import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
-import { useState, useEffect } from 'react';
-import useData from '../../hooks/useData';
+import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
+import { useState, useEffect } from "react";
+import useData from "../../hooks/useData";
 
 const AutoTemperatureComponent = () => {
-  const [temperature, setTemperature] = useState('20°C');
+  const [temperature, setTemperature] = useState("20°C");
   const { getTemperature } = useData();
   // Simulate fetching temperature from an API
   const fetchTemperature = async () => {
     const temperature = await getTemperature();
-    setTemperature(temperature + '°C');
+    setTemperature(temperature + "°C");
   };
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const AutoTemperatureComponent = () => {
   }, []);
 
   return (
-    <NodeViewWrapper className="auto-date-component">
+    <NodeViewWrapper className="auto-temperature-component">
       <span className="label">{temperature}</span>
       <NodeViewContent className="content" />
     </NodeViewWrapper>

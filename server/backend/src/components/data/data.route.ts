@@ -21,7 +21,7 @@ router.get("/", authMiddleware, (req, res, next) =>
   dataController.getAllData(req, res, next)
 );
 
-router.get("/:dataId", authMiddleware, (req, res, next) =>
+router.get("/:dataId", (req, res, next) =>
   dataController.getDataById(req, res, next)
 );
 

@@ -23,14 +23,14 @@ export default function useEditor() {
   const isInitialRenderRef = useRef(true);
 
   let initialTextColor = '#ffffff';
-  let initialFontFamily = 'Arial';
+  let initialFontFamily = '"Arial", sans-serif';
   let initialBackgroundColor = '#000000';
 
   if (selectedData?.value?.length > 0) {
     content = JSON.parse(selectedData?.value);
 
     initialTextColor = content?.attrs?.textColor || '#ffffff';
-    initialFontFamily = content?.attrs?.fontFamily || 'Arial';
+    initialFontFamily = content?.attrs?.fontFamily || '"Arial", sans-serif';
     initialBackgroundColor = selectedData?.backgroundColor || '#000000';
   }
 
