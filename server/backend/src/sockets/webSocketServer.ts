@@ -33,14 +33,14 @@ let standbyCheckInterval: NodeJS.Timeout | null = null;
 
 // Fonction pour vérifier si on est en mode veille
 const isInStandbyMode = (): boolean => {
-  if (!appSettings || appSettings.standby) {
+  // Si les paramètres n'existent pas ou si standby est false, pas de mode veille
+  if (!appSettings || !appSettings.standby) {
     return false;
   }
 
   const now = new Date();
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();
-  const currentTime = `${currentHour}:${currentMinute}`;
 
   // Convertir les chaînes de temps en objets Date pour comparaison
   const [startHour, startMinute] = appSettings.standby_start_time
@@ -57,22 +57,22 @@ const isInStandbyMode = (): boolean => {
   const endTime = new Date();
   endTime.setHours(endHour, endMinute, 0);
 
-  // Si l'heure de fin est avant l'heure de début, cela signifie que la période s'étend sur deux jours
-  if (endTime < startTime) {
-    // Par exemple, de 22:00 à 06:00
-    return now >= startTime || now <= endTime;
-  } else {
-    // Période normale dans la même journée
-    return now >= startTime && now <= endTime;
-  }
+  // Vérifier si l'heure actuelle est DANS l'intervalle actif (non-standby)
+  // Si l'heure actuelle est entre start et end, on n'est PAS en mode veille
+  const isWithinActiveHours = now >= startTime && now <= endTime;
+
+  // Si on est en dehors des heures actives, on est en mode veille
+  return !isWithinActiveHours;
 };
 
 // Fonction pour vérifier et mettre à jour le mode veille
 const checkStandbyMode = async () => {
   try {
-    // Si le mode veille est activé et que l'heure actuelle est en dehors de la plage horaire
-    // ET que le mode actuel n'est pas déjà "standby"
-    if (!isInStandbyMode()) {
+    // Vérifier si on doit être en mode veille
+    const shouldBeInStandby = isInStandbyMode();
+
+    // Si on doit être en mode veille et que le mode actuel n'est pas "standby"
+    if (shouldBeInStandby && currentMode?.name !== "standby") {
       console.log("Mode veille activé - Passage en mode standby");
 
       // Arrêter la lecture en cours
@@ -91,8 +91,8 @@ const checkStandbyMode = async () => {
       // Notifier tous les clients du changement de mode
       notifyModeChange("standby");
     }
-    // Si on n'est plus en mode veille mais que le mode actuel est "standby"
-    else if (isInStandbyMode()) {
+    // Si on n'est pas en mode veille mais que le mode actuel est "standby"
+    else if (!shouldBeInStandby && currentMode?.name === "standby") {
       console.log("Sortie du mode veille - Restauration du mode normal");
 
       // Récupérer le dernier mode connu depuis la base de données
@@ -534,7 +534,7 @@ wsServer.on("connection", async (ws) => {
   const inStandby = isInStandbyMode();
 
   // Envoyer l'état actuel au nouveau client
-  if (inStandby && appSettings?.standby) {
+  if (inStandby) {
     // Si on est en mode veille, envoyer "standby" comme mode
     const data: sendData = {
       mode: "standby",
