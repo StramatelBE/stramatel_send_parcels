@@ -1,4 +1,3 @@
-
 body,
 #root {
   margin: 0;
@@ -35,12 +34,11 @@ body,
 
 .header-text {
   font-size: 17px;
- 
+
   color: #f1921d;
 }
 
 .info-section {
-  
   height: 100%;
   /*   background-color: #000000; */
   padding: 7px 10px;
@@ -52,7 +50,7 @@ body,
 .info-text {
   line-height: 1.2;
   font-size: 21px;
- 
+
   display: flex;
   flex-direction: column;
   color: white;
@@ -60,7 +58,6 @@ body,
 }
 .info-text-light {
   font-size: 14px;
-
 }
 
 .info-value {
@@ -88,7 +85,6 @@ body,
 }
 
 .editorTextArea {
-
 }
 .tiptap {
   :first-child {
@@ -104,7 +100,6 @@ body,
   width: 288px;
   height: 432px;
   font-size: 32px;
-  font-family: "G552 mono";
   overflow: hidden !important;
 }
 p.is-editor-empty:first-child::before {
@@ -179,7 +174,6 @@ p.is-editor-empty:first-child::before {
 }
 
 .tiptap-text-container {
-
   background-size: 100% 100%;
   color: #ffffff;
 }

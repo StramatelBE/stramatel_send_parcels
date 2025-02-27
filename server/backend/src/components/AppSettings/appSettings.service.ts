@@ -2,6 +2,7 @@ import { AppSettings, PrismaClient } from "@prisma/client";
 import { Service } from "typedi";
 import { SettingsDto } from "./appSettings.validation";
 import { exec } from "child_process";
+import { handleAppSettingsUpdate } from "../../sockets/webSocketServer";
 
 @Service()
 export class SettingService {
@@ -16,6 +17,10 @@ export class SettingService {
     const newSetting = await this.prisma.appSettings.create({
       data: settingData,
     });
+
+    // Notifier le WebSocket de la création des paramètres
+    await handleAppSettingsUpdate();
+
     return newSetting;
   }
 
@@ -34,6 +39,10 @@ export class SettingService {
       where: { id: settingId },
       data: settingData,
     });
+
+    // Notifier le WebSocket de la mise à jour des paramètres
+    await handleAppSettingsUpdate();
+
     return updatedSetting;
   }
 
@@ -55,6 +64,9 @@ export class SettingService {
     const deletedSetting = await this.prisma.appSettings.delete({
       where: { id: settingId },
     });
+
+    // Pas besoin de notifier le WebSocket car les paramètres n'existent plus
+
     return deletedSetting;
   }
 }

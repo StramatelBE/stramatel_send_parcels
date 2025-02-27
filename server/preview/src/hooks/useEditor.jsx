@@ -58,11 +58,9 @@ export default function useEditor({ data }) {
       }),
       AutoDateExtension,
       AutoTimeExtension,
-      TextSizeExtension.configure({
-        defaultSize: "32px",
-      }),
+      TextSizeExtension,
       FontFamilyExtension.configure({
-        defaultFont: fontFamily,
+        defaultFont: fontFamily || "Arial",
       }),
       AutoTemperatureExtension,
     ],
@@ -74,9 +72,6 @@ export default function useEditor({ data }) {
   // Effet pour mettre à jour l'éditeur lorsque l'éditeur est disponible et que les données changent
   useEffect(() => {
     if (!editor) return;
-
-    console.log("data", data);
-
     try {
       // Appliquer les styles à l'éditeur sans forcer le focus
       editor.chain().setColor(textColor).run();

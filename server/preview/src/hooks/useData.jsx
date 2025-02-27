@@ -9,15 +9,14 @@ const useData = () => {
   const { connectWebSocket } = useWebSocket(WEBSOCKET_URL, (event) => {
     try {
       const parsedData = JSON.parse(event.data);
-      console.log("Données WebSocket reçues:", parsedData);
+      /* console.log("Données WebSocket reçues:", parsedData); */
       setSocketData(parsedData);
     } catch (error) {
       console.error("Échec d'analyse des données JSON:", error);
     }
   });
 
-
-    const getTemperature = async () => {
+  const getTemperature = async () => {
     const response = await DataService.getOneData(1);
     return response.data.value;
   };

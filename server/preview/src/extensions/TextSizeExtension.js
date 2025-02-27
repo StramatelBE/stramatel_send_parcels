@@ -6,6 +6,7 @@ export default Extension.create({
   addOptions() {
     return {
       types: ['textStyle'],
+      defaultSize: '32',
     };
   },
 
@@ -15,8 +16,8 @@ export default Extension.create({
         types: this.options.types,
         attributes: {
           textSize: {
-            default: '32',
-            parseHTML: element => element.style.fontSize.replace('px', ''),
+            default: this.options.defaultSize,
+            parseHTML: element => element.style.fontSize?.replace('px', '') || this.options.defaultSize,
             renderHTML: attributes => {
               if (!attributes.textSize) {
                 return {};
@@ -35,7 +36,7 @@ export default Extension.create({
         return chain().setMark('textStyle', { textSize: size }).run();
       },
       unsetTextSize: () => ({ chain }) => {
-        return chain().setMark('textStyle', { textSize: '32' }).run();
+        return chain().setMark('textStyle', { textSize: this.options.defaultSize }).run();
       },
     };
   },

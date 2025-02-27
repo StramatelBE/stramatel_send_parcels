@@ -1,5 +1,10 @@
 import { Server } from "ws";
-import { Playlist, PlaylistItem, PrismaClient } from "@prisma/client";
+import {
+  Playlist,
+  PlaylistItem,
+  PrismaClient,
+  AppSettings,
+} from "@prisma/client";
 import { Mode } from "@prisma/client";
 import WebSocket from "ws";
 
@@ -21,6 +26,116 @@ let playlistTimer: NodeJS.Timeout | null = null;
 let currentPlaylistId: number | null = null;
 let currentMode: Mode | null = null;
 let isPlaying = false;
+
+// Variables pour la gestion du mode veille
+let appSettings: AppSettings | null = null;
+let standbyCheckInterval: NodeJS.Timeout | null = null;
+
+// Fonction pour vérifier si on est en mode veille
+const isInStandbyMode = (): boolean => {
+  if (!appSettings || !appSettings.standby) {
+    return false;
+  }
+
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+  const currentTime = `${currentHour}:${currentMinute}`;
+
+  // Convertir les chaînes de temps en objets Date pour comparaison
+  const [startHour, startMinute] = appSettings.standby_start_time
+    .split(":")
+    .map(Number);
+  const [endHour, endMinute] = appSettings.standby_end_time
+    .split(":")
+    .map(Number);
+
+  // Créer des objets Date pour aujourd'hui avec ces heures
+  const startTime = new Date();
+  startTime.setHours(startHour, startMinute, 0);
+
+  const endTime = new Date();
+  endTime.setHours(endHour, endMinute, 0);
+
+  // Si l'heure de fin est avant l'heure de début, cela signifie que la période s'étend sur deux jours
+  if (endTime < startTime) {
+    // Par exemple, de 22:00 à 06:00
+    return now >= startTime || now <= endTime;
+  } else {
+    // Période normale dans la même journée
+    return now >= startTime && now <= endTime;
+  }
+};
+
+// Fonction pour vérifier et mettre à jour le mode veille
+const checkStandbyMode = async () => {
+  try {
+    // Si le mode veille est activé et que l'heure actuelle est en dehors de la plage horaire
+    // ET que le mode actuel n'est pas déjà "standby"
+    if (!isInStandbyMode()) {
+      console.log("Mode veille activé - Passage en mode standby");
+
+      // Arrêter la lecture en cours
+      stopPlaylist();
+
+      // Créer un mode temporaire pour la veille
+      const standbyMode: Mode = {
+        id: -1, // ID temporaire, ne sera pas utilisé
+        name: "standby",
+        playlist_id: null,
+      };
+
+      // Mettre à jour le mode actuel
+      currentMode = standbyMode;
+
+      // Notifier tous les clients du changement de mode
+      notifyModeChange("standby");
+    }
+    // Si on n'est plus en mode veille mais que le mode actuel est "standby"
+    else if (isInStandbyMode()) {
+      console.log("Sortie du mode veille - Restauration du mode normal");
+
+      // Récupérer le dernier mode connu depuis la base de données
+      const lastKnownMode = await prisma.mode.findUnique({
+        where: { id: 1 }, // Supposant que l'ID 1 est le mode principal
+      });
+
+      // Si un mode est trouvé, l'utiliser pour mettre à jour
+      if (lastKnownMode) {
+        await handleModeUpdate(lastKnownMode);
+      }
+    }
+  } catch (error) {
+    console.error("Erreur lors de la vérification du mode veille:", error);
+  }
+};
+
+// Fonction appelée depuis l'extérieur (AppSettingsService) pour notifier des changements dans les paramètres
+export const handleAppSettingsUpdate = async () => {
+  try {
+    console.log(
+      "Notification de mise à jour des paramètres d'application reçue"
+    );
+
+    // Récupérer les paramètres mis à jour
+    const settings = await prisma.appSettings.findFirst();
+
+    if (settings) {
+      // Mettre à jour les paramètres stockés
+      appSettings = settings;
+
+      // Vérifier si le mode veille doit être activé ou désactivé
+      await checkStandbyMode();
+
+      console.log("Paramètres d'application mis à jour avec succès");
+    }
+  } catch (error) {
+    console.error(
+      "Erreur lors de la mise à jour des paramètres d'application:",
+      error
+    );
+  }
+};
 
 // Fonction appelée depuis l'extérieur (ModeService) pour notifier des changements de mode
 export const handleModeUpdate = async (updatedMode: Mode) => {
@@ -337,6 +452,22 @@ const playNextItem = async () => {
 // Fonction d'initialisation principale
 const initialize = async () => {
   try {
+    // Récupérer les paramètres de l'application
+    appSettings = await prisma.appSettings.findFirst();
+
+    if (appSettings) {
+      console.log("Paramètres d'application chargés");
+
+      // Vérifier le mode veille maintenant
+      await checkStandbyMode();
+
+      // Configurer la vérification périodique du mode veille (toutes les minutes)
+      if (standbyCheckInterval) {
+        clearInterval(standbyCheckInterval);
+      }
+      standbyCheckInterval = setInterval(checkStandbyMode, 60 * 1000);
+    }
+
     // Récupérer le mode initial
     const mode: Mode | null = await prisma.mode.findUnique({
       where: {
@@ -399,8 +530,19 @@ const initialize = async () => {
 initialize();
 
 wsServer.on("connection", async (ws) => {
+  // Vérifier si on est en mode veille
+  const inStandby = isInStandbyMode();
+
   // Envoyer l'état actuel au nouveau client
-  if (currentMode) {
+  if (inStandby && appSettings?.standby) {
+    // Si on est en mode veille, envoyer "standby" comme mode
+    const data: sendData = {
+      mode: "standby",
+      PlaylistItem: null,
+      currentIndex: -1,
+    };
+    ws.send(JSON.stringify(data));
+  } else if (currentMode) {
     if (
       currentMode.name === "playlist" &&
       isPlaying &&
@@ -441,6 +583,7 @@ wsServer.on("connection", async (ws) => {
 // Nettoyage des intervalles lors de la fermeture de l'application
 process.on("SIGINT", () => {
   if (playlistTimer) clearTimeout(playlistTimer);
+  if (standbyCheckInterval) clearInterval(standbyCheckInterval);
   console.log("Arrêt propre du serveur WebSocket");
   process.exit(0);
 });

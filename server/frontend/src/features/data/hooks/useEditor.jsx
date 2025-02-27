@@ -51,11 +51,9 @@ export default function useEditor() {
       }),
       AutoDateExtension,
       AutoTimeExtension,
-      TextSizeExtension.configure({
-        defaultSize: '32px',
-      }),
+      TextSizeExtension,
       FontFamilyExtension.configure({
-        defaultFont: initialFontFamily,
+        defaultFont: initialFontFamily || 'Arial',
       }),
       AutoTemperatureExtension,
     ],

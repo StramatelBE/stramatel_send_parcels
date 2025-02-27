@@ -3,9 +3,9 @@ import { useEffect } from "react";
 function Medias(data) {
   const mediaPath = `${process.env.FRONT_URL}${data?.media?.path}`;
 
-  useEffect(() => {
+  /*   useEffect(() => {
     console.log("medias", data?.media);
-  }, [data]);
+  }, [data]); */
   return (
     <div
       style={{

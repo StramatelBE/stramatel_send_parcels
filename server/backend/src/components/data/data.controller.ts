@@ -72,11 +72,16 @@ export class DataController {
     }
   };
 
-  deleteData = async (req: Request, res: Response, next: NextFunction) => {
+  deleteData = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const dataId: number = parseInt(req.params.dataId);
       const deletedData: Data | null = await this.dataService.deleteData(
-        dataId
+        dataId,
+        req.user.username
       );
       if (!deletedData) {
         res.status(404).json({ message: "Data not found" });

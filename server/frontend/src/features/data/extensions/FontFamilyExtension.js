@@ -1,5 +1,6 @@
 import { Extension } from '@tiptap/core'
-import TextStyle from '@tiptap/extension-text-style'
+// Nous ne devons pas importer TextStyle ici car il sera fourni par l'éditeur principal
+// import TextStyle from '@tiptap/extension-text-style'
 
 export default Extension.create({
   name: 'fontFamily',
@@ -11,11 +12,12 @@ export default Extension.create({
     }
   },
 
-  addExtensions() {
-    return [
-      TextStyle
-    ]
-  },
+  // Suppression de la méthode addExtensions pour éviter la duplication
+  // addExtensions() {
+  //   return [
+  //     TextStyle
+  //   ]
+  // },
 
   addGlobalAttributes() {
     return [
