@@ -2,6 +2,7 @@ import { PrismaClient, Playlist, Media } from "@prisma/client";
 import { Service, Inject } from "typedi";
 import { CreatePlaylistDto } from "./playlist.validation";
 import { UploadService } from "../medias/upload.service";
+import { handlePlaylistUpdate } from "../../sockets/webSocketServer";
 
 const prisma = new PrismaClient();
 
@@ -57,6 +58,8 @@ export class PlaylistService {
       },
     });
 
+    // Aucune notification nécessaire car la playlist est vide
+
     return playlist;
   }
 
@@ -70,6 +73,10 @@ export class PlaylistService {
         name: playlistData.name,
       },
     });
+    
+    // Notifier le WebSocket de la mise à jour (même si c'est juste le nom qui change)
+    await handlePlaylistUpdate(id);
+    
     return playlist;
   }
 
@@ -84,7 +91,11 @@ export class PlaylistService {
       throw new Error("Playlist not found");
     }
 
-    // Supprimer les fichiers médias du système de fichiers
+    // Notifier le WebSocket de la suppression de la playlist
+    // (permettra d'arrêter la lecture si cette playlist était en cours de lecture)
+    await handlePlaylistUpdate(id);
+
+    console.log("Playlist supprimée");
     for (const item of playlist.PlaylistItem) {
       if (
         item.media &&
@@ -93,10 +104,19 @@ export class PlaylistService {
         await this.uploadService.removeMediaFile(item.media, username);
       }
     }
-    // Supprimer les médias associés à la playlist
-    await prisma.media.deleteMany({
-      where: { id: { in: playlist.PlaylistItem.map((item) => item.media_id) } },
-    });
+    
+    // Récupérer les IDs de média valides (non null et non undefined)
+    const mediaIds = playlist.PlaylistItem
+      .map(item => item.media_id)
+      .filter(id => id !== null && id !== undefined);
+    
+    // Supprimer les médias associés à la playlist seulement s'il y en a
+    if (mediaIds.length > 0) {
+      await prisma.media.deleteMany({
+        where: { id: { in: mediaIds } },
+      });
+    }
+    
     // Supprimer la playlist et les médias associés de la base de données
     await prisma.playlist.delete({
       where: { id },
@@ -120,6 +140,10 @@ export class PlaylistService {
         },
       },
     });
+    
+    // Notifier le WebSocket de l'ajout d'un média à la playlist
+    await handlePlaylistUpdate(id);
+    
     return playlist;
   }
 
@@ -138,6 +162,9 @@ export class PlaylistService {
         data: {},
       });
     }
+    
+    // Notifier le WebSocket de la modification de l'ordre des médias
+    await handlePlaylistUpdate(id);
 
     return prisma.playlist.findUnique({
       where: { id },

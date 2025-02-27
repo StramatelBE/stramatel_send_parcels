@@ -1,423 +1,407 @@
 import { Server } from "ws";
-import { PrismaClient } from "@prisma/client";
+import { Playlist, PlaylistItem, PrismaClient } from "@prisma/client";
+import { Mode } from "@prisma/client";
+import WebSocket from "ws";
 
 const port: number = parseInt(process.env.WEBSOCKET_PORT) || 8080;
 const prisma = new PrismaClient();
-
-const server = new Server({ port });
-
-// Définir des interfaces pour les types
-interface PlaylistState {
+interface sendData {
+  mode: string;
+  PlaylistItem: PlaylistItem | null;
   currentIndex: number;
-  items: any[];
-  lastChange: number;
-  playlistId: number;
-  modeName: string;
-  timeoutId?: NodeJS.Timeout; // Stocker l'ID du timeout pour éviter les doublons
-  lastUpdated?: number; // Horodatage de la dernière mise à jour de la base de données
 }
 
-interface CurrentItem {
-  id: any;
-  position: any;
-  duration: any;
-  contentType: "media" | "data"; // Type de contenu
-  media?: any; // Contenu média (si applicable)
-  data?: any; // Contenu data (si applicable)
-}
+// Déclarer le serveur WebSocket avant son utilisation
+export const wsServer = new Server({ port });
 
-interface PlaylistItemToSend {
-  modeId: number;
-  modeName: string;
-  playlistId: number;
-  currentItem: CurrentItem;
-  isMainPlaylist?: boolean;
-  isTestMode?: boolean;
-}
+// Variables pour la gestion de la playlist actuelle
+let currentPlaylistItems: PlaylistItem[] = [];
+let currentIndex = 0;
+let playlistTimer: NodeJS.Timeout | null = null;
+let currentPlaylistId: number | null = null;
+let currentMode: Mode | null = null;
+let isPlaying = false;
 
-// Stocker l'état global des playlists actives
-const playlistStates = new Map<number, PlaylistState>();
-
-// Intervalle de vérification des changements de base de données (en ms)
-const DB_CHECK_INTERVAL = 5000; // 5 secondes
-
-// Ajouter un intervalle de rechargement forcé
-const FORCE_RELOAD_INTERVAL = 300000; // 5 minutes (en ms)
-
-// Fonction pour vérifier les changements dans la base de données
-async function checkForDatabaseChanges() {
-  console.log("Vérification des changements dans la base de données...");
-  const modes = await prisma.mode.findMany();
-  let changesDetected = false;
-  const currentTime = Date.now();
-
-  for (const mode of modes) {
-    if (
-      (mode.name === "playlist" || mode.name === "test") &&
-      mode.playlist_id
-    ) {
-      try {
-        // Récupérer les éléments de la playlist depuis la base de données
-        const playlistItems = await prisma.playlistItem.findMany({
-          where: { playlist_id: mode.playlist_id },
-          orderBy: { position: "asc" },
-          include: { media: true, data: true },
-        });
-
-        const currentState = playlistStates.get(mode.playlist_id);
-
-        // Vérifier si la playlist a changé (nombre d'éléments, ordre, contenu)
-        if (currentState) {
-          // Forcer un rechargement périodique pour éviter les problèmes de désynchronisation
-          const timeSinceLastUpdate =
-            currentTime - (currentState.lastUpdated || 0);
-          const forceReload = timeSinceLastUpdate > FORCE_RELOAD_INTERVAL;
-
-          if (forceReload) {
-            console.log(
-              `Rechargement forcé de la playlist ${mode.playlist_id} après ${
-                timeSinceLastUpdate / 1000
-              } secondes`
-            );
-            changesDetected = true;
-          } else if (currentState.items.length !== playlistItems.length) {
-            // Vérifier si le nombre d'éléments a changé
-            console.log(
-              `Nombre d'éléments modifié pour la playlist ${mode.playlist_id}: ${currentState.items.length} => ${playlistItems.length}`
-            );
-            changesDetected = true;
-          } else {
-            // Comparaison détaillée de chaque élément
-            for (let i = 0; i < playlistItems.length; i++) {
-              const newItem = playlistItems[i];
-              const oldItem = currentState.items[i];
-
-              // Vérification ID et position
-              if (
-                newItem.id !== oldItem.id ||
-                newItem.position !== oldItem.position
-              ) {
-                console.log(
-                  `Changement d'ID ou position détecté dans la playlist ${mode.playlist_id}`
-                );
-                changesDetected = true;
-                break;
-              }
-
-              // Vérification média
-              if (
-                (newItem.media && !oldItem.media) ||
-                (!newItem.media && oldItem.media) ||
-                (newItem.media &&
-                  oldItem.media &&
-                  newItem.media.id !== oldItem.media.id)
-              ) {
-                console.log(
-                  `Changement de média détecté dans la playlist ${mode.playlist_id}`
-                );
-                changesDetected = true;
-                break;
-              }
-
-              // Vérification données
-              if (
-                (newItem.data && !oldItem.data) ||
-                (!newItem.data && oldItem.data) ||
-                (newItem.data &&
-                  oldItem.data &&
-                  newItem.data.id !== oldItem.data.id)
-              ) {
-                console.log(
-                  `Changement de données détecté dans la playlist ${mode.playlist_id}`
-                );
-                changesDetected = true;
-                break;
-              }
-
-              // Vérification de la durée
-              if (newItem.duration !== oldItem.duration) {
-                console.log(
-                  `Changement de durée détecté dans la playlist ${mode.playlist_id}`
-                );
-                changesDetected = true;
-                break;
-              }
-
-              // Vérification contenu du média
-              if (newItem.media && oldItem.media) {
-                // Comparer tous les champs pertinents du média
-                const newMediaStr = JSON.stringify({
-                  path: newItem.media.path,
-                  type: newItem.media.type,
-                  file_name: newItem.media.file_name,
-                  size: newItem.media.size,
-                });
-
-                const oldMediaStr = JSON.stringify({
-                  path: oldItem.media.path,
-                  type: oldItem.media.type,
-                  file_name: oldItem.media.file_name,
-                  size: oldItem.media.size,
-                });
-
-                if (newMediaStr !== oldMediaStr) {
-                  console.log(
-                    `Changement dans les propriétés du média détecté dans la playlist ${mode.playlist_id}`
-                  );
-                  changesDetected = true;
-                  break;
-                }
-              }
-
-              // Vérification contenu des données
-              if (newItem.data && oldItem.data) {
-                // Comparer tous les champs pertinents des données
-                const newDataStr = JSON.stringify({
-                  value: newItem.data.value,
-                  backgroundColor: newItem.data.backgroundColor,
-                  type: newItem.data.type,
-                });
-
-                const oldDataStr = JSON.stringify({
-                  value: oldItem.data.value,
-                  backgroundColor: oldItem.data.backgroundColor,
-                  type: oldItem.data.type,
-                });
-
-                if (newDataStr !== oldDataStr) {
-                  console.log(
-                    `Changement dans les propriétés des données détecté dans la playlist ${mode.playlist_id}`
-                  );
-                  changesDetected = true;
-                  break;
-                }
-              }
-            }
-          }
-
-          if (changesDetected) {
-            console.log(
-              `Mise à jour de l'état de la playlist ${mode.playlist_id}`
-            );
-
-            // Mettre à jour l'état
-            currentState.items = playlistItems;
-            currentState.lastUpdated = Date.now();
-
-            // Réinitialiser à l'index actuel (ne pas redémarrer à 0)
-            // Si l'élément actuel n'existe plus, revenir à 0
-            if (currentState.currentIndex >= playlistItems.length) {
-              currentState.currentIndex = 0;
-            }
-
-            // Annuler tout timeout existant
-            if (currentState.timeoutId) {
-              clearTimeout(currentState.timeoutId);
-            }
-
-            // Reprogrammer le prochain élément
-            scheduleNextItem(mode.playlist_id);
-          }
-        } else if (playlistItems.length > 0) {
-          // Nouvelle playlist détectée
-          console.log(`Nouvelle playlist détectée: ${mode.playlist_id}`);
-          changesDetected = true;
-
-          // Initialiser l'état
-          playlistStates.set(mode.playlist_id, {
-            currentIndex: 0,
-            items: playlistItems,
-            lastChange: Date.now(),
-            playlistId: mode.playlist_id,
-            modeName: mode.name,
-            lastUpdated: Date.now(),
-          });
-
-          // Planifier le prochain élément
-          scheduleNextItem(mode.playlist_id);
-        }
-      } catch (error) {
-        console.error(
-          `Erreur lors de la vérification de la playlist ${mode.playlist_id}:`,
-          error
-        );
-      }
-    }
-  }
-
-  // Si des changements ont été détectés, notifier tous les clients
-  if (changesDetected) {
-    const newState = await getCurrentState();
-    console.log("Envoi des nouveaux états aux clients...");
-    server.clients.forEach((client) => {
-      if (client.readyState === 1) {
-        // WebSocket.OPEN
-        client.send(JSON.stringify(newState));
-      }
-    });
-  }
-}
-
-// Fonction pour obtenir l'état actuel de toutes les playlists
-async function getCurrentState() {
-  const modes = await prisma.mode.findMany();
-  const items: PlaylistItemToSend[] = [];
-
-  for (const mode of modes) {
-    // Vérifier si le mode est de type 'playlist' ou 'test'
-    if (
-      (mode.name === "playlist" || mode.name === "test") &&
-      mode.playlist_id
-    ) {
-      let currentState = playlistStates.get(mode.playlist_id);
-
-      // Si cette playlist n'a pas encore d'état, initialiser
-      if (!currentState) {
-        const items = await prisma.playlistItem.findMany({
-          where: { playlist_id: mode.playlist_id },
-          orderBy: { position: "asc" },
-          include: { media: true, data: true },
-        });
-
-        if (items.length > 0) {
-          currentState = {
-            currentIndex: 0,
-            items: items,
-            lastChange: Date.now(),
-            playlistId: mode.playlist_id,
-            modeName: mode.name, // Stocker le type de mode (playlist ou test)
-            lastUpdated: Date.now(),
-          };
-
-          playlistStates.set(mode.playlist_id, currentState);
-
-          // Planifier le passage au prochain élément
-          scheduleNextItem(mode.playlist_id);
-        }
-      }
-
-      if (currentState && currentState.items.length > 0) {
-        const currentItem = currentState.items[currentState.currentIndex];
-
-        // Déterminer le type de contenu
-        const hasMedia =
-          currentItem.media !== null && currentItem.media !== undefined;
-        const hasData =
-          currentItem.data !== null && currentItem.data !== undefined;
-
-        // Préparer l'élément à envoyer avec prise en compte du type de mode
-        const itemToSend: PlaylistItemToSend = {
-          modeId: mode.id,
-          modeName: mode.name, // 'playlist' ou 'test'
-          playlistId: mode.playlist_id,
-          currentItem: {
-            id: currentItem.id,
-            position: currentItem.position,
-            duration: currentItem.duration,
-            contentType: hasMedia ? "media" : "data", // Indiquer explicitement le type
-            media: hasMedia ? currentItem.media : undefined,
-            data: hasData ? currentItem.data : undefined,
-          },
-        };
-
-        // Ajouter des données supplémentaires spécifiques au type de mode
-        if (mode.name === "playlist") {
-          // Configuration spécifique au mode 'playlist'
-          itemToSend.isMainPlaylist = true;
-        } else if (mode.name === "test") {
-          // Configuration spécifique au mode 'test'
-          itemToSend.isTestMode = true;
-        }
-
-        items.push(itemToSend);
-      }
-    }
-  }
-
-  return { items };
-}
-
-// Fonction pour passer à l'élément suivant
-function scheduleNextItem(playlistId: number) {
-  const state = playlistStates.get(playlistId);
-  if (!state) return;
-
-  // Annuler tout timeout existant pour éviter les doublons
-  if (state.timeoutId) {
-    clearTimeout(state.timeoutId);
-  }
-
-  const currentItem = state.items[state.currentIndex];
-  // Ajuster la durée en fonction du type de mode
-  let duration = currentItem.duration * 1000; // convertir en millisecondes
-
-  // Pour le mode 'test', on pourrait vouloir une durée différente
-  if (state.modeName === "test") {
-    // Exemple: durée plus courte pour le mode test
-    duration = Math.min(duration, 5000); // maximum 5 secondes en mode test
-  }
-
-  // Stocker l'ID du timeout pour pouvoir l'annuler si nécessaire
-  state.timeoutId = setTimeout(async () => {
-    // Passer à l'élément suivant
-    state.currentIndex = (state.currentIndex + 1) % state.items.length;
-    state.lastChange = Date.now();
-
-    // Notifier tous les clients connectés du changement
-    const newState = await getCurrentState();
-    server.clients.forEach((client) => {
-      if (client.readyState === 1) {
-        // WebSocket.OPEN
-        client.send(JSON.stringify(newState));
-      }
-    });
-
-    // Planifier le prochain changement
-    scheduleNextItem(playlistId);
-  }, duration);
-}
-
-// Démarrer l'intervalle de vérification des changements
-setInterval(checkForDatabaseChanges, DB_CHECK_INTERVAL);
-
-// Gérer les nouvelles connexions
-server.on("connection", async (ws) => {
-  console.log("Client connecté");
-
+// Fonction appelée depuis l'extérieur (ModeService) pour notifier des changements de mode
+export const handleModeUpdate = async (updatedMode: Mode) => {
   try {
-    // Envoyer l'état actuel au nouveau client UNE SEULE FOIS
-    const currentState = await getCurrentState();
-    ws.send(JSON.stringify(currentState));
+    console.log("Notification de changement de mode reçue!");
+    console.log(`Ancien mode: ${currentMode?.name || 'aucun'}, Nouveau mode: ${updatedMode.name}`);
+    
+    // Si le mode n'a pas changé, ne rien faire
+    if (currentMode && 
+        updatedMode.name === currentMode.name && 
+        updatedMode.playlist_id === currentMode.playlist_id) {
+      return;
+    }
+    
+    // Mettre à jour le mode actuel
+    currentMode = updatedMode;
+    
+    // Si le nouveau mode n'est pas "playlist", arrêter la lecture
+    if (updatedMode.name !== "playlist") {
+      stopPlaylist();
+      console.log("Mode n'est pas 'playlist' - Arrêt de la lecture");
+      
+      // Notifier tous les clients du changement de mode
+      notifyModeChange(updatedMode.name);
+      return;
+    }
+    
+    // Si le nouveau mode est "playlist" et a un ID de playlist valide
+    if (updatedMode.name === "playlist" && updatedMode.playlist_id) {
+      // Récupérer la nouvelle playlist
+      const playlist = await prisma.playlist.findUnique({
+        where: {
+          id: updatedMode.playlist_id
+        }
+      });
+      
+      if (playlist) {
+        // Récupérer les éléments de la nouvelle playlist
+        const newPlaylistItems = await prisma.playlistItem.findMany({
+          where: {
+            playlist_id: playlist.id
+          },
+          include: {
+            media: true,
+            data: {
+              include: {
+                background: true
+              }
+            }
+          },
+          orderBy: {
+            position: 'asc'
+          }
+        });
+        
+        if (newPlaylistItems.length > 0) {
+          console.log(`Nouvelle playlist chargée: ${playlist.name} (${newPlaylistItems.length} éléments)`);
+          
+          // Redémarrer la playlist avec les nouveaux éléments
+          startPlaylist(newPlaylistItems);
+        } else {
+          console.log("La playlist est vide - Aucun élément à lire");
+          stopPlaylist();
+        }
+      } else {
+        console.log("Playlist introuvable - Arrêt de la lecture");
+        stopPlaylist();
+      }
+    }
   } catch (error) {
-    console.error("Erreur lors de l'envoi de l'état initial:", error);
-    ws.send("Erreur lors de la récupération des données\n");
+    console.error("Erreur lors du traitement du changement de mode:", error);
+  }
+};
+
+// Fonction pour déterminer le mode basé sur le contenu de l'élément
+const determineItemMode = (item: PlaylistItem): string => {
+  if (!item) return "playlist";
+  
+  // Si l'élément a un data_id, envoyer "data" comme mode
+  if (item.data_id) return "data";
+  
+  // Sinon, si l'élément a un media_id, envoyer "media" comme mode
+  if (item.media_id) return "media";
+  
+  // Par défaut, retourner "playlist"
+  return "playlist";
+};
+
+// Fonction appelée depuis l'extérieur (PlaylistService) pour notifier des changements dans une playlist
+export const handlePlaylistUpdate = async (playlistId: number) => {
+  try {
+    console.log(`Notification de mise à jour de playlist reçue pour l'ID: ${playlistId}`);
+    
+    // Vérifier si c'est la playlist actuellement en lecture
+    if (currentMode?.name === "playlist" && 
+        currentMode.playlist_id === playlistId && 
+        isPlaying) {
+      
+      console.log("La playlist en cours de lecture a été modifiée");
+      
+      // Récupérer les éléments mis à jour de la playlist
+      const updatedPlaylistItems = await prisma.playlistItem.findMany({
+        where: {
+          playlist_id: playlistId
+        },
+        include: {
+          media: true,
+          data: {
+            include: {
+              background: true
+            }
+          }
+        },
+        orderBy: {
+          position: 'asc'
+        }
+      });
+      
+      if (updatedPlaylistItems.length > 0) {
+        // Mettre à jour les éléments
+        currentPlaylistItems = updatedPlaylistItems;
+        
+        // Ajuster l'index si nécessaire
+        if (currentIndex >= currentPlaylistItems.length) {
+          currentIndex = 0;
+        }
+        
+        console.log(`Playlist mise à jour: ${updatedPlaylistItems.length} éléments`);
+        
+        // Envoyer l'élément actuel à tous les clients
+        const currentItem = currentPlaylistItems[currentIndex];
+        
+        // Déterminer le mode basé sur le contenu de l'élément
+        const itemMode = determineItemMode(currentItem);
+        
+        const data: sendData = {
+          mode: itemMode,
+          PlaylistItem: currentItem,
+          currentIndex: currentIndex
+        };
+        
+        wsServer.clients.forEach(client => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(data));
+          }
+        });
+      } else if (isPlaying) {
+        // Si la playlist est maintenant vide mais qu'elle était en lecture
+        console.log("La playlist est maintenant vide - Arrêt de la lecture");
+        stopPlaylist();
+        notifyModeChange(currentMode.name);
+      }
+    }
+  } catch (error) {
+    console.error("Erreur lors du traitement de la mise à jour de playlist:", error);
+  }
+};
+
+// Notifier tous les clients du changement de mode
+const notifyModeChange = (modeName: string) => {
+  const data = {
+    mode: modeName,
+    PlaylistItem: null,
+    currentIndex: -1
+  };
+  
+  wsServer.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(data));
+    }
+  });
+};
+
+// Arrêter la lecture de la playlist
+const stopPlaylist = () => {
+  if (playlistTimer) {
+    clearTimeout(playlistTimer);
+    playlistTimer = null;
+  }
+  
+  currentPlaylistItems = [];
+  currentIndex = 0;
+  currentPlaylistId = null;
+  isPlaying = false;
+  
+  console.log("Lecture de la playlist arrêtée");
+};
+
+const startPlaylist = async (playlistItems: PlaylistItem[]) => {
+  if (playlistItems.length > 0) {
+    // Arrêter la lecture précédente si existante
+    if (playlistTimer) {
+      clearTimeout(playlistTimer);
+    }
+    
+    // Mettre à jour les variables globales
+    currentPlaylistItems = playlistItems;
+    currentIndex = 0;
+    currentPlaylistId = playlistItems[0].playlist_id;
+    isPlaying = true;
+    
+    // Démarrer la lecture
+    playNextItem();
+  }
+};
+
+// Fonction pour récupérer les éléments mis à jour de la playlist
+const fetchUpdatedPlaylistItems = async () => {
+  if (!currentPlaylistId) return null;
+  
+  try {
+    return await prisma.playlistItem.findMany({
+      where: {
+        playlist_id: currentPlaylistId
+      },
+      include: {
+        media: true,
+        data: {
+          include: {
+            background: true
+          }
+        }
+      },
+      orderBy: {
+        position: 'asc'
+      }
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des éléments de la playlist:", error);
+    return null;
+  }
+};
+
+const playNextItem = async () => {
+  // Vérifier si nous sommes toujours en mode playlist
+  if (!isPlaying || currentPlaylistItems.length === 0) return;
+  
+  // Récupérer les données les plus récentes avant de jouer l'élément
+  const updatedItems = await fetchUpdatedPlaylistItems();
+  if (updatedItems && updatedItems.length > 0) {
+    currentPlaylistItems = updatedItems;
+    // S'assurer que l'index est valide
+    if (currentIndex >= currentPlaylistItems.length) {
+      currentIndex = 0;
+    }
+  }
+  
+  const currentItem = currentPlaylistItems[currentIndex];
+  
+  // Déterminer le mode basé sur le contenu de l'élément
+  const itemMode = determineItemMode(currentItem);
+  
+  const data: sendData = {
+    mode: itemMode,
+    PlaylistItem: currentItem,
+    currentIndex: currentIndex
+  };
+  
+  // Diffuser l'élément actuel à tous les clients
+  wsServer.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(data));
+    }
+  });
+  
+  console.log(`Lecture de l'élément ${currentIndex + 1}/${currentPlaylistItems.length} - Durée: ${currentItem.duration}s - Mode: ${itemMode}`);
+  
+  const duration = currentItem.duration * 1000;
+  
+  // Planifier le passage à l'élément suivant
+  playlistTimer = setTimeout(() => {
+    // Vérifier à nouveau si nous sommes toujours en mode playlist
+    if (!isPlaying) return;
+    
+    // Passer à l'élément suivant
+    currentIndex = (currentIndex + 1) % currentPlaylistItems.length;
+    playNextItem();
+  }, duration);
+};
+
+// Fonction d'initialisation principale
+const initialize = async () => {
+  try {
+    // Récupérer le mode initial
+    const mode: Mode | null = await prisma.mode.findUnique({
+      where: {
+        id: 1
+      }
+    });
+    
+    currentMode = mode;
+    
+    // Si le mode est "playlist", démarrer la lecture
+    if (mode?.name === "playlist" && mode.playlist_id) {
+      console.log("Mode 'playlist' détecté - Démarrage de la lecture");
+      
+      const playlist = await prisma.playlist.findUnique({
+        where: {
+          id: mode.playlist_id
+        }
+      });
+      
+      if (playlist) {
+        const playlistItems = await prisma.playlistItem.findMany({
+          where: {
+            playlist_id: playlist.id
+          },
+          include: {
+            media: true,
+            data: {
+              include: {
+                background: true
+              }
+            }
+          },
+          orderBy: {
+            position: 'asc'
+          }
+        });
+        
+        if (playlistItems.length > 0) {
+          console.log(`Démarrage de la playlist: ${playlist.name} (${playlistItems.length} éléments)`);
+          startPlaylist(playlistItems);
+        } else {
+          console.log("La playlist est vide - Aucun élément à lire");
+        }
+      } else {
+        console.log("Playlist introuvable");
+      }
+    } else {
+      console.log(`Mode actuel: ${mode?.name || 'aucun'} - Pas de lecture de playlist`);
+    }
+  } catch (error) {
+    console.error("Erreur lors de l'initialisation:", error);
+  }
+};
+
+// Démarrer le processus d'initialisation
+initialize();
+
+wsServer.on("connection", async (ws) => {
+  // Envoyer l'état actuel au nouveau client
+  if (currentMode) {
+    if (currentMode.name === "playlist" && isPlaying && currentPlaylistItems.length > 0) {
+      // Si en mode playlist et la lecture est active, envoyer l'élément actuel
+      const currentItem = currentPlaylistItems[currentIndex];
+      
+      // Déterminer le mode basé sur le contenu de l'élément
+      const itemMode = determineItemMode(currentItem);
+      
+      const data: sendData = {
+        mode: itemMode,
+        PlaylistItem: currentItem,
+        currentIndex: currentIndex
+      };
+      ws.send(JSON.stringify(data));
+    } else {
+      // Si pas en mode playlist, envoyer juste le mode
+      const data: sendData = {
+        mode: currentMode.name,
+        PlaylistItem: null,
+        currentIndex: -1
+      };
+      ws.send(JSON.stringify(data));
+    }
   }
 
   ws.on("close", () => {
-    console.log("Client déconnecté");
+    console.log("Client disconnected");
   });
 
   ws.on("error", (err) => {
-    console.error("Erreur WebSocket:", err);
+    console.error("WebSocket error:", err);
   });
 });
 
-// Initialiser les états des playlists au démarrage
-(async () => {
-  try {
-    await getCurrentState();
-    console.log("États des playlists initialisés");
-    console.log(
-      `Vérification des changements de base de données toutes les ${
-        DB_CHECK_INTERVAL / 1000
-      } secondes`
-    );
-  } catch (error) {
-    console.error("Erreur lors de l'initialisation des états:", error);
-  }
-})();
+// Nettoyage des intervalles lors de la fermeture de l'application
+process.on('SIGINT', () => {
+  if (playlistTimer) clearTimeout(playlistTimer);
+  console.log('Arrêt propre du serveur WebSocket');
+  process.exit(0);
+});
 
-// Exporter le serveur pour pouvoir le fermer proprement
-export { server };
-
-console.log(`Serveur WebSocket démarré sur le port ${port}`);
+console.log(`WebSocket Server is running on port ${port}`);

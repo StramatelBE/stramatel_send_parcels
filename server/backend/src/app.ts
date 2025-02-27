@@ -1,7 +1,7 @@
 import express from "express";
 import "reflect-metadata";
 import { configureApp } from "./configureApp";
-import { server as webSocketServer } from "./sockets/webSocketServer";
+import { wsServer } from "./sockets/webSocketServer";
 
 const app = express();
 const port: number = process.env.API_PORT
@@ -21,7 +21,7 @@ process.on("SIGINT", () => {
     console.log("Serveur API arrêté");
   });
 
-  webSocketServer.close(() => {
+  wsServer.close(() => {
     console.log("Serveur WebSocket arrêté");
     process.exit(0);
   });

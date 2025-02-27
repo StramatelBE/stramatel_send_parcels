@@ -1,9 +1,10 @@
 import { fetchWithAuthorization } from '../../../utils/fetchWithAuthorization';
 
+const API_URL = process.env.API_URL + 'app-settings/';
 class SettingsService {
   static async getSettings() {
     const response = await fetchWithAuthorization(
-      `${process.env.API_URL}settings/`,
+      `${API_URL}`,
       {
         method: 'GET',
       }
@@ -19,7 +20,7 @@ class SettingsService {
 
   static async updateDate(date) {
     const response = await fetchWithAuthorization(
-      `${process.env.API_URL}settings/date`,
+      `${API_URL}date`,
       {
         method: 'PUT',
         headers: {
@@ -32,7 +33,7 @@ class SettingsService {
 
   static async updateSetting(settingId, settingData) {
     const response = await fetchWithAuthorization(
-      `${process.env.API_URL}settings/${settingId}`,
+      `${API_URL}${settingId}`,
       {
         method: 'PUT',
         headers: {

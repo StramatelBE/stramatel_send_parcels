@@ -16,6 +16,12 @@ const useData = () => {
     }
   });
 
+
+    const getTemperature = async () => {
+    const response = await DataService.getOneData(1);
+    return response.data.value;
+  };
+
   useEffect(() => {
     console.log("Connexion au WebSocket...");
     connectWebSocket();
@@ -23,7 +29,7 @@ const useData = () => {
 
   useStandby();
 
-  return null;
+  return { getTemperature };
 };
 
 export default useData;

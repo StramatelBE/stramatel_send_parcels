@@ -4,6 +4,8 @@ import { HttpException } from "../../exceptions/HttpException";
 import * as ffmpeg from "fluent-ffmpeg";
 import { UploadService } from "./upload.service";
 import { NextFunction } from "express";
+import { handlePlaylistUpdate } from "../../sockets/webSocketServer";
+
 const prisma = new PrismaClient();
 
 @Service()
@@ -65,10 +67,24 @@ export class MediaService {
   }
 
   async updateMedia(mediaId: number, media: Partial<Media>): Promise<Media> {
-    return prisma.media.update({
+    const updatedMedia = await prisma.media.update({
       where: { id: mediaId },
       data: media,
     });
+    
+    // Vérifier si ce média est utilisé dans des playlistItems
+    const playlistItems = await prisma.playlistItem.findMany({
+      where: { media_id: mediaId },
+      distinct: ['playlist_id'],
+      select: { playlist_id: true }
+    });
+    
+    // Notifier chaque playlist concernée
+    for (const item of playlistItems) {
+      await handlePlaylistUpdate(item.playlist_id);
+    }
+    
+    return updatedMedia;
   }
 
   async getMediaCount(playlistId: number): Promise<number> {
@@ -87,15 +103,35 @@ export class MediaService {
   async deleteMedia(mediaId: number, username: string): Promise<Media> {
     const media = await prisma.media.findUnique({
       where: { id: mediaId },
+      include: {
+        PlaylistItem: {
+          select: {
+            playlist_id: true
+          }
+        }
+      }
     });
-
-    await this.uploadService.removeMediaFile(media, username);
 
     if (!media) {
       throw new HttpException(404, `Media with ID ${mediaId} doesn't exist.`);
     }
-    return prisma.media.delete({
+    
+    // Collecter les IDs des playlists concernées avant de supprimer le média
+    const affectedPlaylistIds = media.PlaylistItem.map(item => item.playlist_id);
+    const uniquePlaylistIds = [...new Set(affectedPlaylistIds)];
+    
+    await this.uploadService.removeMediaFile(media, username);
+    
+    // Supprimer le média
+    await prisma.media.delete({
       where: { id: mediaId },
     });
+    
+    // Notifier toutes les playlists affectées
+    for (const playlistId of uniquePlaylistIds) {
+      await handlePlaylistUpdate(playlistId);
+    }
+    
+    return media;
   }
 }

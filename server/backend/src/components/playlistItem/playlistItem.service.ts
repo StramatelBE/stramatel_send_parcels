@@ -6,6 +6,8 @@ import {
 } from "./playlistItem.validation";
 import { UploadService } from "../medias/upload.service";
 import { PlaylistService } from "../playlist/playlist.service";
+import { handlePlaylistUpdate } from "../../sockets/webSocketServer";
+
 const prisma = new PrismaClient();
 
 interface PlaylistItemWithMedia extends PlaylistItem {
@@ -58,6 +60,9 @@ export class PlaylistItemService {
       },
     });
 
+    // Notifier le WebSocket de l'ajout d'un nouvel élément à la playlist
+    await handlePlaylistUpdate(playlistItemData.playlist_id);
+
     return playlistItem;
   }
 
@@ -74,6 +79,10 @@ export class PlaylistItemService {
         data_id: playlistItemData.data_id,
       },
     });
+    
+    // Notifier le WebSocket de la mise à jour d'un élément de la playlist
+    await handlePlaylistUpdate(playlistItem.playlist_id);
+    
     return prisma.playlistItem.findUnique({
       where: { id },
       include: {
@@ -96,6 +105,9 @@ export class PlaylistItemService {
     if (!playlistItem) {
       throw new Error("PlaylistItem not found");
     }
+    
+    // Conserver l'ID de la playlist pour la notification
+    const playlistId = playlistItem.playlist_id;
 
     // Supprimer les fichiers médias du système de fichiers
     if (playlistItem.media) {
@@ -115,6 +127,9 @@ export class PlaylistItemService {
     await prisma.playlistItem.delete({
       where: { id },
     });
+    
+    // Notifier le WebSocket de la suppression d'un élément de la playlist
+    await handlePlaylistUpdate(playlistId);
 
     return playlistItem;
   }
@@ -140,6 +155,10 @@ export class PlaylistItemService {
         },
       },
     });
+    
+    // Notifier le WebSocket de la mise à jour d'un élément de la playlist
+    await handlePlaylistUpdate(playlistItem.playlist_id);
+    
     return playlistItem;
   }
 
@@ -161,6 +180,9 @@ export class PlaylistItemService {
         data: {},
       });
     }
+    
+    // Notifier le WebSocket de la mise à jour d'un élément de la playlist
+    await handlePlaylistUpdate(playlistItem.playlist_id);
 
     return prisma.playlistItem.findUnique({
       where: { id },
@@ -196,6 +218,12 @@ export class PlaylistItemService {
         });
       })
     );
+    
+    // Notifier le WebSocket si des éléments ont été mis à jour
+    if (updatedItems.length > 0) {
+      // Utiliser l'ID de la playlist du premier élément (ils devraient tous être de la même playlist)
+      await handlePlaylistUpdate(updatedItems[0].playlist_id);
+    }
 
     return updatedItems;
   }

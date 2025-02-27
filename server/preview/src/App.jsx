@@ -1,29 +1,27 @@
-import { useEffect, useState } from "react";
-import useSocketData from "./stores/socketDataStore";
+import { useEffect } from "react";
+import Editor from "./components/Editor";
+import Medias from "./components/Medias";
 import useData from "./hooks/useData";
-import Medias from "./components/newComponent/Medias";
+import useSocketData from "./stores/socketDataStore";
 function App() {
-  const [showPlaylist, setShowPlaylist] = useState(true);
+
   const { socketData } = useSocketData();
 
   useData();
 
   useEffect(() => {
-    console.log("Données actuelles du socket:", socketData?.items?.[0]);
+    console.log("Données actuelles du socket:", socketData);
   }, [socketData]);
 
   return (
     <>
-      {socketData?.items?.[0]?.modeName === "playlist" ? (
-        socketData?.items?.[0]?.currentItem?.contentType === "media" ? (
-          <Medias media={socketData?.items?.[0]?.currentItem?.media} />
-        ) : (
-          socketData?.items?.[0]?.currentItem?.contentType === "data" && (
-            <div>data</div>
-          )
-        )
-      ) : (
-        <div>test</div>
+      {socketData?.mode === "media" && (
+        <Medias media={socketData.PlaylistItem.media} />
+      )}
+      {socketData?.mode === "data" && (
+       <div>
+        <Editor data={socketData.PlaylistItem.data} />
+       </div>
       )}
     </>
   );

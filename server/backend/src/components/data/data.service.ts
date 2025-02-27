@@ -2,6 +2,7 @@ import { PrismaClient, Data, User } from "@prisma/client";
 import { Service, Inject } from "typedi";
 import { CreateDataDto, UpdateDataDto } from "./data.validation";
 import { UploadService } from "../medias/upload.service";
+import { handlePlaylistUpdate } from "../../sockets/webSocketServer";
 
 const prisma = new PrismaClient();
 
@@ -38,8 +39,20 @@ export class DataService {
   ): Promise<Data> {
     const existingData = await prisma.data.findUnique({
       where: { id },
-      include: { background: true },
+      include: { 
+        background: true,
+        PlaylistItem: {
+          select: {
+            playlist_id: true
+          }
+        }
+      },
     });
+    
+    // Collecter les IDs des playlists concernées avant la mise à jour
+    const affectedPlaylistIds = existingData.PlaylistItem.map(item => item.playlist_id);
+    const uniquePlaylistIds = [...new Set(affectedPlaylistIds)];
+    
     if (
       updateDataDto?.background_id !== existingData?.background_id &&
       existingData?.background_id !== null
@@ -63,13 +76,47 @@ export class DataService {
       },
       include: { background: true },
     });
+    
+    // Notifier toutes les playlists affectées
+    for (const playlistId of uniquePlaylistIds) {
+      await handlePlaylistUpdate(playlistId);
+    }
+    
     return updatedData;
   }
 
   async deleteData(id: number): Promise<Data | null> {
-    return prisma.data.delete({
+    // Récupérer les playlists associées à ces données
+    const data = await prisma.data.findUnique({
+      where: { id },
+      include: {
+        PlaylistItem: {
+          select: {
+            playlist_id: true
+          }
+        }
+      }
+    });
+    
+    if (!data) {
+      return null;
+    }
+    
+    // Collecter les IDs des playlists concernées avant la suppression
+    const affectedPlaylistIds = data.PlaylistItem.map(item => item.playlist_id);
+    const uniquePlaylistIds = [...new Set(affectedPlaylistIds)];
+    
+    // Supprimer les données
+    const deletedData = await prisma.data.delete({
       where: { id },
     });
+    
+    // Notifier toutes les playlists affectées
+    for (const playlistId of uniquePlaylistIds) {
+      await handlePlaylistUpdate(playlistId);
+    }
+    
+    return deletedData;
   }
 
   async getAllData(): Promise<Data[]> {

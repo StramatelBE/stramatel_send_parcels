@@ -101,6 +101,7 @@ export class PlaylistController {
         res.status(200).json({ message: "deleted" });
       }
     } catch (error) {
+      console.log(error);
       next(error);
     }
   };
