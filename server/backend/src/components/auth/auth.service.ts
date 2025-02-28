@@ -1,5 +1,5 @@
 import { PrismaClient, User } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import path from "path";
@@ -25,7 +25,7 @@ export class AuthService {
         `This username ${userData.username} already exists`
       );
     }
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    const hashedPassword = await bcryptjs.hash(userData.password, 10);
     const user = await prisma.user.create({
       data: {
         ...userData,
@@ -52,7 +52,7 @@ export class AuthService {
       throw new HttpException(401, "Incorrect username or password");
     }
 
-    const isValidPassword = await bcrypt.compare(
+    const isValidPassword = await bcryptjs.compare(
       credentials.password,
       user.password
     );
@@ -84,7 +84,7 @@ export class AuthService {
       throw new HttpException(404, "User not found");
     }
 
-    const isValidPassword = await bcrypt.compare(
+    const isValidPassword = await bcryptjs.compare(
       changePasswordData.oldPassword,
       user.password
     );
@@ -93,7 +93,7 @@ export class AuthService {
       throw new HttpException(400, "Incorrect old password");
     }
 
-    const hashedNewPassword = await bcrypt.hash(
+    const hashedNewPassword = await bcryptjs.hash(
       changePasswordData.newPassword,
       10
     );
