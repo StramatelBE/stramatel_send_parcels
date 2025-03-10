@@ -1,6 +1,6 @@
 import { Node } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-import AutoDateComponent from '../components/AutoDateComponent.jsx';
+import AutoDateComponent from '../components/extensions/AutoDateComponent';
 
 export default Node.create({
   name: 'autoDate',

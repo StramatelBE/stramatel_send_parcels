@@ -1,6 +1,6 @@
 import { Node } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-import AutoTimeComponent from '../components/AutoTimeComponent.jsx';
+import AutoTimeComponent from '../components/extensions/AutoTimeComponent.jsx';
 
 export default Node.create({
   name: 'autoTime',

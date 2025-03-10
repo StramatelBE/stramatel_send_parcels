@@ -1,30 +1,36 @@
+import { Media, User } from "@prisma/client";
 import { NextFunction } from "express";
 import { unlinkSync } from "fs";
 import multer from "multer";
-import { Inject, Service } from "typedi";
+import path from "path";
+import { Service } from "typedi";
 import { v4 as uuidv4 } from "uuid";
 import { HttpException } from "../../exceptions/HttpException";
-import { MediaService } from "./media.service";
-import { UserService } from "../users/users.service";
-import { Media } from "@prisma/client";
-import path from "path";
 
 @Service()
 export class UploadService {
-  constructor(
-    @Inject(() => UserService) private userService: UserService,
-    @Inject(() => MediaService) private mediaService: MediaService
-  ) {}
+  constructor() {}
 
   private getExtension(mimetype: string) {
     const parts = mimetype.split("/");
     return parts[parts.length - 1];
   }
 
-  public handleUpload = async (req: any, res: any, next: NextFunction) => {
-    try {
+  public handleUpload = async (
+    req: any,
+    res: any,
+    next: NextFunction
+  ): Promise<any> => {
+    return new Promise((resolve, reject) => {
       const env = process.env.NODE_ENV;
       const uploadDir = process.env[`UPLOAD_DIR_${env}`];
+
+      if (!uploadDir) {
+        return reject(
+          new HttpException(500, "Upload directory not configured")
+        );
+      }
+
       const destination = `${uploadDir}${req.user.username}`;
 
       const upload = multer({
@@ -38,33 +44,62 @@ export class UploadService {
             cb(null, filename);
           },
         }),
-      });
+        fileFilter: (req, file, cb) => {
+          // Vérifier les types de fichiers acceptés
+          if (
+            file.mimetype.startsWith("video/") ||
+            file.mimetype.startsWith("image/")
+          ) {
+            cb(null, true);
+          } else {
+            cb(
+              new Error(
+                "Format de fichier non supporté. Seuls les images et vidéos sont acceptés."
+              )
+            );
+          }
+        },
+        limits: {
+          fileSize: 100 * 1024 * 1024, // Limite à 100MB
+        },
+      }).single("file");
 
-      upload.single("file")(req, res, function (err) {
+      upload(req, res, function (err) {
         if (err) {
-          console.log(err);
-          throw new HttpException(500, "Cannot upload file");
+          console.error("Upload error:", err);
+          return reject(
+            new HttpException(
+              400,
+              err.message || "Erreur lors de l'upload du fichier"
+            )
+          );
+        } else {
+          if (!req.file) {
+            return reject(
+              new HttpException(400, "Aucun fichier n'a été uploadé")
+            );
+          } else {
+            resolve(req.file);
+          }
         }
-        next();
       });
-    } catch (error) {
-      console.log(error);
-
-      next(error);
-    }
+    });
   };
 
-  public deleteMedia = async (media: Media, req: any): Promise<void> => {
+  public removeMediaFile = async (
+    media: Media,
+    username: string
+  ): Promise<void> => {
     try {
       unlinkSync(
         path.join(
           process.env[`UPLOAD_DIR_${process.env.NODE_ENV}`],
-          req.user.username,
+          username,
           media.file_name
         )
       );
     } catch (error) {
-    
+      console.error("Error removing media file:", error);
     }
   };
 }

@@ -1,8 +1,3 @@
-@font-face {
-  font-family: 'G552 mono';
-  src: local('G552 mono.otf'), url('/fonts/G552 mono.otf') format('opentype'); /* Chemin ajusté */
-}
-
 body {
   margin: 0;
   font-family: 'stratos-regular', sans-serif;
@@ -31,7 +26,6 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: 'G552 mono';
 }
 .headerLeft {
   display: flex;
@@ -111,7 +105,7 @@ body {
 }
 
 .editorTextArea {
-  font-family: 'G552 mono', monospace;
+  font-family: 'Roboto', 'Arial', sans-serif;
 }
 .tiptap {
   :first-child {
@@ -128,8 +122,6 @@ body {
   width: 288px;
   height: 432px;
   font-size: 32px;
-
-  font-family: 'G552 mono';
 
   overflow: hidden !important;
 }
@@ -164,6 +156,6 @@ p.is-editor-empty:first-child::before {
 
 .tiptap-text-container {
   margin: 0 auto;
-
+  background-size: 100% 100%;
   color: #ffffff;
 }

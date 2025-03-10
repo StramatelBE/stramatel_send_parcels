@@ -50,7 +50,7 @@ function EditorDataComponent({ currentMedia }) {
         defaultColor: "#ffffff",
       }),
       BackgroundExtension.configure({
-        defaultBackgroundColor: "#000000",
+        defaultBackgroundColor: "#ffffff",
       }),
       AutoTemperatureExtension,
     ],
@@ -63,13 +63,7 @@ function EditorDataComponent({ currentMedia }) {
     }
   }, [editor, editorBackgroundColor]);
 
-  useEffect(() => {
-    if (editor && content && previousContent.current !== content) {
-      editor.commands.setContent(content);
-      previousContent.current = content;
-      setEditorBackgroundColor(content?.attrs?.backgroundColor);
-    }
-  }, [content, editor]);
+
 
   return (
     <div

@@ -2,11 +2,14 @@ import { PrismaClient, Playlist, Media } from "@prisma/client";
 import { Service, Inject } from "typedi";
 import { CreatePlaylistDto } from "./playlist.validation";
 import { UploadService } from "../medias/upload.service";
+import { handlePlaylistUpdate } from "../../sockets/webSocketServer";
 
 const prisma = new PrismaClient();
 
 interface PlaylistWithMedia extends Playlist {
-  medias: Media[];
+  PlaylistItem: {
+    media: Media;
+  }[];
 }
 
 @Service()
@@ -18,7 +21,11 @@ export class PlaylistService {
   async getAllPlaylists(): Promise<Playlist[]> {
     const playlists = await prisma.playlist.findMany({
       include: {
-        medias: true,
+        PlaylistItem: {
+          include: {
+            media: true,
+          },
+        },
       },
     });
     return playlists;
@@ -28,9 +35,18 @@ export class PlaylistService {
     const playlist = await prisma.playlist.findUnique({
       where: { id },
       include: {
-        medias: true,
+        PlaylistItem: {
+          include: {
+            media: true,
+            data: true,
+          },
+          orderBy: {
+            position: "asc",
+          },
+        },
       },
     });
+
     return playlist;
   }
 
@@ -41,6 +57,8 @@ export class PlaylistService {
         user_id: playlistData.user_id,
       },
     });
+
+    // Aucune notification nécessaire car la playlist est vide
 
     return playlist;
   }
@@ -55,27 +73,50 @@ export class PlaylistService {
         name: playlistData.name,
       },
     });
+    
+    // Notifier le WebSocket de la mise à jour (même si c'est juste le nom qui change)
+    await handlePlaylistUpdate(id);
+    
     return playlist;
   }
 
-  async deletePlaylist(id: number, req: any): Promise<Playlist | null> {
+  async deletePlaylist(id: number, username: string): Promise<Playlist | null> {
     // Récupérer les médias associés à la playlist
     const playlist = await prisma.playlist.findUnique({
       where: { id },
-      include: { medias: true },
+      include: { PlaylistItem: { include: { media: true } } },
     });
 
     if (!playlist) {
       throw new Error("Playlist not found");
     }
 
-    // Supprimer les fichiers médias du système de fichiers
-    for (const media of playlist.medias) {
-      if (media.type === "image" || media.type === "video") {
-        await this.uploadService.deleteMedia(media, req);
+    // Notifier le WebSocket de la suppression de la playlist
+    // (permettra d'arrêter la lecture si cette playlist était en cours de lecture)
+    await handlePlaylistUpdate(id);
+
+    console.log("Playlist supprimée");
+    for (const item of playlist.PlaylistItem) {
+      if (
+        item.media &&
+        (item.media.type === "image" || item.media.type === "video")
+      ) {
+        await this.uploadService.removeMediaFile(item.media, username);
       }
     }
-
+    
+    // Récupérer les IDs de média valides (non null et non undefined)
+    const mediaIds = playlist.PlaylistItem
+      .map(item => item.media_id)
+      .filter(id => id !== null && id !== undefined);
+    
+    // Supprimer les médias associés à la playlist seulement s'il y en a
+    if (mediaIds.length > 0) {
+      await prisma.media.deleteMany({
+        where: { id: { in: mediaIds } },
+      });
+    }
+    
     // Supprimer la playlist et les médias associés de la base de données
     await prisma.playlist.delete({
       where: { id },
@@ -94,18 +135,22 @@ export class PlaylistService {
     const playlist = await prisma.playlist.update({
       where: { id },
       data: {
-        medias: {
+        PlaylistItem: {
           connect: { id: mediaId },
         },
       },
     });
+    
+    // Notifier le WebSocket de l'ajout d'un média à la playlist
+    await handlePlaylistUpdate(id);
+    
     return playlist;
   }
 
   async updateMediasInPlaylist(id: number, medias: Media[]): Promise<Playlist> {
     const playlist = await prisma.playlist.findUnique({
       where: { id },
-      include: { medias: true },
+      include: { PlaylistItem: { include: { media: true } } },
     });
 
     if (!playlist) throw new Error("Playlist not found");
@@ -114,13 +159,16 @@ export class PlaylistService {
     for (const media of medias) {
       await prisma.media.update({
         where: { id: media.id },
-        data: { position: media.position },
+        data: {},
       });
     }
+    
+    // Notifier le WebSocket de la modification de l'ordre des médias
+    await handlePlaylistUpdate(id);
 
     return prisma.playlist.findUnique({
       where: { id },
-      include: { medias: true },
+      include: { PlaylistItem: { include: { media: true } } },
     });
   }
 }

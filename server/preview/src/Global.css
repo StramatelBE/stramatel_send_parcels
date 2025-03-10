@@ -1,10 +1,5 @@
-@font-face {
-  font-family: "G552 mono";
-  src: local("G552 mono.otf"), url("/fonts/G552 mono.otf") format("opentype"); /* Chemin ajusté */
-}
 body,
 #root {
-  font-family: "G552 mono", sans-serif;
   margin: 0;
   background-color: #000000;
   color: rgb(255, 255, 255);
@@ -39,12 +34,11 @@ body,
 
 .header-text {
   font-size: 17px;
-  font-family: "G552 mono", sans-serif;
+
   color: #f1921d;
 }
 
 .info-section {
-  font-family: "G552 mono", sans-serif;
   height: 100%;
   /*   background-color: #000000; */
   padding: 7px 10px;
@@ -56,7 +50,7 @@ body,
 .info-text {
   line-height: 1.2;
   font-size: 21px;
-  font-family: "G552 mono", sans-serif;
+
   display: flex;
   flex-direction: column;
   color: white;
@@ -64,7 +58,6 @@ body,
 }
 .info-text-light {
   font-size: 14px;
-  font-family: "G552 mono", sans-serif;
 }
 
 .info-value {
@@ -87,12 +80,11 @@ body,
 
 .info-value-date {
   font-size: 32px;
-  font-family: "G552 mono";
+
   padding-top: 15px;
 }
 
 .editorTextArea {
-  font-family: "G552 mono", monospace;
 }
 .tiptap {
   :first-child {
@@ -108,7 +100,6 @@ body,
   width: 288px;
   height: 432px;
   font-size: 32px;
-  font-family: "G552 mono";
   overflow: hidden !important;
 }
 p.is-editor-empty:first-child::before {
@@ -131,12 +122,47 @@ p.is-editor-empty:first-child::before {
   border-radius: 4px;
 }
 
+.auto-temperature-component {
+  display: inline-block;
+  border-radius: 4px;
+}
+
 .ProseMirror {
   margin: 1px;
 }
 
-.tiptap-text-container {
-  margin: 0 auto;
+.tiptap {
+  :first-child {
+    margin-top: 0;
+  }
 
+  p {
+    margin: 0;
+  }
+}
+
+.fixed-editor {
+  overflow: hidden;
+  width: 288px;
+  height: 432px;
+  font-size: 32px;
+
+  overflow: hidden !important;
+}
+.ProseMirror {
+  outline: none;
+  height: 100%;
+}
+
+p.is-editor-empty:first-child::before {
+  color: #d3d7df;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.tiptap-text-container {
+  background-size: 100% 100%;
   color: #ffffff;
 }

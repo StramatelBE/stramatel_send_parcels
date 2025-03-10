@@ -1,18 +1,19 @@
-import { Settings } from "@prisma/client";
+import { AppSettings } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import { Inject, Service } from "typedi";
-import { SettingService } from "./settings.service";
-import { SettingsDto } from "./settings.validation";
+import { SettingService } from "./appSettings.service";
+import { SettingsDto } from "./appSettings.validation";
+import { Settings } from "http2";
 
 @Service()
-export class SettingController {
+export class AppSettingController {
   constructor(
     @Inject(() => SettingService)
     private settingService: SettingService
   ) {}
   getSettings = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const settings: Settings[] = await this.settingService.getSettings();
+      const settings: AppSettings[] = await this.settingService.getSettings();
       res.status(200).json({ data: settings, message: "found" });
     } catch (error) {
       next(error);
@@ -22,7 +23,7 @@ export class SettingController {
   createSetting = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const settingData: SettingsDto = req.body;
-      const newSetting: Settings = await this.settingService.createSetting(
+      const newSetting: AppSettings = await this.settingService.createSetting(
         settingData
       );
       res.status(201).json({ data: newSetting, message: "created" });
@@ -34,9 +35,9 @@ export class SettingController {
   getSettingById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const settingId: number = parseInt(req.params.settingId);
-      const setting: Settings | null = await this.settingService.getSettingById(
-        settingId
-      );
+      const setting: AppSettings | null =
+        await this.settingService.getSettingById(settingId);
+
       if (!setting) {
         res.status(404).json({ message: "Setting not found" });
       } else {
@@ -51,8 +52,9 @@ export class SettingController {
     try {
       const settingId: number = parseInt(req.params.settingId);
       const settingData: SettingsDto = req.body;
-      const updatedSetting: Settings | null =
+      const updatedSetting: AppSettings | null =
         await this.settingService.updateSetting(settingId, settingData);
+
       if (!updatedSetting) {
         res.status(404).json({ message: "Setting not found" });
       } else {
@@ -76,8 +78,9 @@ export class SettingController {
   deleteSetting = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const settingId: number = parseInt(req.params.settingId);
-      const deletedSetting: Settings | null =
+      const deletedSetting: AppSettings | null =
         await this.settingService.deleteSetting(settingId);
+
       if (!deletedSetting) {
         res.status(404).json({ message: "Setting not found" });
       } else {

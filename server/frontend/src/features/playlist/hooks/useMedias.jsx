@@ -1,7 +1,7 @@
-import { useCallback } from "react";
-import MediaService from "../api/mediaService";
-import usePlaylists from "../hooks/usePlaylists";
-import selectedPlaylistStore from "../stores/selectedPlaylistStore";
+import { useCallback } from 'react';
+import MediaService from '../api/mediaService';
+import usePlaylists from '../hooks/usePlaylists';
+import selectedPlaylistStore from '../stores/selectedPlaylistStore';
 
 function useMedia() {
   const { getPlaylistById } = usePlaylists();
@@ -12,23 +12,19 @@ function useMedia() {
         await MediaService.deleteMedia(mediaId);
         getPlaylistById(playlistId);
       } catch (error) {
-        console.error("Failed to delete media:", error);
+        console.error('Failed to delete media:', error);
       }
     },
     [getPlaylistById]
   );
 
-  const uploadMedia = useCallback(
-    async (fileData, playlistId) => {
-      try {
-        await MediaService.uploadFile(fileData, playlistId);
-        getPlaylistById(playlistId);
-      } catch (error) {
-        console.error("Failed to upload media:", error);
-      }
-    },
-    [getPlaylistById]
-  );
+  const uploadMedia = useCallback(async (fileData) => {
+    try {
+      await MediaService.uploadFile(fileData);
+    } catch (error) {
+      console.error('Failed to upload media:', error);
+    }
+  }, []);
 
   const updateMedia = useCallback(
     async (e, media) => {
@@ -50,7 +46,7 @@ function useMedia() {
         };
         setSelectedPlaylist(updatedPlaylist);
       } catch (error) {
-        console.error("Failed to update media:", error);
+        console.error('Failed to update media:', error);
       }
     },
     [selectedPlaylist, setSelectedPlaylist]
@@ -70,23 +66,10 @@ function useMedia() {
     [selectedPlaylist, setSelectedPlaylist]
   );
 
-  const handleAddData = useCallback(
-    async (type, playlistId) => {
-      try {
-        await MediaService.addData(type, playlistId);
-        getPlaylistById(playlistId);
-      } catch (error) {
-        console.error("Failed to add data:", error);
-      }
-    },
-    []
-  );
-
   return {
     deleteMedia,
     uploadMedia,
     updateMedia,
-    handleAddData,
     updateMediaTextEditor,
   };
 }

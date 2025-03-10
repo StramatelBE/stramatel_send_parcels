@@ -1,37 +1,27 @@
-import DataComponent from "./components/DataComponent";
-import EditorDataComponent from "./components/EditorDataComponent";
-import InformationComponent from "./components/InformationComponent";
-import PlaylistComponent from "./components/PlaylistComponent";
-import TestComponent from "./components/TestComponent";
+import { useEffect } from "react";
+import Editor from "./components/Editor";
+import Medias from "./components/Medias";
 import useData from "./hooks/useData";
 import useSocketData from "./stores/socketDataStore";
-import useStandbyStore from "./stores/standbyStore";
-
+import TestComponent from "./components/TestComponent";
 function App() {
-  useData();
   const { socketData } = useSocketData();
-  const { isStandby } = useStandbyStore();
+
+  useData();
+
+  useEffect(() => {
+    console.log("Données actuelles du socket:", socketData);
+  }, [socketData]);
 
   return (
     <>
-      {isStandby ? (
-        <></>
-      ) : (
-        <div
-          style={{
-            opacity:
-              socketData?.settings?.brightness === 0
-                ? 0
-                : (socketData?.settings?.brightness || 10) / 10,
-          }}
-        >
-          {socketData?.mode.name === "textEditor" && <EditorDataComponent />}
-          {socketData?.mode.name === "test" && <TestComponent />}
-          {socketData?.mode.name === "data" && <DataComponent />}
-          {socketData?.mode.name === "playlist" && <PlaylistComponent />}
-          {socketData?.mode.name === "information" && <InformationComponent />}
-        </div>
+      {socketData?.mode === "media" && (
+        <Medias media={socketData.PlaylistItem.media} />
       )}
+      {socketData?.mode === "data" && (
+        <Editor data={socketData.PlaylistItem.data} />
+      )}
+      {socketData?.mode === "test" && <TestComponent />}
     </>
   );
 }

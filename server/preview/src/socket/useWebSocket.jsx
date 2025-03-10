@@ -17,7 +17,6 @@ const useWebSocket = (url, onMessage) => {
     };
 
     wsRef.current.onclose = () => {
-      console.log("WebSocket closed, attempting to reconnect...");
       if (!reconnectInterval.current) {
         reconnectInterval.current = setInterval(() => {
           if (wsRef.current.readyState === WebSocket.CLOSED) {

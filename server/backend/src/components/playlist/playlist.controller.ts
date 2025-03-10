@@ -3,11 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { Inject, Service } from "typedi";
 import { PlaylistService } from "./playlist.service";
 import { CreatePlaylistDto, UpdatePlaylistDto } from "./playlist.validation";
-import { UserPayload } from "../../types/UserPayload";
-
-interface CustomRequest extends Request {
-  user?: UserPayload;
-}
+import { CustomRequest } from "../../middlewares/extractUserId.middleware";
 
 @Service()
 export class PlaylistController {
@@ -95,36 +91,17 @@ export class PlaylistController {
     try {
       const playlistId: number = parseInt(req.params.playlistId);
       const deletedPlaylist: Playlist | null =
-        await this.playlistService.deletePlaylist(playlistId, req);
+        await this.playlistService.deletePlaylist(
+          playlistId,
+          req.user.username
+        );
       if (!deletedPlaylist) {
         res.status(404).json({ message: "Playlist not found" });
       } else {
         res.status(200).json({ message: "deleted" });
       }
     } catch (error) {
-      next(error);
-    }
-  };
-
-  updateMediasInPlaylist = async (
-    req: CustomRequest,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const playlistId: number = parseInt(req.params.playlistId);
-      const medias = req.body;
-
-      const updatedPlaylist: Playlist | null =
-        await this.playlistService.updateMediasInPlaylist(playlistId, medias);
-      if (!updatedPlaylist) {
-        res.status(404).json({ message: "Playlist not found" });
-      } else {
-        res.status(200).json({ data: updatedPlaylist, message: "updated" });
-      }
-    } catch (error) {
       console.log(error);
-
       next(error);
     }
   };

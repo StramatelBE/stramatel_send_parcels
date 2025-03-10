@@ -3,7 +3,7 @@ import cors from "cors";
 import { ErrorMiddleware } from "./middlewares/error.middleware";
 import routes from "./routes/routes";
 import { extractUserId } from "./middlewares/extractUserId.middleware";
-import './scheduledTasks/dailyTasks';
+/* import './scheduledTasks/dailyTasks'; */
 
 export const configureApp = (app: express.Application) => {
   app.use(cors());

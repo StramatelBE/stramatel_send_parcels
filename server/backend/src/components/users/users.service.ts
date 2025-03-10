@@ -1,6 +1,6 @@
 import { PrismaClient, User } from "@prisma/client";
 import { Service } from "typedi";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import { HttpException } from "../../exceptions/HttpException"; // Make sure the import path is correct
 import * as fs from "fs";
 import * as path from "path";
@@ -21,7 +21,7 @@ export class UserService {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    const hashedPassword = await bcryptjs.hash(userData.password, 10);
     const newUser = await prisma.user.create({
       data: {
         ...userData,
@@ -85,7 +85,7 @@ export class UserService {
 
     let updateData = userData;
     if (userData.password) {
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
+      const hashedPassword = await bcryptjs.hash(userData.password, 10);
       updateData = { ...userData, password: hashedPassword };
     }
 

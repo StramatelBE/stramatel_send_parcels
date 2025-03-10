@@ -3,13 +3,13 @@ import PlaylistService from '../api/playlistService';
 import playlistStore from '../stores/playlistsStores';
 import selectedPlaylistStore from '../stores/selectedPlaylistStore';
 import useModes from './useMode';
-import modeStore from '../stores/modeStore';
+import PlaylistItemService from '../api/playlistItemService';
 
 const usePlaylists = () => {
-  const { setPlaylists, removePlaylist, playlists, updatePlaylistName } = playlistStore();
-  const { setSelectedPlaylist } = selectedPlaylistStore();
+  const { setPlaylists, removePlaylist, playlists, updatePlaylistName } =
+    playlistStore();
+  const { setSelectedPlaylist, selectedPlaylist } = selectedPlaylistStore();
   const { updateMode } = useModes();
-  const { modes } = modeStore();
 
   const getAllPlaylists = useCallback(async () => {
     try {
@@ -35,14 +35,14 @@ const usePlaylists = () => {
   const deletePlaylist = useCallback(
     async (id) => {
       try {
-        updateMode('null', null)
+        updateMode('null', null);
         await PlaylistService.deletePlaylist(id);
         removePlaylist(id);
       } catch (error) {
         console.error('Failed to delete playlist:', error);
       }
     },
-    [removePlaylist]
+    [removePlaylist, updateMode]
   );
 
   const getPlaylistById = useCallback(
@@ -56,15 +56,23 @@ const usePlaylists = () => {
     },
     [setSelectedPlaylist]
   );
-  const updateMediasInPlaylist = useCallback(
-    async (items, selectedPlaylist) => {
-      setSelectedPlaylist({
-        ...selectedPlaylist,
-        medias: items,
-      });
-      await PlaylistService.updateMediasInPlaylist(items, selectedPlaylist.id);
+  const updatePlaylistItems = useCallback(
+    async (items) => {
+      try {
+        setSelectedPlaylist({
+          ...selectedPlaylist,
+          PlaylistItem: items,
+        });
+        const response = await PlaylistItemService.updatePlaylistItem(items);
+        setSelectedPlaylist({
+          ...selectedPlaylist,
+          PlaylistItem: response.data,
+        });
+      } catch (error) {
+        console.error('Failed to update playlist items:', error);
+      }
     },
-    [setSelectedPlaylist]
+    [setSelectedPlaylist, selectedPlaylist]
   );
 
   const updateNamePlaylist = useCallback(
@@ -82,14 +90,65 @@ const usePlaylists = () => {
     },
     [setSelectedPlaylist, updatePlaylistName]
   );
+  const deletePlaylistItem = useCallback(
+    async (id, selectedPlaylist) => {
+      await PlaylistItemService.deletePlaylistItem(id);
+      setSelectedPlaylist({
+        ...selectedPlaylist,
+        PlaylistItem: selectedPlaylist.PlaylistItem.filter(
+          (item) => item.id !== id
+        ),
+      });
+    },
+    [setSelectedPlaylist]
+  );
+
+  const addPlaylistItemEditor = useCallback(
+    async (playlistId) => {
+      try {
+        const response = await PlaylistItemService.addPlaylistItem(playlistId);
+
+        setSelectedPlaylist({
+          ...selectedPlaylist,
+          PlaylistItem: [...selectedPlaylist.PlaylistItem, response.data],
+        });
+      } catch (error) {
+        console.error('Failed to add playlist item:', error);
+      }
+    },
+    [selectedPlaylist, setSelectedPlaylist]
+  );
+
+  const updatePlaylistItem = useCallback(
+    async (PlaylistItemUpdate) => {
+      try {
+        const response = await PlaylistItemService.updatePlaylistItem(
+          PlaylistItemUpdate
+        );
+
+        setSelectedPlaylist({
+          ...selectedPlaylist,
+          PlaylistItem: selectedPlaylist.PlaylistItem.map((item) =>
+            item.id === response.data.id ? response.data : item
+          ),
+        });
+      } catch (error) {
+        console.error('Failed to update playlist item:', error);
+      }
+    },
+    [selectedPlaylist, setSelectedPlaylist]
+  );
 
   return {
     addPlaylist,
-    getAllPlaylists: getAllPlaylists,
+    getAllPlaylists,
     deletePlaylist,
     getPlaylistById,
-    updateMediasInPlaylist,
-    updateNamePlaylist
+    updatePlaylistItems,
+    updateNamePlaylist,
+    deletePlaylistItem,
+    addPlaylistItemEditor,
+    updatePlaylistItem,
   };
 };
 

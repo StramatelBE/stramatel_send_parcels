@@ -1,28 +1,31 @@
 import { Media, PrismaClient } from "@prisma/client";
-import { Service } from "typedi";
+import { Inject, Service } from "typedi";
 import { HttpException } from "../../exceptions/HttpException";
 import * as ffmpeg from "fluent-ffmpeg";
+import { UploadService } from "./upload.service";
+import { NextFunction } from "express";
+import { handlePlaylistUpdate } from "../../sockets/webSocketServer";
 
 const prisma = new PrismaClient();
 
 @Service()
 export class MediaService {
-  async createMedia(req: any, mediaPosition: number): Promise<Media> {
-    const file = req.file;
-    const mediaDuration = await this.getDuration(file.path, file.mimetype);
-    const media = {
-      original_file_name: file.originalname,
-      file_name: file.filename,
-      path: `/medias/${req.user.username}/${file.filename}`,
-      format: file.mimetype.split("/")[1],
-      type: file.mimetype.split("/")[0],
-      size: file.size,
-      uploaded_at: new Date(),
-      user_id: req.user.id,
-      duration: mediaDuration,
-      position: mediaPosition,
-    };
+  constructor(
+    @Inject(() => UploadService) private uploadService: UploadService
+  ) {}
+  async createMedia(req: any, res: any, next: NextFunction): Promise<Media> {
     try {
+      const file = await this.uploadService.handleUpload(req, res, next);
+      const media = {
+        original_file_name: file.originalname,
+        file_name: file.filename,
+        path: `/medias/${req.user.username}/${file.filename}`,
+        format: file.mimetype.split("/")[1],
+        type: file.mimetype.split("/")[0],
+        size: file.size,
+        uploaded_at: new Date(),
+        user_id: req.user.id,
+      };
       const newMedia = await prisma.media.create({
         data: media,
       });
@@ -30,36 +33,6 @@ export class MediaService {
     } catch (error) {
       console.log(error);
       throw new HttpException(500, "Cannot create media");
-    }
-  }
-
-  public async addData(type: string, userId: number, mediaCount: number, playlistId: number): Promise<Media> {
-    const newMedia = {
-      type: type,
-      position: mediaCount + 1,
-      duration: 1,
-      original_file_name: type,
-      file_name: type,
-      path: type,
-      format: type,
-      size: 1,
-      uploaded_at: new Date(),
-      user: {
-        connect: { id: userId }
-      },
-      Playlist: {
-        connect: { id: playlistId }
-      }
-    };
-
-    try {
-      const createdMedia = await prisma.media.create({
-        data: newMedia,
-      });
-      return createdMedia;
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(500, "Cannot create data media");
     }
   }
 
@@ -71,8 +44,10 @@ export class MediaService {
 
     return new Promise((resolve, reject) => {
       ffmpeg.ffprobe(filePath, (err, metadata) => {
-        if (err) reject(err);
-        else resolve(metadata.format.duration);
+        if (err) {
+          console.log(err);
+          reject(err);
+        } else resolve(metadata.format.duration);
       });
     });
   }
@@ -92,28 +67,71 @@ export class MediaService {
   }
 
   async updateMedia(mediaId: number, media: Partial<Media>): Promise<Media> {
-    return prisma.media.update({
+    const updatedMedia = await prisma.media.update({
       where: { id: mediaId },
       data: media,
     });
+    
+    // Vérifier si ce média est utilisé dans des playlistItems
+    const playlistItems = await prisma.playlistItem.findMany({
+      where: { media_id: mediaId },
+      distinct: ['playlist_id'],
+      select: { playlist_id: true }
+    });
+    
+    // Notifier chaque playlist concernée
+    for (const item of playlistItems) {
+      await handlePlaylistUpdate(item.playlist_id);
+    }
+    
+    return updatedMedia;
   }
 
   async getMediaCount(playlistId: number): Promise<number> {
     const mediaCount = await prisma.media.count({
-      where: { playlistId: playlistId },
+      where: {
+        PlaylistItem: {
+          some: {
+            playlist_id: playlistId,
+          },
+        },
+      },
     });
     return mediaCount;
   }
 
-  async deleteMedia(mediaId: number): Promise<Media> {
+  async deleteMedia(mediaId: number, username: string): Promise<Media> {
     const media = await prisma.media.findUnique({
       where: { id: mediaId },
+      include: {
+        PlaylistItem: {
+          select: {
+            playlist_id: true
+          }
+        }
+      }
     });
+
     if (!media) {
       throw new HttpException(404, `Media with ID ${mediaId} doesn't exist.`);
     }
-    return prisma.media.delete({
+    
+    // Collecter les IDs des playlists concernées avant de supprimer le média
+    const affectedPlaylistIds = media.PlaylistItem.map(item => item.playlist_id);
+    const uniquePlaylistIds = [...new Set(affectedPlaylistIds)];
+    
+    await this.uploadService.removeMediaFile(media, username);
+    
+    // Supprimer le média
+    await prisma.media.delete({
       where: { id: mediaId },
     });
+    
+    // Notifier toutes les playlists affectées
+    for (const playlistId of uniquePlaylistIds) {
+      await handlePlaylistUpdate(playlistId);
+    }
+    
+    return media;
   }
 }
