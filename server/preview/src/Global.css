@@ -96,12 +96,7 @@ body,
   }
 }
 
-.fixed-editor {
-  width: 288px;
-  height: 432px;
-  font-size: 32px;
-  overflow: hidden !important;
-}
+
 p.is-editor-empty:first-child::before {
   color: #d3d7df;
   content: attr(data-placeholder);
@@ -143,9 +138,7 @@ p.is-editor-empty:first-child::before {
 
 .fixed-editor {
   overflow: hidden;
-  width: 288px;
-  height: 432px;
-  font-size: 32px;
+
 
   overflow: hidden !important;
 }

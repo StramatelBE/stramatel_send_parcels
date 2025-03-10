@@ -13,6 +13,8 @@ import { useTranslation } from 'react-i18next';
 import MenuBarComponent from './MenuBarComponent';
 import useEditor from '../hooks/useEditor';
 
+const baseFontSize = 16; // Define a base font size
+
 function EditorComponents() {
   const { t } = useTranslation();
 
@@ -60,7 +62,7 @@ function DataDetailsClose() {
 
 function ContentEditor() {
   const { editor } = useEditor();
-
+  const RATIO = 0.4;
   if (!editor) {
     return null;
   }
@@ -71,9 +73,10 @@ function ContentEditor() {
       <div
         className="tiptap-text-container"
         style={{
-          maxHeight: `${process.env.PREVIEW_HEIGHT}px`,
-          maxWidth: `${process.env.PREVIEW_WIDTH}px`,
-          minWidth: `${process.env.PREVIEW_WIDTH}px`,
+          fontSize: `${baseFontSize * RATIO}px`, // Adjust font size based on RATIO
+          maxHeight: `${process.env.PREVIEW_HEIGHT * RATIO}px`,
+          maxWidth: `${process.env.PREVIEW_WIDTH * RATIO}px`,
+          minWidth: `${process.env.PREVIEW_WIDTH * RATIO}px`,
           overflow: 'hidden',
           scrollbarWidth: 'none',
         }}

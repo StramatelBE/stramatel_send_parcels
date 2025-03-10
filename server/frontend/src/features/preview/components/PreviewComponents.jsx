@@ -15,6 +15,7 @@ function Icon() {
 }
 
 function Preview() {
+  const RATIO = 0.4;
   return (
     <>
       <iframe
@@ -22,8 +23,8 @@ function Preview() {
         title="Preview"
         style={{
           border: 'none',
-          height: `${process.env.PREVIEW_HEIGHT}px`,
-          width: `${process.env.PREVIEW_WIDTH}px`,
+          height: `${process.env.PREVIEW_HEIGHT * RATIO}px`,
+          width: `${process.env.PREVIEW_WIDTH * RATIO}px`,
         }}
       ></iframe>
     </>

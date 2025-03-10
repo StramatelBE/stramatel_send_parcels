@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@dotenvx/dotenvx": "^0.26.0",
-    "@prisma/client": "^6.3.1",
+    "@prisma/client": "^6.4.1",
     "@tsed/multipartfiles": "^5.65.9",
     "@types/swagger-jsdoc": "^6.0.4",
     "bcryptjs": "^3.0.2",
@@ -43,7 +43,7 @@
     "@types/swagger-ui-express": "^4.1.7",
     "install": "^0.13.0",
     "nodemon": "^3.1.9",
-    "prisma": "^6.3.1",
+    "prisma": "^6.4.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.3"

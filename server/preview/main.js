@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, screen } from "electron";
 
 
 
@@ -7,16 +7,23 @@ let mainWindow;
 
 
 function createWindow() {
-    mainWindow = new BrowserWindow({
-        x: 0,
-        y: 0,
-        width: parseInt(process.env.PREVIEW_WIDTH, 10),
-        height: parseInt(process.env.PREVIEW_HEIGHT, 10),
-        frame: false,
+    const displays = screen.getAllDisplays();
+    const secondDisplay = displays[1]; // Sélectionne explicitement le deuxième écran
 
-    });
-    /* mainWindow.webContents.openDevTools(); */
-    mainWindow.loadURL(process.env.PREVIEW_URL);
+    if (secondDisplay) {
+        mainWindow = new BrowserWindow({
+            x: secondDisplay.bounds.x,
+            y: secondDisplay.bounds.y,
+            width: 1920,
+            height: 1080,
+            frame: false,
+            fullscreen: true,
+        });
+        /* mainWindow.webContents.openDevTools(); */
+        mainWindow.loadURL(process.env.PREVIEW_URL);
+    } else {
+        console.error("Le deuxième écran n'est pas disponible.");
+    }
 }
 
 
