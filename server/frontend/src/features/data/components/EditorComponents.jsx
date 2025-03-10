@@ -65,7 +65,6 @@ function ContentEditor() {
     return null;
   }
 
-
   return (
     <>
       <MenuBarComponent editor={editor} />

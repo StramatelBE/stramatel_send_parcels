@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev:backend": "pnpm --filter backend dev",
-    "dev:frontend": "pnpm --filter frontend dev",
-    "dev:preview": "pnpm --filter preview dev",
+    "b": "pnpm --filter backend dev",
+    "f": "pnpm --filter frontend dev",
+    "p": "pnpm --filter preview dev",
     "dev:electron": "pnpm --filter preview electron",
     "prisma:generate": "cd backend && npx prisma generate",
     "prisma:migrate": "cd backend && npx prisma migrate dev",

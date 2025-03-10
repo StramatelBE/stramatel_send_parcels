@@ -26,7 +26,6 @@ function useData() {
     const updatedData = data.map((item) =>
       item.id === newData.id ? { ...response.data } : item
     );
-    console.log(updatedData);
     setSelectedData(response.data);
     setData(updatedData);
   }, []);

@@ -121,16 +121,21 @@ export default function useEditor() {
         isUpdatingRef.current = true;
 
         // Appliquer les styles initiaux seulement au chargement ou au changement de texte sélectionné
-        editor.chain().focus().setColor(initialTextColor).run();
-        editor.chain().focus().setFontFamily(initialFontFamily).run();
+        /*  editor.chain().setColor(initialTextColor).run();
+        editor.chain().setFontFamily(initialFontFamily).run(); */
 
         const editorElement = document.querySelector('.tiptap-text-container');
+        console.log(editorElement);
         if (editorElement) {
+          console.log('editorElement');
           if (selectedData.background) {
-            editorElement.style.backgroundImage = `url(${selectedData.background.path})`;
+            console.log('selectedData.background');
+            editorElement.style.backgroundImage = `url(${process.env.FRONT_URL}${selectedData.background.path})`;
           } else {
+            console.log('selectedData.background is null');
             editorElement.style.backgroundImage = null;
           }
+          console.log('initialBackgroundColor');
           editorElement.style.backgroundColor = initialBackgroundColor;
         }
 

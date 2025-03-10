@@ -17,7 +17,6 @@ import {
   IconButton,
   MenuItem,
   Select,
-  Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useRef } from 'react';
@@ -57,9 +56,20 @@ const MenuBarComponent = ({ editor }) => {
   ];
 
   return (
-    <div className="control-group">
-      <div className="button-group">
-        <FormControl size="small" sx={{ minWidth: 120, marginRight: 1 }}>
+    <div>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '2px',
+          alignContent: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
+        <FormControl
+          size="small"
+          sx={{ border: 'none', width: 150, marginRight: 1 }}
+        >
           <Select
             value={
               editor.getAttributes('textStyle').fontFamily ||
@@ -69,6 +79,8 @@ const MenuBarComponent = ({ editor }) => {
               editor.chain().focus().setFontFamily(event.target.value).run();
             }}
             sx={{
+              boxShadow: 'none',
+              '& .MuiOutlinedInput-notchedOutline': { border: 0 },
               height: '40px',
               '& .MuiSelect-select': {
                 fontFamily:
@@ -88,6 +100,71 @@ const MenuBarComponent = ({ editor }) => {
             ))}
           </Select>
         </FormControl>
+        <FormControl
+          size="small"
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            flexDirection: 'row',
+          }}
+        >
+          <IconButton
+            onClick={() => {
+              const currentSize = parseInt(
+                editor.getAttributes('textStyle').textSize || '32',
+                10
+              );
+              const newSize = Math.max(8, currentSize - 2);
+              editor.chain().setTextSize(newSize.toString()).run();
+            }}
+            color="default"
+          >
+            -
+          </IconButton>
+          <input
+            type="text"
+            value={editor.getAttributes('textStyle').textSize || '32'}
+            onChange={(event) => {
+              const value = event.target.value;
+              if (/^\d*$/.test(value)) {
+                editor.chain().setTextSize(value).run();
+              }
+            }}
+            style={{
+              color: 'default',
+              fontSize: '16px',
+              width: '32px',
+              height: '32px',
+              textAlign: 'center',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              margin: '0 2px',
+              padding: '0 5px',
+              backgroundColor: 'transparent',
+            }}
+          />
+          <IconButton
+            onClick={() => {
+              const currentSize = parseInt(
+                editor.getAttributes('textStyle').textSize || '32',
+                10
+              );
+              const newSize = Math.min(100, currentSize + 2);
+              editor.chain().setTextSize(newSize.toString()).run();
+            }}
+            color="default"
+          >
+            +
+          </IconButton>
+        </FormControl>
+      {/*   <div
+          style={{
+            width: '2px',
+            backgroundColor: '#ccc',
+            margin: '0 8px',
+            height: '30px',
+          }}
+        /> */}
 
         <IconButton
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -101,6 +178,7 @@ const MenuBarComponent = ({ editor }) => {
         >
           <FormatItalicIcon />
         </IconButton>
+
         <IconButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
           color={editor.isActive('strike') ? 'primary' : 'default'}
@@ -114,73 +192,16 @@ const MenuBarComponent = ({ editor }) => {
           <FormatUnderlinedIcon />
         </IconButton>
 
-        <FormControl
-          size="small"
-          sx={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            flexDirection: 'row',
-          }}
-        >
-          <Select
-            labelId="text-size-select-label"
-            id="text-size-select"
-            color="primary"
-            value={editor.getAttributes('textStyle').textSize || '32'}
-            label="Text Size"
-            sx={{
-              color: 'text.secondary',
-              padding: 0,
-              '& .MuiSelect-iconOutlined': {
-                color: 'transparent',
-                width: 0,
-                height: 0,
-              },
-              '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-                border: 'none',
-                width: 0,
-                height: 0,
-              },
-              '& .css-1aagvc8-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.css-1aagvc8-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.css-1aagvc8-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input':
-                {
-                  padding: '8px 2px 8px 8px',
-                },
-            }}
-            onChange={(event) => {
-              const size = event.target.value;
-              if (size === 'default') {
-                editor.chain().focus().unsetTextSize().run();
-              } else {
-                editor.chain().focus().setTextSize(size).run();
-              }
-            }}
-          >
-            <MenuItem value="24">24</MenuItem>
-            <MenuItem value="26">26</MenuItem>
-            <MenuItem value="28">28</MenuItem>
-            <MenuItem value="30">30</MenuItem>
-            <MenuItem value="32">32</MenuItem>
-            <MenuItem value="34">34</MenuItem>
-            <MenuItem value="36">36</MenuItem>
-            <MenuItem value="38">38</MenuItem>
-            <MenuItem value="40">40</MenuItem>
-            <MenuItem value="42">42</MenuItem>
-            <MenuItem value="44">44</MenuItem>
-            <MenuItem value="46">46</MenuItem>
-            <MenuItem value="48">48</MenuItem>
-            <MenuItem value="50">50</MenuItem>
-          </Select>
-          <Typography variant="h8" sx={{ color: 'text.secondary' }}>
-            px
-          </Typography>
-        </FormControl>
-
         <IconButton
           onClick={() => showColorPickerInput(colorTextInputRef)}
           color="default"
         >
           <FormatColorTextIcon
-            sx={{ color: editor.getAttributes('textStyle').color || 'white' }}
+            sx={{
+              color: editor.getAttributes('textStyle').color || 'white',
+
+              borderRadius: '4px',
+            }}
           />
         </IconButton>
         <input
@@ -202,7 +223,11 @@ const MenuBarComponent = ({ editor }) => {
           color="default"
         >
           <FormatColorFillIcon
-            sx={{ color: selectedData?.backgroundColor || '#000000' }}
+            sx={{
+              color: selectedData?.backgroundColor || '#000000',
+
+              borderRadius: '4px',
+            }}
           />
         </IconButton>
         <input
