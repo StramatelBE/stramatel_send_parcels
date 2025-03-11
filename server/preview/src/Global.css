@@ -96,7 +96,6 @@ body,
   }
 }
 
-
 p.is-editor-empty:first-child::before {
   color: #d3d7df;
   content: attr(data-placeholder);
@@ -122,10 +121,6 @@ p.is-editor-empty:first-child::before {
   border-radius: 4px;
 }
 
-.ProseMirror {
-  margin: 1px;
-}
-
 .tiptap {
   :first-child {
     margin-top: 0;
@@ -139,12 +134,7 @@ p.is-editor-empty:first-child::before {
 .fixed-editor {
   overflow: hidden;
 
-
   overflow: hidden !important;
-}
-.ProseMirror {
-  outline: none;
-  height: 100%;
 }
 
 p.is-editor-empty:first-child::before {

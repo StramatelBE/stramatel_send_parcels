@@ -1,4 +1,5 @@
 import { Extension } from '@tiptap/core';
+import { EDITOR_RATIO } from '../constants/editorConstants';
 
 export default Extension.create({
   name: 'textSize',
@@ -19,10 +20,9 @@ export default Extension.create({
             default: this.options.defaultSize,
             parseHTML: element => element.style.fontSize?.replace('px', '') || this.options.defaultSize,
             renderHTML: attributes => {
-              if (!attributes.textSize) {
-                return {};
-              }
-              return { style: `font-size: ${attributes.textSize}px` };
+              const baseSize = attributes.textSize || this.options.defaultSize;
+              const scaledSize = Math.round(parseInt(baseSize) * EDITOR_RATIO);
+              return { style: `font-size: ${scaledSize}px` };
             },
           },
         },

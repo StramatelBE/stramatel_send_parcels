@@ -73,10 +73,10 @@ function ContentEditor() {
       <div
         className="tiptap-text-container"
         style={{
-          fontSize: `${baseFontSize * RATIO}px`, // Adjust font size based on RATIO
           maxHeight: `${process.env.PREVIEW_HEIGHT * RATIO}px`,
           maxWidth: `${process.env.PREVIEW_WIDTH * RATIO}px`,
           minWidth: `${process.env.PREVIEW_WIDTH * RATIO}px`,
+          minHeight: `${process.env.PREVIEW_HEIGHT * RATIO}px`,
           overflow: 'hidden',
           scrollbarWidth: 'none',
         }}

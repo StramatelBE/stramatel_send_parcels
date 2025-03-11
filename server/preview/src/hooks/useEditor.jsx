@@ -12,8 +12,8 @@ import FontFamilyExtension from "../extensions/FontFamilyExtension";
 import TextSizeExtension from "../extensions/TextSizeExtension";
 import { EDITOR_RATIO } from "../constants/editorConstants";
 
-// Taille de base pour le texte (sera multipliée par le ratio)
-const BASE_TEXT_SIZE = 24;
+// Taille par défaut à utiliser si non spécifiée
+const DEFAULT_TEXT_SIZE = 32;
 
 export default function useEditor({ data }) {
   const isUpdatingRef = useRef(false);
@@ -25,7 +25,9 @@ export default function useEditor({ data }) {
   const [fontFamily, setFontFamily] = useState('"Arial", sans-serif');
   const [backgroundColor, setBackgroundColor] = useState("#000000");
   const [color, setColor] = useState("#ffffff");
-  const [textSize, setTextSize] = useState(Math.round(BASE_TEXT_SIZE * EDITOR_RATIO).toString());
+  const [textSize, setTextSize] = useState(
+    Math.round(DEFAULT_TEXT_SIZE * EDITOR_RATIO).toString()
+  );
 
   // Mettre à jour les états lorsque data change
   useEffect(() => {
@@ -33,41 +35,45 @@ export default function useEditor({ data }) {
       if (data?.value?.length > 0) {
         console.log("data.value", data.value);
         const parsedContent = JSON.parse(data.value);
-        
+
         // Vérifier si le contenu JSON contient des informations de taille
         let hasTextSizeInfo = false;
-        
+
         // Fonction récursive pour vérifier les informations de taille dans le contenu
         const checkForTextSize = (node) => {
           if (!node) return false;
-          
+
           // Vérifier les marques pour trouver textSize
           if (node.marks && Array.isArray(node.marks)) {
             for (const mark of node.marks) {
-              if (mark.type === 'textStyle' && mark.attrs && mark.attrs.textSize) {
+              if (
+                mark.type === "textStyle" &&
+                mark.attrs &&
+                mark.attrs.textSize
+              ) {
                 hasTextSizeInfo = true;
                 return true;
               }
             }
           }
-          
+
           // Vérifier dans le contenu enfant
           if (node.content && Array.isArray(node.content)) {
             for (const child of node.content) {
               if (checkForTextSize(child)) return true;
             }
           }
-          
+
           return false;
         };
-        
+
         // Vérifier si le contenu a des informations de taille
         if (parsedContent.content) {
           parsedContent.content.forEach(checkForTextSize);
         }
-        
+
         console.log("Content has text size information:", hasTextSizeInfo);
-        
+
         setEditorContent(parsedContent);
         setTextColor(parsedContent?.attrs?.textColor || "#ffffff");
         setFontFamily(
@@ -75,10 +81,10 @@ export default function useEditor({ data }) {
         );
         setBackgroundColor(data?.backgroundColor || "#000000");
         setColor(parsedContent?.attrs?.textColor || "#ffffff");
-        
+
         // Si aucune information de taille n'est trouvée, utiliser la taille de base avec ratio
         if (!hasTextSizeInfo) {
-          setTextSize(Math.round(BASE_TEXT_SIZE * EDITOR_RATIO).toString());
+          setTextSize(Math.round(DEFAULT_TEXT_SIZE * EDITOR_RATIO).toString());
         }
       } else {
         setEditorContent(null);
@@ -86,7 +92,7 @@ export default function useEditor({ data }) {
         setFontFamily('"Arial", sans-serif');
         setBackgroundColor("#000000");
         setColor("#ffffff");
-        setTextSize(Math.round(BASE_TEXT_SIZE * EDITOR_RATIO).toString());
+        setTextSize(Math.round(DEFAULT_TEXT_SIZE * EDITOR_RATIO).toString());
       }
     } catch (error) {
       console.error("Erreur lors du traitement des données:", error);
@@ -108,7 +114,7 @@ export default function useEditor({ data }) {
       AutoDateExtension,
       AutoTimeExtension,
       TextSizeExtension.configure({
-        types: ['textStyle'],
+        types: ["textStyle"],
         defaultSize: textSize, // Utiliser la taille calculée avec le ratio
       }),
       FontFamilyExtension.configure({

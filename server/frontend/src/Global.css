@@ -11,7 +11,7 @@ body {
 }
 .mainContainer {
   margin: 3vh;
-  font-family: system-ui !important;
+
   padding-bottom: 50px;
 }
 .herderTitlePage {
@@ -120,13 +120,7 @@ body {
 .fixed-editor {
   overflow: hidden;
 
-  font-size: 32px;
-
   overflow: hidden !important;
-}
-.ProseMirror {
-  outline: none;
-  height: 100%;
 }
 
 p.is-editor-empty:first-child::before {
@@ -147,10 +141,6 @@ p.is-editor-empty:first-child::before {
   display: inline-block;
 
   border-radius: 4px;
-}
-
-.ProseMirror {
-  margin: 1px;
 }
 
 .tiptap-text-container {
