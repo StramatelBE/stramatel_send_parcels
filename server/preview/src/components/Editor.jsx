@@ -21,7 +21,7 @@ function Editor({ data }) {
         scrollbarWidth: "none",
       }}
     >
-      <EditorContent editor={editor} />
+      <EditorContent className="fixed-editor"  editor={editor} />
     </div>
   );
 }

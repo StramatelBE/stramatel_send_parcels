@@ -119,7 +119,7 @@ body {
 
 .fixed-editor {
   overflow: hidden;
-
+  font-size: 32px;
   overflow: hidden !important;
 }
 
