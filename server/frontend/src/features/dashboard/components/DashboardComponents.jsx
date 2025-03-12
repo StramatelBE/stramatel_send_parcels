@@ -6,12 +6,12 @@ import PreviewComponents from '../../preview/components/PreviewComponents';
 function DashboardComponents() {
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={9}>
         <DataComponents />
       </Grid>
-      <Grid item xs={12} sm={6}>
+     {/*  <Grid item xs={12} sm={6}>
         <PreviewComponents />
-      </Grid>
+      </Grid> */}
       <Grid item xs={12} sm={3}>
         <PlaylistComponents />
       </Grid>

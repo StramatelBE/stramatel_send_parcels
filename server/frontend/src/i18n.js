@@ -8,7 +8,7 @@ i18n
   .use(LanguageDetector) // Détecte automatiquement la langue
   .use(initReactI18next) // Initialise avec React
   .init({
-    fallbackLng: 'de', // Langue par défaut si la langue détectée n'est pas disponible
+    fallbackLng: 'fr', // Langue par défaut si la langue détectée n'est pas disponible
     debug: false, // Désactiver les logs en production
     saveMissing: true, // (Facultatif) Pour identifier les clés manquantes en développement
     missingKeyHandler: (lng, ns, key) => {

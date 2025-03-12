@@ -1,0 +1,70 @@
+{
+  "login": {
+    "title": "Connexion",
+    "password": "Mot de passe",
+    "submit": "Se connecter"
+  },
+  "accident": {
+    "title": "Accident",
+    "daysWithoutAccident": "Jours sans accident",
+    "recordDaysWithoutAccident": "Record de jours sans accident",
+    "accidentsThisYear": "Accidents cette année"
+  },
+  "dashboard": {
+    "data": "editor",
+    "preview": "Aperçu",
+    "playlist": "Liste de lecture"
+  },
+  "dataList": {
+    "title": "editor"
+  },
+  "editor": {
+    "placeholder": "Saisissez votre texte ici"
+  },
+  "playlistDetails": {
+    "textEditor": "Éditeur de texte",
+    "upload": "Télécharger",
+    "seconds": "Secondes"
+  },
+  "playlistList": {
+    "title": "Listes de lecture"
+  },
+  "preview": {
+    "title": "Aperçu"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "darkMode": "Mode sombre",
+    "testPanel": "Panneau de test",
+    "syncDate": "Synchroniser la date",
+    "changePassword": "Changer le mot de passe",
+    "brightness": "Luminosité",
+    "standby": "Veille"
+  },
+  "dialogs": {
+    "changePassword": {
+      "title": "Changer le mot de passe",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "incorrectPassword": "Mot de passe actuel incorrect",
+      "cancel": "Annuler",
+      "submit": "Confirmer"
+    },
+    "addData": {
+      "title": "Ajouter des données",
+      "name": "Nom des données",
+      "add": "Ajouter"
+    },
+    "addPlaylist": {
+      "title": "Ajouter une liste de lecture",
+      "name": "Nom de la liste de lecture",
+      "add": "Ajouter"
+    },
+    "updatePlaylist": {
+      "title": "Mettre à jour la liste de lecture",
+      "name": "Nom de la liste de lecture",
+      "update": "Mettre à jour"
+    }
+  }
+}
